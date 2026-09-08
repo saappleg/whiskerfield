@@ -14,7 +14,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Miso has decided that any closed laptop is an invitation, but an open one is a personal insult. We compromise by having a decoy notebook nearby.',
     topic: 'cat_life',
     created_at: '2026-09-08T14:15:00.000Z',
-    reactions: { purr: 14, paw: 7, treat: 3 },
+    reactions: { like: 14, love: 7, treat: 3, laugh: 9 },
     profiles: { display_name: 'Sylvie & Miso', handle: 'sylvie_miso' },
   },
   {
@@ -23,7 +23,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Moved the living room scratcher 18 inches to the left so it aligns with Clover’s morning stretch path. Immediate adoption. Territory really is micro-geography.',
     topic: 'home',
     created_at: '2026-09-08T11:00:00.000Z',
-    reactions: { paw: 18, treat: 8, purr: 11 },
+    reactions: { love: 18, treat: 8, like: 11 },
     profiles: { display_name: 'Leo', handle: 'leo_and_clover' },
   },
   {
@@ -32,7 +32,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Our vet loved the three-day observation note. Just having timestamps for when the coughing happened stopped me from feeling like I was rambling in the exam room.',
     topic: 'care',
     created_at: '2026-09-07T18:40:00.000Z',
-    reactions: { purr: 21, paw: 12 },
+    reactions: { like: 21, love: 12, sad: 1 },
     profiles: { display_name: 'Aster', handle: 'aster_notes' },
   },
   {
@@ -41,7 +41,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Finally moved the litter box out of the hallway into a quiet corner of the office. Biscuit used it within an hour like it had always been there. Wish I had done this years ago.',
     topic: 'home',
     created_at: '2026-09-08T19:00:00.000Z',
-    reactions: { paw: 9, purr: 6 },
+    reactions: { love: 9, like: 6, treat: 2 },
     profiles: { display_name: 'Priya N.', handle: 'priya_and_biscuit' },
   },
   {
@@ -50,7 +50,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'My cat has decided the dishwasher is now a threat that must be supervised from three feet away at all times. She has lived here five years. The dishwasher has not changed.',
     topic: 'cat_life',
     created_at: '2026-09-08T17:30:00.000Z',
-    reactions: { hiss: 24, purr: 10, treat: 5 },
+    reactions: { angry: 24, like: 10, treat: 5, laugh: 15 },
     profiles: { display_name: 'Owen R.', handle: 'owen_orangecat' },
   },
   {
@@ -59,7 +59,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'New here — this is Us (yes, that is her name), a 2-year-old tabby who talks constantly and has strong opinions about which armchair is currently the correct armchair.',
     topic: 'introductions',
     created_at: '2026-09-08T15:10:00.000Z',
-    reactions: { purr: 16, treat: 8, paw: 6 },
+    reactions: { like: 16, treat: 8, love: 6 },
     profiles: { display_name: 'Delphine', handle: 'delphine_and_us' },
   },
   {
@@ -68,7 +68,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Anyone else keep a little notes app entry for their senior cat? Started jotting down small changes — appetite, energy, litter habits — and it made vet visits so much less vague.',
     topic: 'care',
     created_at: '2026-09-08T12:20:00.000Z',
-    reactions: { purr: 18, paw: 15 },
+    reactions: { like: 18, love: 15, treat: 4 },
     profiles: { display_name: 'Marcus T.', handle: 'marcus_t' },
   },
   {
@@ -77,7 +77,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Put up a window perch on the least-used window in the house purely because it gets the best afternoon light. It is now, obviously, the single most popular spot in the apartment.',
     topic: 'home',
     created_at: '2026-09-07T21:15:00.000Z',
-    reactions: { purr: 13, treat: 7, paw: 5 },
+    reactions: { like: 13, treat: 7, love: 5 },
     profiles: { display_name: 'Hana K.', handle: 'hana_k' },
   },
   {
@@ -86,7 +86,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Ash has started “making biscuits” on my laptop keyboard specifically when I am unmuted in a video meeting. I do not think this is a coincidence.',
     topic: 'cat_life',
     created_at: '2026-09-07T16:05:00.000Z',
-    reactions: { purr: 42, paw: 19, treat: 11 },
+    reactions: { like: 42, love: 19, treat: 11, laugh: 23 },
     profiles: { display_name: 'Reuben', handle: 'reuben_and_ash' },
   },
   {
@@ -95,7 +95,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Hello from a very reluctant foster-turned-forever-home situation. Meet Toast, who was supposed to stay two weeks and has now been here for two years.',
     topic: 'introductions',
     created_at: '2026-09-06T19:45:00.000Z',
-    reactions: { purr: 32, treat: 22, paw: 15 },
+    reactions: { like: 32, treat: 22, love: 15, omg: 6 },
     profiles: { display_name: 'Sofia M.', handle: 'sofia_catlife' },
   },
   {
@@ -104,7 +104,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'PSA to fellow multi-cat households: adding a second water bowl on a different level of the house (not just a different room) made a bigger difference in drinking habits than I expected.',
     topic: 'care',
     created_at: '2026-09-06T14:30:00.000Z',
-    reactions: { paw: 17, purr: 12 },
+    reactions: { love: 17, like: 12, treat: 6 },
     profiles: { display_name: 'James O.', handle: 'james_o' },
   },
   {
@@ -113,7 +113,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Rearranged the living room around Mochi’s favorite nap spots instead of human walking routes. My interior decorating instincts are gone but the cat is genuinely thriving.',
     topic: 'home',
     created_at: '2026-09-05T18:00:00.000Z',
-    reactions: { purr: 15, paw: 9, treat: 4 },
+    reactions: { like: 15, love: 9, treat: 4 },
     profiles: { display_name: 'Grace L.', handle: 'grace_and_mochi' },
   },
   {
@@ -122,7 +122,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Watched my cat plan a jump onto the high counter for a full ten seconds, visibly reconsider the physics, and calmly walk away. A rare moment of feline self-awareness.',
     topic: 'cat_life',
     created_at: '2026-09-04T20:20:00.000Z',
-    reactions: { purr: 49, treat: 18, paw: 11, hiss: 2 },
+    reactions: { like: 49, treat: 18, love: 11, laugh: 35, omg: 8, angry: 2 },
     profiles: { display_name: 'Theo B.', handle: 'theo_b' },
   },
 ];
@@ -133,7 +133,7 @@ export const previewComments: CommunityComment[] = [
     post_id: 1,
     body: 'Miso has excellent office instincts. Mine prefers to schedule every meeting directly on the keyboard.',
     created_at: '2026-09-08T15:30:00.000Z',
-    reactions: { purr: 7, treat: 2 },
+    reactions: { like: 7, treat: 2, laugh: 4 },
     profiles: { display_name: 'Noor & Fig', handle: 'noor_fig' },
   },
   {
@@ -141,7 +141,7 @@ export const previewComments: CommunityComment[] = [
     post_id: 2,
     body: 'This is such a good reminder. The scratcher beside our doorway gets used ten times more than the fancy one in the spare room.',
     created_at: '2026-09-08T12:30:00.000Z',
-    reactions: { paw: 8, purr: 3 },
+    reactions: { love: 8, like: 3 },
     profiles: { display_name: 'Jo', handle: 'jo_and_juno' },
   },
   {
@@ -149,7 +149,7 @@ export const previewComments: CommunityComment[] = [
     post_id: 3,
     body: 'I write down changes in appetite, litter box habits, and energy. It helps me be specific without spiraling.',
     created_at: '2026-09-07T19:50:00.000Z',
-    reactions: { purr: 9, paw: 4 },
+    reactions: { like: 9, love: 4 },
     profiles: { display_name: 'Mina', handle: 'mina_mooncat' },
   },
   {
@@ -157,7 +157,7 @@ export const previewComments: CommunityComment[] = [
     post_id: 5,
     body: 'Dishwashers make deep, subterranean noises. From a cat’s perspective, it’s clearly an underground dragon.',
     created_at: '2026-09-08T18:00:00.000Z',
-    reactions: { hiss: 14, purr: 5 },
+    reactions: { angry: 14, like: 5, laugh: 11 },
     profiles: { display_name: 'Aster', handle: 'aster_notes' },
   },
   {
@@ -165,7 +165,7 @@ export const previewComments: CommunityComment[] = [
     post_id: 7,
     body: 'Same here! The veterinarian actually thanked us because we had specific dates instead of vague impressions.',
     created_at: '2026-09-08T13:45:00.000Z',
-    reactions: { purr: 8, paw: 3 },
+    reactions: { like: 8, love: 3 },
     profiles: { display_name: 'Sylvie & Miso', handle: 'sylvie_miso' },
   },
   {
@@ -173,7 +173,7 @@ export const previewComments: CommunityComment[] = [
     post_id: 10,
     body: 'Foster fails are the absolute best kind of failure. Welcome Toast!',
     created_at: '2026-09-06T20:10:00.000Z',
-    reactions: { purr: 12, treat: 6 },
+    reactions: { like: 12, treat: 6, love: 8 },
     profiles: { display_name: 'Delphine', handle: 'delphine_and_us' },
   },
 ];

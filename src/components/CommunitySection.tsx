@@ -126,6 +126,7 @@ export function CommunitySection({
               onReactPost={onReactPost}
               onReactComment={onReactComment}
               onAddComment={onAddComment}
+              onOpenAuth={onOpenAuth}
             />
           ))}
           {!isLoading && posts.length === 0 && (

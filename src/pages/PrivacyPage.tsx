@@ -1,0 +1,114 @@
+export function PrivacyPage() {
+  return (
+    <div className="privacy-page shell" style={{ paddingTop: '80px', paddingBottom: '96px', maxWidth: '840px' }}>
+      <p className="eyebrow"><i /> Privacy Policy &amp; Reader Trust</p>
+      <h1 style={{ fontSize: 'clamp(2.5rem, 4.2vw, 4rem)', lineHeight: 1, margin: '.4rem 0 1.5rem' }}>
+        Privacy Policy &amp; Reader Disclosures
+      </h1>
+      <p style={{ color: 'var(--ink-soft)', fontSize: '.9rem', marginBottom: '2.5rem' }}>
+        Last updated: September 8, 2026
+      </p>
+
+      <div className="privacy-content" style={{ display: 'grid', gap: '2rem', lineHeight: 1.7, color: '#183b43' }}>
+        <section>
+          <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
+            1. Overview &amp; Commitment
+          </h2>
+          <p>
+            Whiskerfield (<strong>whiskerfield.social</strong>) is dedicated to being a gentle, transparent, and respectful space for cat lovers. We keep data collection to the absolute minimum necessary to operate the community and deliver editorial content.
+          </p>
+        </section>
+
+        <section>
+          <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
+            2. Community &amp; Account Information
+          </h2>
+          <p>
+            When you join the Cat Club, we use passwordless magic-link authentication powered by Supabase. Your email address is stored securely and used exclusively to verify your identity and send your sign-in link.
+          </p>
+          <p>
+            Your email address is <strong>never displayed publicly</strong>, never sold to third parties, and never exposed to other members. Only your chosen display name and handle are visible alongside your published notes, replies, and reactions.
+          </p>
+        </section>
+
+        <section>
+          <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
+            3. Advertising &amp; Third-Party Cookies (Google AdSense)
+          </h2>
+          <p>
+            Whiskerfield uses Google AdSense to support independent writing, web hosting, and editorial curation.
+          </p>
+          <p>
+            Third-party vendors, including Google, use cookies to serve ads based on a user’s prior visits to Whiskerfield and other websites on the internet. Google’s use of advertising cookies enables it and its partners to serve ads to our users based on their visit to our sites and/or other sites on the Internet.
+          </p>
+          <p>
+            Users may opt out of personalized advertising at any time by visiting:{' '}
+            <a
+              href="https://www.google.com/settings/ads"
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontWeight: 800, textDecoration: 'underline', color: 'var(--coral)' }}
+            >
+              Google Ads Settings (google.com/settings/ads)
+            </a>.
+          </p>
+          <p>
+            Alternatively, you can opt out of a third-party vendor’s use of cookies for personalized advertising by visiting{' '}
+            <a
+              href="https://www.aboutads.info"
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontWeight: 800, textDecoration: 'underline', color: 'var(--coral)' }}
+            >
+              aboutads.info
+            </a>.
+          </p>
+        </section>
+
+        <section>
+          <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
+            4. Local Storage &amp; Visitor Identifiers
+          </h2>
+          <p>
+            To allow visitors to react to notes (likes, treats, smiles) without requiring registration, a random client identifier is saved in your browser’s local storage. This identifier does not contain personally identifiable information and is used solely to record which reactions you have chosen.
+          </p>
+        </section>
+
+        <section>
+          <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
+            5. Error Tracking &amp; Diagnostics (Sentry)
+          </h2>
+          <p>
+            We use Sentry to monitor software health and catch technical crashes. Sentry collects anonymous diagnostic crash reports (browser version, operating system, and error stack trace) so we can repair bugs quickly. No sensitive personal communication is sent to Sentry.
+          </p>
+        </section>
+
+        <section>
+          <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
+            6. Editorial Independence &amp; Affiliate Disclosure
+          </h2>
+          <p>
+            All care observations, scratcher field tests, and environmental enrichment articles are written independently. When an article includes an affiliate link to a pet product, it is clearly and prominently labeled. We only mention products that have proven genuinely useful in real cat homes.
+          </p>
+        </section>
+
+        <section>
+          <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
+            7. Contact Us
+          </h2>
+          <p>
+            If you have questions about this privacy policy or your community account, please reach out via GitHub at{' '}
+            <a
+              href="https://github.com/saappleg/whiskerfield"
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontWeight: 800, textDecoration: 'underline', color: 'var(--coral)' }}
+            >
+              github.com/saappleg/whiskerfield
+            </a>.
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}

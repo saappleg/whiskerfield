@@ -37,6 +37,16 @@ create table if not exists public.community_comments (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.community_reactions (
+  id bigint generated always as identity primary key,
+  target_type text not null check (target_type in ('post', 'comment')),
+  target_id bigint not null,
+  user_identifier text not null,
+  reaction text not null check (reaction in ('like', 'love', 'treat', 'sad', 'laugh', 'omg', 'angry')),
+  created_at timestamptz not null default now(),
+  unique (target_type, target_id, user_identifier)
+);
+
 create table if not exists public.member_resources (
   id bigint generated always as identity primary key,
   slug text not null unique check (slug ~ '^[a-z0-9-]{3,80}$'),
@@ -54,16 +64,21 @@ create index if not exists community_posts_public_feed_idx
   on public.community_posts (created_at desc, id desc) where is_published;
 create index if not exists community_comments_post_id_idx
   on public.community_comments (post_id, created_at asc);
+create index if not exists community_reactions_target_idx
+  on public.community_reactions (target_type, target_id);
+create index if not exists community_reactions_user_idx
+  on public.community_reactions (user_identifier);
 
 alter table public.profiles enable row level security;
 alter table public.memberships enable row level security;
 alter table public.community_posts enable row level security;
 alter table public.community_comments enable row level security;
+alter table public.community_reactions enable row level security;
 alter table public.member_resources enable row level security;
 
 -- Explicit, least-privilege Data API grants.
 revoke all on table public.profiles, public.memberships, public.community_posts,
-  public.community_comments, public.member_resources from anon, authenticated;
+  public.community_comments, public.community_reactions, public.member_resources from anon, authenticated;
 
 grant select on table public.profiles to anon, authenticated;
 grant insert, update on table public.profiles to authenticated;
@@ -75,6 +90,8 @@ grant insert, delete on table public.community_posts to authenticated;
 
 grant select on table public.community_comments to anon, authenticated;
 grant insert, delete on table public.community_comments to authenticated;
+
+grant select, insert, update, delete on table public.community_reactions to anon, authenticated;
 
 grant select on table public.member_resources to authenticated;
 
@@ -140,6 +157,27 @@ create policy "members delete own comments"
   on public.community_comments for delete to authenticated
   using ((select auth.uid()) = author_id);
 
+drop policy if exists "reactions are readable by all" on public.community_reactions;
+create policy "reactions are readable by all"
+  on public.community_reactions for select to anon, authenticated
+  using (true);
+
+drop policy if exists "anyone can insert reactions" on public.community_reactions;
+create policy "anyone can insert reactions"
+  on public.community_reactions for insert to anon, authenticated
+  with check (char_length(user_identifier) between 3 and 100);
+
+drop policy if exists "anyone can update reactions" on public.community_reactions;
+create policy "anyone can update reactions"
+  on public.community_reactions for update to anon, authenticated
+  using (true)
+  with check (char_length(user_identifier) between 3 and 100);
+
+drop policy if exists "anyone can delete reactions" on public.community_reactions;
+create policy "anyone can delete reactions"
+  on public.community_reactions for delete to anon, authenticated
+  using (true);
+
 drop policy if exists "active members read the shelf" on public.member_resources;
 create policy "active members read the shelf"
   on public.member_resources for select to authenticated
@@ -151,6 +189,25 @@ create policy "active members read the shelf"
         and memberships.status = 'active'
     )
   );
+
+-- Enable Supabase Realtime for instant synchronization across all visitors
+do $$
+begin
+  alter publication supabase_realtime add table public.community_posts;
+exception when others then null;
+end $$;
+
+do $$
+begin
+  alter publication supabase_realtime add table public.community_comments;
+exception when others then null;
+end $$;
+
+do $$
+begin
+  alter publication supabase_realtime add table public.community_reactions;
+exception when others then null;
+end $$;
 
 -- Starter material lives in the protected table, not in the public JavaScript bundle.
 insert into public.member_resources (slug, kind, title, summary, body)

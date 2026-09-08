@@ -12,6 +12,7 @@ type PostCardProps = {
   onReactPost: (postId: number, reaction: ReactionType) => void;
   onReactComment: (commentId: number, reaction: ReactionType) => void;
   onAddComment: (postId: number, body: string) => Promise<string | null>;
+  onOpenAuth: () => void;
 };
 
 export function PostCard({
@@ -22,6 +23,7 @@ export function PostCard({
   onReactPost,
   onReactComment,
   onAddComment,
+  onOpenAuth,
 }: PostCardProps) {
   const [showComments, setShowComments] = useState(false);
   const [replyText, setReplyText] = useState('');
@@ -116,19 +118,28 @@ export function PostCard({
             </div>
           )}
 
-          <form className="comment-composer" onSubmit={handleReply}>
-            <input
-              type="text"
-              placeholder="Add a gentle reply…"
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              maxLength={500}
-              aria-label="Reply to post"
-            />
-            <button type="submit" disabled={busy || !replyText.trim()}>
-              {busy ? 'Sending…' : 'Reply'}
-            </button>
-          </form>
+          {currentUserId ? (
+            <form className="comment-composer" onSubmit={handleReply}>
+              <input
+                type="text"
+                placeholder="Add a gentle reply…"
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                maxLength={500}
+                aria-label="Reply to post"
+              />
+              <button type="submit" disabled={busy || !replyText.trim()}>
+                {busy ? 'Sending…' : 'Reply'}
+              </button>
+            </form>
+          ) : (
+            <div className="comment-signin-prompt">
+              <p>Sign in with a quick magic link to join the conversation and reply.</p>
+              <button type="button" onClick={onOpenAuth}>
+                Sign in to reply →
+              </button>
+            </div>
+          )}
           {replyError && <p className="form-error" role="alert">{replyError}</p>}
         </div>
       )}

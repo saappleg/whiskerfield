@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { previewComments, previewPosts } from '../data/community';
 import { ensureProfile, isSupabaseConfigured, supabase, type Profile } from '../lib/supabase';
+import { getVisitorId } from '../lib/visitor';
 import type { CommunityComment, CommunityPost, MemberResource, ReactionCounts, ReactionType, Topic } from '../types/community';
 
 function updateReactions(
@@ -12,17 +13,14 @@ function updateReactions(
   const next: ReactionCounts = { ...currentReactions };
 
   if (currentChoice === toggled) {
-    // Un-react
     next[toggled] = Math.max(0, (next[toggled] ?? 1) - 1);
     return { reactions: next, userReaction: undefined };
   }
 
-  // If changing choice, decrement the previous one
   if (currentChoice) {
     next[currentChoice] = Math.max(0, (next[currentChoice] ?? 1) - 1);
   }
 
-  // Increment new choice
   next[toggled] = (next[toggled] ?? 0) + 1;
   return { reactions: next, userReaction: toggled };
 }
@@ -60,7 +58,7 @@ export function useWhiskerfield() {
       setIsMember(active);
       if (active) await loadResources();
     } catch {
-      // Retry message shown in UI on write failure
+      // Handled via user state
     }
   }, [loadResources]);
 
@@ -68,32 +66,105 @@ export function useWhiskerfield() {
     if (!supabase) return;
     setIsLoadingFeed(true);
     setFeedError('');
-    const [postsRes, commentsRes] = await Promise.all([
+
+    const [postsRes, commentsRes, reactionsRes] = await Promise.all([
       supabase
         .from('community_posts')
         .select('id, author_id, body, topic, created_at, profiles(display_name, handle)')
         .eq('is_published', true)
         .order('created_at', { ascending: false })
         .order('id', { ascending: false })
-        .limit(30),
+        .limit(50),
       supabase
         .from('community_comments')
         .select('id, post_id, author_id, body, created_at, profiles(display_name, handle)')
         .order('created_at', { ascending: true })
-        .limit(100),
+        .limit(200),
+      supabase
+        .from('community_reactions')
+        .select('target_type, target_id, user_identifier, reaction')
+        .limit(2000),
     ]);
 
     if (postsRes.error) {
       setFeedError('The live conversation is taking a short nap. Try refreshing in a moment.');
-    } else if (postsRes.data && postsRes.data.length > 0) {
-      setPosts(postsRes.data as CommunityPost[]);
+      setIsLoadingFeed(false);
+      return;
     }
 
-    if (!commentsRes.error && commentsRes.data && commentsRes.data.length > 0) {
-      setComments(commentsRes.data as CommunityComment[]);
+    const visitorId = user?.id || getVisitorId();
+
+    const postReactionCounts: Record<number, ReactionCounts> = {};
+    const postUserReactions: Record<number, ReactionType> = {};
+    const commentReactionCounts: Record<number, ReactionCounts> = {};
+    const commentUserReactions: Record<number, ReactionType> = {};
+
+    if (reactionsRes.data) {
+      for (const row of reactionsRes.data as Array<{
+        target_type: 'post' | 'comment';
+        target_id: number;
+        user_identifier: string;
+        reaction: ReactionType;
+      }>) {
+        const isSelf = row.user_identifier === visitorId;
+        if (row.target_type === 'post') {
+          if (!postReactionCounts[row.target_id]) postReactionCounts[row.target_id] = {};
+          postReactionCounts[row.target_id][row.reaction] =
+            (postReactionCounts[row.target_id][row.reaction] ?? 0) + 1;
+          if (isSelf) postUserReactions[row.target_id] = row.reaction;
+        } else if (row.target_type === 'comment') {
+          if (!commentReactionCounts[row.target_id]) commentReactionCounts[row.target_id] = {};
+          commentReactionCounts[row.target_id][row.reaction] =
+            (commentReactionCounts[row.target_id][row.reaction] ?? 0) + 1;
+          if (isSelf) commentUserReactions[row.target_id] = row.reaction;
+        }
+      }
     }
+
+    const dbPosts = (postsRes.data || []) as CommunityPost[];
+    const dbPostIds = new Set(dbPosts.map((p) => p.id));
+    const mergedPosts = [
+      ...dbPosts,
+      ...previewPosts.filter((p) => !dbPostIds.has(p.id)),
+    ].map((post) => {
+      const extraCounts = postReactionCounts[post.id] || {};
+      const baseCounts = post.reactions || {};
+      const mergedCounts: ReactionCounts = { ...baseCounts };
+      for (const [key, count] of Object.entries(extraCounts)) {
+        const k = key as ReactionType;
+        mergedCounts[k] = (mergedCounts[k] ?? 0) + (count ?? 0);
+      }
+      return {
+        ...post,
+        reactions: mergedCounts,
+        userReaction: postUserReactions[post.id] ?? post.userReaction,
+      };
+    });
+    setPosts(mergedPosts);
+
+    const dbComments = (commentsRes.data || []) as CommunityComment[];
+    const dbCommentIds = new Set(dbComments.map((c) => c.id));
+    const mergedComments = [
+      ...previewComments.filter((c) => !dbCommentIds.has(c.id)),
+      ...dbComments,
+    ].map((comment) => {
+      const extraCounts = commentReactionCounts[comment.id] || {};
+      const baseCounts = comment.reactions || {};
+      const mergedCounts: ReactionCounts = { ...baseCounts };
+      for (const [key, count] of Object.entries(extraCounts)) {
+        const k = key as ReactionType;
+        mergedCounts[k] = (mergedCounts[k] ?? 0) + (count ?? 0);
+      }
+      return {
+        ...comment,
+        reactions: mergedCounts,
+        userReaction: commentUserReactions[comment.id] ?? comment.userReaction,
+      };
+    });
+    setComments(mergedComments);
+
     setIsLoadingFeed(false);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -113,6 +184,28 @@ export function useWhiskerfield() {
     });
     return () => listener.subscription.unsubscribe();
   }, [hydrateMember, refreshFeed]);
+
+  // Realtime subscription for cross-user live updates
+  useEffect(() => {
+    if (!supabase) return;
+    const channel = supabase
+      .channel('whiskerfield_realtime_feed')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'community_comments' }, () => {
+        void refreshFeed();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'community_reactions' }, () => {
+        void refreshFeed();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'community_posts' }, () => {
+        void refreshFeed();
+      })
+      .subscribe();
+
+    const client = supabase;
+    return () => {
+      void client.removeChannel(channel);
+    };
+  }, [refreshFeed]);
 
   async function sendMagicLink(email: string) {
     if (!supabase) return 'The secure sign-in is being connected.';
@@ -142,15 +235,14 @@ export function useWhiskerfield() {
       }
     }
 
-    // Optimistic fallback for preview mode / local guest
     const optimisticPost: CommunityPost = {
       id: Date.now(),
       author_id: user?.id || 'guest',
       body: trimmed,
       topic,
       created_at: new Date().toISOString(),
-      reactions: { purr: 1 },
-      userReaction: 'purr',
+      reactions: { like: 1 },
+      userReaction: 'like',
       profiles: profile
         ? { display_name: profile.display_name, handle: profile.handle }
         : { display_name: user?.email?.split('@')[0] || 'Friendly Cat Person', handle: 'cat_friend' },
@@ -167,9 +259,13 @@ export function useWhiskerfield() {
   }
 
   function reactToPost(postId: number, reaction: ReactionType) {
+    const visitorId = user?.id || getVisitorId();
+    let isRemoving = false;
+
     setPosts((current) =>
       current.map((post) => {
         if (post.id !== postId) return post;
+        isRemoving = post.userReaction === reaction;
         const result = updateReactions(post.reactions, post.userReaction, reaction);
         return {
           ...post,
@@ -178,12 +274,37 @@ export function useWhiskerfield() {
         };
       })
     );
+
+    if (supabase) {
+      if (isRemoving) {
+        void supabase
+          .from('community_reactions')
+          .delete()
+          .match({ target_type: 'post', target_id: postId, user_identifier: visitorId });
+      } else {
+        void supabase
+          .from('community_reactions')
+          .upsert(
+            {
+              target_type: 'post',
+              target_id: postId,
+              user_identifier: visitorId,
+              reaction,
+            },
+            { onConflict: 'target_type, target_id, user_identifier' }
+          );
+      }
+    }
   }
 
   function reactToComment(commentId: number, reaction: ReactionType) {
+    const visitorId = user?.id || getVisitorId();
+    let isRemoving = false;
+
     setComments((current) =>
       current.map((comment) => {
         if (comment.id !== commentId) return comment;
+        isRemoving = comment.userReaction === reaction;
         const result = updateReactions(comment.reactions, comment.userReaction, reaction);
         return {
           ...comment,
@@ -192,13 +313,38 @@ export function useWhiskerfield() {
         };
       })
     );
+
+    if (supabase) {
+      if (isRemoving) {
+        void supabase
+          .from('community_reactions')
+          .delete()
+          .match({ target_type: 'comment', target_id: commentId, user_identifier: visitorId });
+      } else {
+        void supabase
+          .from('community_reactions')
+          .upsert(
+            {
+              target_type: 'comment',
+              target_id: commentId,
+              user_identifier: visitorId,
+              reaction,
+            },
+            { onConflict: 'target_type, target_id, user_identifier' }
+          );
+      }
+    }
   }
 
   async function publishComment(postId: number, body: string) {
+    if (!user || !profile) {
+      return 'You must sign in with a magic link before leaving a reply.';
+    }
+
     const trimmed = body.trim();
     if (!trimmed || trimmed.length > 500) return 'Replies need to be between 1 and 500 characters.';
 
-    if (supabase && user && profile) {
+    if (supabase) {
       const result = await supabase
         .from('community_comments')
         .insert({ post_id: postId, author_id: user.id, body: trimmed })
@@ -211,18 +357,15 @@ export function useWhiskerfield() {
       }
     }
 
-    // Optimistic fallback
     const newComment: CommunityComment = {
       id: Date.now(),
       post_id: postId,
-      author_id: user?.id || 'guest',
+      author_id: user.id,
       body: trimmed,
       created_at: new Date().toISOString(),
-      reactions: { purr: 1 },
-      userReaction: 'purr',
-      profiles: profile
-        ? { display_name: profile.display_name, handle: profile.handle }
-        : { display_name: user?.email?.split('@')[0] || 'Cat friend', handle: 'cat_friend' },
+      reactions: { like: 1 },
+      userReaction: 'like',
+      profiles: { display_name: profile.display_name, handle: profile.handle },
     };
     setComments((prev) => [...prev, newComment]);
     return null;

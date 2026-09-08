@@ -1,6 +1,6 @@
 export type Topic = 'cat_life' | 'care' | 'introductions' | 'home';
 
-export type ReactionType = 'purr' | 'paw' | 'treat' | 'hiss';
+export type ReactionType = 'like' | 'love' | 'treat' | 'sad' | 'laugh' | 'omg' | 'angry';
 
 export type ReactionMeta = {
   key: ReactionType;
@@ -9,10 +9,13 @@ export type ReactionMeta = {
 };
 
 export const REACTIONS: ReactionMeta[] = [
-  { key: 'purr', label: 'Purr', emoji: '😸' },
-  { key: 'paw', label: 'Paw print', emoji: '🐾' },
-  { key: 'treat', label: 'Cat treat', emoji: '🐟' },
-  { key: 'hiss', label: 'Hiss', emoji: '😾' },
+  { key: 'like', label: 'Like', emoji: '😸' },
+  { key: 'love', label: 'Love', emoji: '😻' },
+  { key: 'treat', label: 'Give a Treat', emoji: '🐟' },
+  { key: 'sad', label: 'Sad', emoji: '😿' },
+  { key: 'laugh', label: 'Laugh', emoji: '😹' },
+  { key: 'omg', label: 'OMG', emoji: '🙀' },
+  { key: 'angry', label: 'Angry', emoji: '😾' },
 ];
 
 export type ReactionCounts = Partial<Record<ReactionType, number>>;

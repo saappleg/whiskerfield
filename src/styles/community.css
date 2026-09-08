@@ -43,10 +43,13 @@
 .reaction-count { font-size:.7rem; font-weight:800; opacity:.85; margin-left:.15rem; }
 
 .reaction-pill.active { border-width:1.5px; font-weight:800; }
-.reaction-pill.active.purr { background:#ffe4e6; border-color:#f43f5e; color:#be123c; }
-.reaction-pill.active.paw { background:#e0f2fe; border-color:#0284c7; color:#0369a1; }
-.reaction-pill.active.treat { background:#fef3c7; border-color:#f59e0b; color:#b45309; }
-.reaction-pill.active.hiss { background:#ede9fe; border-color:#8b5cf6; color:#6d28d9; }
+.reaction-pill.active.like { background:#fef3c7; border-color:#f59e0b; color:#b45309; }
+.reaction-pill.active.love { background:#ffe4e6; border-color:#f43f5e; color:#be123c; }
+.reaction-pill.active.treat { background:#e0f2fe; border-color:#0284c7; color:#0369a1; }
+.reaction-pill.active.sad { background:#f1f5f9; border-color:#64748b; color:#334155; }
+.reaction-pill.active.laugh { background:#fef08a; border-color:#eab308; color:#854d0e; }
+.reaction-pill.active.omg { background:#ede9fe; border-color:#8b5cf6; color:#6d28d9; }
+.reaction-pill.active.angry { background:#ffedd5; border-color:#ea580c; color:#9a3412; }
 
 .reactions-bar.compact { gap:4px; margin-top:.45rem; }
 .reactions-bar.compact .reaction-pill { padding:.18rem .45rem; font-size:.65rem; }
@@ -71,5 +74,10 @@
 .comment-composer input { flex:1; border:1px solid var(--line); padding:.55rem .75rem; font-size:.8rem; background:#fff; color:var(--ink); outline-color:var(--coral); }
 .comment-composer button { border:0; background:var(--ink); color:var(--cream); padding:.55rem .95rem; font-size:.74rem; font-weight:800; cursor:pointer; }
 .comment-composer button:hover { background:var(--coral); }
+
+.comment-signin-prompt { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:rgba(255,252,246,.85); border:1px dashed var(--line); margin-top:.75rem; }
+.comment-signin-prompt p { margin:0; font-size:.78rem; color:var(--ink-soft); }
+.comment-signin-prompt button { border:0; background:var(--ink); color:var(--cream); padding:.45rem .85rem; font-size:.72rem; font-weight:800; cursor:pointer; white-space:nowrap; }
+.comment-signin-prompt button:hover { background:var(--coral); }
 
 .empty-feed { padding:2rem; border:1px dashed var(--line); color:var(--ink-soft); text-align:center; }
