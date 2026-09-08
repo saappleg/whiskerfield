@@ -49,15 +49,51 @@ export function PostCard({
     setBusy(false);
   }
 
+  const taggedPet = post.pets;
+
   return (
     <article className="post-card">
       <header>
-        <span className="avatar warm">{author.display_name.slice(0, 1)}</span>
+        <span className="avatar warm" style={{ overflow: 'hidden' }}>
+          {author.avatar_url && author.avatar_url.startsWith('http') ? (
+            /* oxlint-disable-next-line next/no-img-element */
+            <img
+              src={author.avatar_url}
+              alt=""
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          ) : (
+            author.display_name.slice(0, 1)
+          )}
+        </span>
         <div>
           <b>{author.display_name}</b>
           <p>@{author.handle} · {relativeTime(post.created_at)}</p>
         </div>
-        <span className="topic">{topicLabels[post.topic]}</span>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '.6rem', flexWrap: 'wrap' }}>
+          {taggedPet && (
+            <span
+              className="pet-badge"
+              title={taggedPet.breed ? `${taggedPet.name} (${taggedPet.breed})` : taggedPet.name}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '.35rem',
+                fontSize: '.72rem',
+                fontWeight: 800,
+                padding: '.25rem .6rem',
+                background: 'rgba(243,108,77,.12)',
+                color: 'var(--coral)',
+                borderRadius: '999px',
+                border: '1px solid rgba(243,108,77,.25)',
+              }}
+            >
+              <span>{taggedPet.avatar_url || '🐾'}</span>
+              <span>{taggedPet.name}</span>
+            </span>
+          )}
+          <span className="topic">{topicLabels[post.topic]}</span>
+        </div>
       </header>
 
       <p className="post-body">{post.body}</p>

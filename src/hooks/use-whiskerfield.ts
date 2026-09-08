@@ -3,7 +3,7 @@ import type { User } from '@supabase/supabase-js';
 import { previewComments, previewPosts } from '../data/community';
 import { ensureProfile, isSupabaseConfigured, supabase, type Profile } from '../lib/supabase';
 import { getVisitorId } from '../lib/visitor';
-import type { CommunityComment, CommunityPost, MemberResource, ReactionCounts, ReactionType, Topic } from '../types/community';
+import type { CommunityComment, CommunityPost, MemberResource, Pet, ReactionCounts, ReactionType, Topic } from '../types/community';
 
 function updateReactions(
   currentReactions: ReactionCounts = {},
@@ -28,6 +28,7 @@ function updateReactions(
 export function useWhiskerfield() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [userPets, setUserPets] = useState<Pet[]>([]);
   const [isMember, setIsMember] = useState(false);
   const [posts, setPosts] = useState<CommunityPost[]>(previewPosts);
   const [comments, setComments] = useState<CommunityComment[]>(previewComments);
@@ -44,11 +45,24 @@ export function useWhiskerfield() {
     if (!result.error) setResources((result.data ?? []) as MemberResource[]);
   }, []);
 
+  const loadPets = useCallback(async (userId: string) => {
+    if (!supabase) return;
+    const result = await supabase
+      .from('pets')
+      .select('*')
+      .eq('owner_id', userId)
+      .order('created_at', { ascending: true });
+    if (!result.error && result.data) {
+      setUserPets(result.data as Pet[]);
+    }
+  }, []);
+
   const hydrateMember = useCallback(async (nextUser: User) => {
     if (!supabase) return;
     try {
       const nextProfile = await ensureProfile(nextUser);
       setProfile(nextProfile);
+      await loadPets(nextUser.id);
       const membership = await supabase
         .from('memberships')
         .select('status')
@@ -60,7 +74,7 @@ export function useWhiskerfield() {
     } catch {
       // Handled via user state
     }
-  }, [loadResources]);
+  }, [loadPets, loadResources]);
 
   const refreshFeed = useCallback(async () => {
     if (!supabase) return;
@@ -70,14 +84,14 @@ export function useWhiskerfield() {
     const [postsRes, commentsRes, reactionsRes] = await Promise.all([
       supabase
         .from('community_posts')
-        .select('id, author_id, body, topic, created_at, profiles(display_name, handle)')
+        .select('id, author_id, body, topic, pet_id, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
         .eq('is_published', true)
         .order('created_at', { ascending: false })
         .order('id', { ascending: false })
         .limit(50),
       supabase
         .from('community_comments')
-        .select('id, post_id, author_id, body, created_at, profiles(display_name, handle)')
+        .select('id, post_id, author_id, body, created_at, profiles(display_name, handle, avatar_url)')
         .order('created_at', { ascending: true })
         .limit(200),
       supabase
@@ -121,7 +135,7 @@ export function useWhiskerfield() {
       }
     }
 
-    const dbPosts = (postsRes.data || []) as CommunityPost[];
+    const dbPosts = (postsRes.data || []) as unknown as CommunityPost[];
     const dbPostIds = new Set(dbPosts.map((p) => p.id));
     const mergedPosts = [
       ...dbPosts,
@@ -178,6 +192,7 @@ export function useWhiskerfield() {
       if (session?.user) void hydrateMember(session.user);
       if (!session) {
         setProfile(null);
+        setUserPets([]);
         setIsMember(false);
         setResources([]);
       }
@@ -199,13 +214,17 @@ export function useWhiskerfield() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'community_posts' }, () => {
         void refreshFeed();
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pets' }, () => {
+        void refreshFeed();
+        if (user) void loadPets(user.id);
+      })
       .subscribe();
 
     const client = supabase;
     return () => {
       void client.removeChannel(channel);
     };
-  }, [refreshFeed]);
+  }, [loadPets, refreshFeed, user]);
 
   async function sendMagicLink(email: string) {
     if (!supabase) return 'The secure sign-in is being connected.';
@@ -218,19 +237,93 @@ export function useWhiskerfield() {
       : 'Check your inbox for a one-tap sign-in link. Then come straight back to Whiskerfield.';
   }
 
-  async function publishPost(body: string, topic: Topic) {
+  async function updateProfile(displayName: string, handle: string, bio: string, avatarUrl: string) {
+    if (!supabase || !user) return 'You must be signed in to update your profile.';
+
+    const result = await supabase
+      .from('profiles')
+      .update({
+        display_name: displayName,
+        handle,
+        bio,
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', user.id)
+      .select('id, handle, display_name, avatar_url, bio')
+      .single();
+
+    if (result.error) return result.error.message;
+    if (result.data) {
+      setProfile(result.data as Profile);
+      void refreshFeed();
+      return null;
+    }
+    return 'Could not update profile.';
+  }
+
+  async function createPet(name: string, breed: string, age: string, quirk: string, avatarUrl: string) {
+    if (!supabase || !user) {
+      // Local optimistic fallback
+      const localPet: Pet = {
+        id: Date.now(),
+        owner_id: user?.id || 'guest',
+        name,
+        breed,
+        age,
+        quirk,
+        avatar_url: avatarUrl || '🐱',
+        created_at: new Date().toISOString(),
+      };
+      setUserPets((prev) => [...prev, localPet]);
+      return null;
+    }
+
+    const result = await supabase
+      .from('pets')
+      .insert({
+        owner_id: user.id,
+        name,
+        breed: breed || null,
+        age: age || null,
+        quirk: quirk || null,
+        avatar_url: avatarUrl || '🐱',
+      })
+      .select('*')
+      .single();
+
+    if (result.error) return result.error.message;
+    if (result.data) {
+      setUserPets((prev) => [...prev, result.data as Pet]);
+      return null;
+    }
+    return 'Could not add pet.';
+  }
+
+  async function deletePet(id: number) {
+    if (supabase) {
+      const result = await supabase.from('pets').delete().eq('id', id);
+      if (result.error) return result.error.message;
+    }
+    setUserPets((prev) => prev.filter((p) => p.id !== id));
+    return null;
+  }
+
+  async function publishPost(body: string, topic: Topic, petId?: number) {
     const trimmed = body.trim();
     if (!trimmed || trimmed.length > 1000) return 'Posts need to be between 1 and 1,000 characters.';
+
+    const chosenPet = userPets.find((p) => p.id === petId);
 
     if (supabase && user && profile) {
       const result = await supabase
         .from('community_posts')
-        .insert({ author_id: user.id, body: trimmed, topic })
-        .select('id, author_id, body, topic, created_at, profiles(display_name, handle)')
+        .insert({ author_id: user.id, body: trimmed, topic, pet_id: petId || null })
+        .select('id, author_id, body, topic, pet_id, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
         .single();
       if (result.error) return result.error.message;
       if (result.data) {
-        setPosts((current) => [result.data as CommunityPost, ...current.filter((post) => post.id !== result.data.id)]);
+        setPosts((current) => [(result.data as unknown as CommunityPost), ...current.filter((post) => post.id !== result.data.id)]);
         return null;
       }
     }
@@ -240,11 +333,13 @@ export function useWhiskerfield() {
       author_id: user?.id || 'guest',
       body: trimmed,
       topic,
+      pet_id: petId,
+      pets: chosenPet || null,
       created_at: new Date().toISOString(),
       reactions: { like: 1 },
       userReaction: 'like',
       profiles: profile
-        ? { display_name: profile.display_name, handle: profile.handle }
+        ? { display_name: profile.display_name, handle: profile.handle, avatar_url: profile.avatar_url }
         : { display_name: user?.email?.split('@')[0] || 'Friendly Cat Person', handle: 'cat_friend' },
     };
     setPosts((current) => [optimisticPost, ...current]);
@@ -348,7 +443,7 @@ export function useWhiskerfield() {
       const result = await supabase
         .from('community_comments')
         .insert({ post_id: postId, author_id: user.id, body: trimmed })
-        .select('id, post_id, author_id, body, created_at, profiles(display_name, handle)')
+        .select('id, post_id, author_id, body, created_at, profiles(display_name, handle, avatar_url)')
         .single();
       if (result.error) return result.error.message;
       if (result.data) {
@@ -365,7 +460,7 @@ export function useWhiskerfield() {
       created_at: new Date().toISOString(),
       reactions: { like: 1 },
       userReaction: 'like',
-      profiles: { display_name: profile.display_name, handle: profile.handle },
+      profiles: { display_name: profile.display_name, handle: profile.handle, avatar_url: profile.avatar_url },
     };
     setComments((prev) => [...prev, newComment]);
     return null;
@@ -386,6 +481,7 @@ export function useWhiskerfield() {
     if (supabase) await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
+    setUserPets([]);
     setIsMember(false);
   }
 
@@ -393,6 +489,7 @@ export function useWhiskerfield() {
     configured: isSupabaseConfigured,
     user,
     profile,
+    userPets,
     isMember,
     posts,
     comments,
@@ -401,6 +498,9 @@ export function useWhiskerfield() {
     feedError,
     refreshFeed,
     sendMagicLink,
+    updateProfile,
+    createPet,
+    deletePet,
     publishPost,
     deletePost,
     reactToPost,

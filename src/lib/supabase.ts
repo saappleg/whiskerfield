@@ -4,6 +4,8 @@ export type Profile = {
   id: string;
   handle: string;
   display_name: string;
+  avatar_url?: string;
+  bio?: string;
 };
 
 const url = import.meta.env.VITE_SUPABASE_URL?.trim().replace(/\/$/, '');
@@ -21,7 +23,7 @@ export async function ensureProfile(user: User): Promise<Profile> {
 
   const existing = await supabase
     .from('profiles')
-    .select('id, handle, display_name')
+    .select('id, handle, display_name, avatar_url, bio')
     .eq('id', user.id)
     .maybeSingle();
 
@@ -32,7 +34,7 @@ export async function ensureProfile(user: User): Promise<Profile> {
   const created = await supabase
     .from('profiles')
     .insert({ id: user.id, handle: handleFor(user), display_name: displayName })
-    .select('id, handle, display_name')
+    .select('id, handle, display_name, avatar_url, bio')
     .single();
 
   if (created.data) return created.data as Profile;
@@ -40,7 +42,7 @@ export async function ensureProfile(user: User): Promise<Profile> {
   // A second tab can create the same profile while this request is in flight.
   const retried = await supabase
     .from('profiles')
-    .select('id, handle, display_name')
+    .select('id, handle, display_name, avatar_url, bio')
     .eq('id', user.id)
     .single();
   if (retried.data) return retried.data as Profile;

@@ -20,15 +20,28 @@ export const REACTIONS: ReactionMeta[] = [
 
 export type ReactionCounts = Partial<Record<ReactionType, number>>;
 
+export type Pet = {
+  id: number;
+  owner_id?: string;
+  name: string;
+  breed?: string;
+  age?: string;
+  quirk?: string;
+  avatar_url?: string;
+  created_at?: string;
+};
+
 export type CommunityPost = {
   id: number;
   author_id?: string;
   body: string;
   topic: Topic;
+  pet_id?: number;
+  pets?: Pet | { id: number; name: string; breed?: string; avatar_url?: string } | null;
   created_at: string;
   reactions?: ReactionCounts;
   userReaction?: ReactionType;
-  profiles?: { display_name: string; handle: string } | { display_name: string; handle: string }[] | null;
+  profiles?: { display_name: string; handle: string; avatar_url?: string } | { display_name: string; handle: string; avatar_url?: string }[] | null;
 };
 
 export type CommunityComment = {
@@ -39,7 +52,7 @@ export type CommunityComment = {
   created_at: string;
   reactions?: ReactionCounts;
   userReaction?: ReactionType;
-  profiles?: { display_name: string; handle: string } | { display_name: string; handle: string }[] | null;
+  profiles?: { display_name: string; handle: string; avatar_url?: string } | { display_name: string; handle: string; avatar_url?: string }[] | null;
 };
 
 export type MemberResource = {

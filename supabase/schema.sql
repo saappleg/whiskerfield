@@ -8,9 +8,15 @@ create table if not exists public.profiles (
   handle text not null unique
     check (handle = lower(handle) and handle ~ '^[a-z0-9_]{3,24}$'),
   display_name text not null check (char_length(display_name) between 2 and 40),
+  avatar_url text,
+  bio text check (bio is null or char_length(bio) <= 300),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Migration helper if table already exists
+alter table public.profiles add column if not exists avatar_url text;
+alter table public.profiles add column if not exists bio text;
 
 create table if not exists public.memberships (
   user_id uuid primary key references public.profiles (id) on delete cascade,
@@ -19,15 +25,30 @@ create table if not exists public.memberships (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.pets (
+  id bigint generated always as identity primary key,
+  owner_id uuid not null references public.profiles (id) on delete cascade,
+  name text not null check (char_length(name) between 1 and 50),
+  breed text check (breed is null or char_length(breed) <= 80),
+  age text check (age is null or char_length(age) <= 50),
+  quirk text check (quirk is null or char_length(quirk) <= 200),
+  avatar_url text,
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.community_posts (
   id bigint generated always as identity primary key,
   author_id uuid not null references public.profiles (id) on delete cascade,
   topic text not null default 'cat_life'
     check (topic in ('cat_life', 'care', 'introductions', 'home')),
+  pet_id bigint references public.pets (id) on delete set null,
   body text not null check (char_length(body) between 1 and 1000),
   is_published boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+-- Migration helper if community_posts already exists
+alter table public.community_posts add column if not exists pet_id bigint references public.pets (id) on delete set null;
 
 create table if not exists public.community_comments (
   id bigint generated always as identity primary key,
@@ -64,6 +85,8 @@ create index if not exists community_posts_public_feed_idx
   on public.community_posts (created_at desc, id desc) where is_published;
 create index if not exists community_comments_post_id_idx
   on public.community_comments (post_id, created_at asc);
+create index if not exists pets_owner_id_idx
+  on public.pets (owner_id);
 create index if not exists community_reactions_target_idx
   on public.community_reactions (target_type, target_id);
 create index if not exists community_reactions_user_idx
@@ -71,19 +94,23 @@ create index if not exists community_reactions_user_idx
 
 alter table public.profiles enable row level security;
 alter table public.memberships enable row level security;
+alter table public.pets enable row level security;
 alter table public.community_posts enable row level security;
 alter table public.community_comments enable row level security;
 alter table public.community_reactions enable row level security;
 alter table public.member_resources enable row level security;
 
 -- Explicit, least-privilege Data API grants.
-revoke all on table public.profiles, public.memberships, public.community_posts,
+revoke all on table public.profiles, public.memberships, public.pets, public.community_posts,
   public.community_comments, public.community_reactions, public.member_resources from anon, authenticated;
 
 grant select on table public.profiles to anon, authenticated;
 grant insert, update on table public.profiles to authenticated;
 
 grant select, insert, update on table public.memberships to authenticated;
+
+grant select on table public.pets to anon, authenticated;
+grant insert, update, delete on table public.pets to authenticated;
 
 grant select on table public.community_posts to anon, authenticated;
 grant insert, delete on table public.community_posts to authenticated;
@@ -93,7 +120,7 @@ grant insert, delete on table public.community_comments to authenticated;
 
 grant select, insert, update, delete on table public.community_reactions to anon, authenticated;
 
-grant select on table public.member_resources to authenticated;
+grant select on table public.member_resources to anon, authenticated;
 
 -- RLS Policies
 drop policy if exists "public profiles are readable" on public.profiles;
@@ -178,17 +205,31 @@ create policy "anyone can delete reactions"
   on public.community_reactions for delete to anon, authenticated
   using (true);
 
-drop policy if exists "active members read the shelf" on public.member_resources;
-create policy "active members read the shelf"
-  on public.member_resources for select to authenticated
-  using (
-    exists (
-      select 1
-      from public.memberships
-      where memberships.user_id = (select auth.uid())
-        and memberships.status = 'active'
-    )
-  );
+drop policy if exists "public pets are readable" on public.pets;
+create policy "public pets are readable"
+  on public.pets for select to anon, authenticated
+  using (true);
+
+drop policy if exists "members insert own pets" on public.pets;
+create policy "members insert own pets"
+  on public.pets for insert to authenticated
+  with check ((select auth.uid()) = owner_id);
+
+drop policy if exists "members update own pets" on public.pets;
+create policy "members update own pets"
+  on public.pets for update to authenticated
+  using ((select auth.uid()) = owner_id)
+  with check ((select auth.uid()) = owner_id);
+
+drop policy if exists "members delete own pets" on public.pets;
+create policy "members delete own pets"
+  on public.pets for delete to authenticated
+  using ((select auth.uid()) = owner_id);
+
+drop policy if exists "member resources are public" on public.member_resources;
+create policy "member resources are public"
+  on public.member_resources for select to anon, authenticated
+  using (true);
 
 -- Enable Supabase Realtime for instant synchronization across all visitors
 do $$
@@ -206,6 +247,12 @@ end $$;
 do $$
 begin
   alter publication supabase_realtime add table public.community_reactions;
+exception when others then null;
+end $$;
+
+do $$
+begin
+  alter publication supabase_realtime add table public.pets;
 exception when others then null;
 end $$;
 

@@ -1,12 +1,16 @@
 import type { Profile } from '../lib/supabase';
 import type { PageRoute } from '../lib/router';
+import type { Theme } from '../lib/theme';
 
 type HeaderProps = {
   configured: boolean;
   profile: Profile | null;
   signedIn: boolean;
   currentRoute: PageRoute;
+  theme: Theme;
+  onToggleTheme: () => void;
   onOpenAuth: () => void;
+  onOpenProfile: () => void;
   onSignOut: () => void;
 };
 
@@ -15,7 +19,10 @@ export function Header({
   profile,
   signedIn,
   currentRoute,
+  theme,
+  onToggleTheme,
   onOpenAuth,
+  onOpenProfile,
   onSignOut,
 }: HeaderProps) {
   return (
@@ -23,7 +30,28 @@ export function Header({
       <div className="utility-bar">
         <div className="shell utility-inner">
           <span>Cat people, in good company.</span>
-          <span>{configured ? 'Live community · free to join' : 'Community preview · connecting soon'}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              style={{
+                border: 0,
+                background: 'transparent',
+                color: 'inherit',
+                fontSize: '.72rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '.3rem',
+                cursor: 'pointer',
+              }}
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              aria-label="Toggle dark mode"
+            >
+              {theme === 'dark' ? '☀️ Light mode' : '🌙 Night mode'}
+            </button>
+            <span>{configured ? 'Live community · free to join' : 'Community preview · connecting soon'}</span>
+          </div>
         </div>
       </div>
       <header className="site-header">
@@ -45,7 +73,26 @@ export function Header({
           </nav>
           {signedIn ? (
             <div className="account-area">
-              <span>@{profile?.handle || 'catfriend'}</span>
+              <button
+                type="button"
+                onClick={onOpenProfile}
+                title="Edit profile & cats"
+                style={{
+                  border: '1px solid var(--line)',
+                  borderRadius: '999px',
+                  padding: '.35rem .75rem',
+                  background: 'var(--cream)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '.4rem',
+                  fontSize: '.75rem',
+                  fontWeight: 800,
+                  color: 'var(--ink)',
+                }}
+              >
+                <span>{profile?.avatar_url && !profile.avatar_url.startsWith('http') ? profile.avatar_url : '🐾'}</span>
+                <span>@{profile?.handle || 'catfriend'}</span>
+              </button>
               <button type="button" onClick={onSignOut}>Sign out</button>
             </div>
           ) : (
