@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { previewComments, previewPosts } from '../data/community';
 import { ensureProfile, isSupabaseConfigured, supabase, type Profile } from '../lib/supabase';
@@ -27,6 +27,12 @@ function updateReactions(
 
 export function useWhiskerfield() {
   const [user, setUser] = useState<User | null>(null);
+  const userRef = useRef<User | null>(null);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
+
   const [profile, setProfile] = useState<Profile | null>(null);
   const [userPets, setUserPets] = useState<Pet[]>([]);
   const [isMember, setIsMember] = useState(false);
@@ -35,6 +41,7 @@ export function useWhiskerfield() {
   const [resources, setResources] = useState<MemberResource[]>([]);
   const [isLoadingFeed, setIsLoadingFeed] = useState(isSupabaseConfigured);
   const [feedError, setFeedError] = useState('');
+  const isFetchingRef = useRef(false);
 
   const loadResources = useCallback(async () => {
     if (!supabase) return;
@@ -77,130 +84,143 @@ export function useWhiskerfield() {
   }, [loadPets, loadResources]);
 
   const refreshFeed = useCallback(async () => {
-    if (!supabase) return;
+    if (!supabase || isFetchingRef.current) return;
+    isFetchingRef.current = true;
     setIsLoadingFeed(true);
     setFeedError('');
 
-    const [postsRes, commentsRes, reactionsRes] = await Promise.all([
-      supabase
-        .from('community_posts')
-        .select('id, author_id, body, topic, pet_id, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false })
-        .order('id', { ascending: false })
-        .limit(50),
-      supabase
-        .from('community_comments')
-        .select('id, post_id, author_id, body, created_at, profiles(display_name, handle, avatar_url)')
-        .order('created_at', { ascending: true })
-        .limit(200),
-      supabase
-        .from('community_reactions')
-        .select('target_type, target_id, user_identifier, reaction')
-        .limit(2000),
-    ]);
+    try {
+      const [postsRes, commentsRes, reactionsRes] = await Promise.all([
+        supabase
+          .from('community_posts')
+          .select('id, author_id, body, topic, pet_id, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
+          .eq('is_published', true)
+          .order('created_at', { ascending: false })
+          .order('id', { ascending: false })
+          .limit(50),
+        supabase
+          .from('community_comments')
+          .select('id, post_id, author_id, body, created_at, profiles(display_name, handle, avatar_url)')
+          .order('created_at', { ascending: true })
+          .limit(200),
+        supabase
+          .from('community_reactions')
+          .select('target_type, target_id, user_identifier, reaction')
+          .limit(2000),
+      ]);
 
-    if (postsRes.error) {
-      setFeedError('The live conversation is taking a short nap. Try refreshing in a moment.');
-      setIsLoadingFeed(false);
-      return;
-    }
+      if (postsRes.error) {
+        setFeedError('The live conversation is taking a short nap. Try refreshing in a moment.');
+        setIsLoadingFeed(false);
+        return;
+      }
 
-    const visitorId = user?.id || getVisitorId();
+      const visitorId = userRef.current?.id || getVisitorId();
 
-    const postReactionCounts: Record<number, ReactionCounts> = {};
-    const postUserReactions: Record<number, ReactionType> = {};
-    const commentReactionCounts: Record<number, ReactionCounts> = {};
-    const commentUserReactions: Record<number, ReactionType> = {};
+      const postReactionCounts: Record<number, ReactionCounts> = {};
+      const postUserReactions: Record<number, ReactionType> = {};
+      const commentReactionCounts: Record<number, ReactionCounts> = {};
+      const commentUserReactions: Record<number, ReactionType> = {};
 
-    if (reactionsRes.data) {
-      for (const row of reactionsRes.data as Array<{
-        target_type: 'post' | 'comment';
-        target_id: number;
-        user_identifier: string;
-        reaction: ReactionType;
-      }>) {
-        const isSelf = row.user_identifier === visitorId;
-        if (row.target_type === 'post') {
-          if (!postReactionCounts[row.target_id]) postReactionCounts[row.target_id] = {};
-          postReactionCounts[row.target_id][row.reaction] =
-            (postReactionCounts[row.target_id][row.reaction] ?? 0) + 1;
-          if (isSelf) postUserReactions[row.target_id] = row.reaction;
-        } else if (row.target_type === 'comment') {
-          if (!commentReactionCounts[row.target_id]) commentReactionCounts[row.target_id] = {};
-          commentReactionCounts[row.target_id][row.reaction] =
-            (commentReactionCounts[row.target_id][row.reaction] ?? 0) + 1;
-          if (isSelf) commentUserReactions[row.target_id] = row.reaction;
+      if (reactionsRes.data) {
+        for (const row of reactionsRes.data as Array<{
+          target_type: 'post' | 'comment';
+          target_id: number;
+          user_identifier: string;
+          reaction: ReactionType;
+        }>) {
+          const isSelf = row.user_identifier === visitorId;
+          if (row.target_type === 'post') {
+            if (!postReactionCounts[row.target_id]) postReactionCounts[row.target_id] = {};
+            postReactionCounts[row.target_id][row.reaction] =
+              (postReactionCounts[row.target_id][row.reaction] ?? 0) + 1;
+            if (isSelf) postUserReactions[row.target_id] = row.reaction;
+          } else if (row.target_type === 'comment') {
+            if (!commentReactionCounts[row.target_id]) commentReactionCounts[row.target_id] = {};
+            commentReactionCounts[row.target_id][row.reaction] =
+              (commentReactionCounts[row.target_id][row.reaction] ?? 0) + 1;
+            if (isSelf) commentUserReactions[row.target_id] = row.reaction;
+          }
         }
       }
+
+      const dbPosts = (postsRes.data || []) as unknown as CommunityPost[];
+      const dbPostIds = new Set(dbPosts.map((p) => p.id));
+      const mergedPosts = [
+        ...dbPosts,
+        ...previewPosts.filter((p) => !dbPostIds.has(p.id)),
+      ].map((post) => {
+        const extraCounts = postReactionCounts[post.id] || {};
+        const baseCounts = post.reactions || {};
+        const mergedCounts: ReactionCounts = { ...baseCounts };
+        for (const [key, count] of Object.entries(extraCounts)) {
+          const k = key as ReactionType;
+          mergedCounts[k] = (mergedCounts[k] ?? 0) + (count ?? 0);
+        }
+        return {
+          ...post,
+          reactions: mergedCounts,
+          userReaction: postUserReactions[post.id] ?? post.userReaction,
+        };
+      });
+      setPosts(mergedPosts);
+
+      const dbComments = (commentsRes.data || []) as CommunityComment[];
+      const dbCommentIds = new Set(dbComments.map((c) => c.id));
+      const mergedComments = [
+        ...previewComments.filter((c) => !dbCommentIds.has(c.id)),
+        ...dbComments,
+      ].map((comment) => {
+        const extraCounts = commentReactionCounts[comment.id] || {};
+        const baseCounts = comment.reactions || {};
+        const mergedCounts: ReactionCounts = { ...baseCounts };
+        for (const [key, count] of Object.entries(extraCounts)) {
+          const k = key as ReactionType;
+          mergedCounts[k] = (mergedCounts[k] ?? 0) + (count ?? 0);
+        }
+        return {
+          ...comment,
+          reactions: mergedCounts,
+          userReaction: commentUserReactions[comment.id] ?? comment.userReaction,
+        };
+      });
+      setComments(mergedComments);
+    } finally {
+      isFetchingRef.current = false;
+      setIsLoadingFeed(false);
     }
-
-    const dbPosts = (postsRes.data || []) as unknown as CommunityPost[];
-    const dbPostIds = new Set(dbPosts.map((p) => p.id));
-    const mergedPosts = [
-      ...dbPosts,
-      ...previewPosts.filter((p) => !dbPostIds.has(p.id)),
-    ].map((post) => {
-      const extraCounts = postReactionCounts[post.id] || {};
-      const baseCounts = post.reactions || {};
-      const mergedCounts: ReactionCounts = { ...baseCounts };
-      for (const [key, count] of Object.entries(extraCounts)) {
-        const k = key as ReactionType;
-        mergedCounts[k] = (mergedCounts[k] ?? 0) + (count ?? 0);
-      }
-      return {
-        ...post,
-        reactions: mergedCounts,
-        userReaction: postUserReactions[post.id] ?? post.userReaction,
-      };
-    });
-    setPosts(mergedPosts);
-
-    const dbComments = (commentsRes.data || []) as CommunityComment[];
-    const dbCommentIds = new Set(dbComments.map((c) => c.id));
-    const mergedComments = [
-      ...previewComments.filter((c) => !dbCommentIds.has(c.id)),
-      ...dbComments,
-    ].map((comment) => {
-      const extraCounts = commentReactionCounts[comment.id] || {};
-      const baseCounts = comment.reactions || {};
-      const mergedCounts: ReactionCounts = { ...baseCounts };
-      for (const [key, count] of Object.entries(extraCounts)) {
-        const k = key as ReactionType;
-        mergedCounts[k] = (mergedCounts[k] ?? 0) + (count ?? 0);
-      }
-      return {
-        ...comment,
-        reactions: mergedCounts,
-        userReaction: commentUserReactions[comment.id] ?? comment.userReaction,
-      };
-    });
-    setComments(mergedComments);
-
-    setIsLoadingFeed(false);
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (!supabase) return;
-    void Promise.resolve().then(refreshFeed);
+
+    void refreshFeed();
+
     void supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) void hydrateMember(session.user);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) void hydrateMember(currentUser);
     });
+
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) void hydrateMember(session.user);
-      if (!session) {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        void hydrateMember(currentUser);
+      } else {
         setProfile(null);
         setUserPets([]);
         setIsMember(false);
         setResources([]);
       }
     });
-    return () => listener.subscription.unsubscribe();
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, [hydrateMember, refreshFeed]);
 
-  // Realtime subscription for cross-user live updates
+  // Realtime subscription for cross-user live updates - subscribed once
   useEffect(() => {
     if (!supabase) return;
     const channel = supabase
@@ -216,15 +236,14 @@ export function useWhiskerfield() {
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pets' }, () => {
         void refreshFeed();
-        if (user) void loadPets(user.id);
+        if (userRef.current) void loadPets(userRef.current.id);
       })
       .subscribe();
 
-    const client = supabase;
     return () => {
-      void client.removeChannel(channel);
+      void supabase?.removeChannel(channel);
     };
-  }, [loadPets, refreshFeed, user]);
+  }, [loadPets, refreshFeed]);
 
   async function sendMagicLink(email: string) {
     if (!supabase) return 'The secure sign-in is being connected.';

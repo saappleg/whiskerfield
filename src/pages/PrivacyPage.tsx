@@ -9,7 +9,7 @@ export function PrivacyPage() {
         Last updated: September 8, 2026
       </p>
 
-      <div className="privacy-content" style={{ display: 'grid', gap: '2rem', lineHeight: 1.7, color: '#183b43' }}>
+      <div className="privacy-content" style={{ display: 'grid', gap: '2rem', lineHeight: 1.7, color: 'var(--ink)' }}>
         <section>
           <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
             1. Overview &amp; Commitment

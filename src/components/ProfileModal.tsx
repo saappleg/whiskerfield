@@ -281,7 +281,7 @@ export function ProfileModal({
                       alignItems: 'center',
                       gap: '.8rem',
                       padding: '.8rem 1rem',
-                      background: 'rgba(255,252,246,.7)',
+                      background: 'var(--paper)',
                       border: '1px solid var(--line)',
                       borderLeft: '4px solid var(--coral)',
                     }}
@@ -293,7 +293,7 @@ export function ProfileModal({
                         {[pet.breed, pet.age].filter(Boolean).join(' · ')}
                       </span>
                       {pet.quirk && (
-                        <p style={{ margin: '.2rem 0 0', fontSize: '.75rem', fontStyle: 'italic', color: '#183b43' }}>
+                        <p style={{ margin: '.2rem 0 0', fontSize: '.75rem', fontStyle: 'italic', color: 'var(--ink)' }}>
                           “{pet.quirk}”
                         </p>
                       )}
@@ -342,7 +342,7 @@ export function ProfileModal({
                     value={petName}
                     onChange={(e) => setPetName(e.target.value)}
                     maxLength={50}
-                    style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)' }}
+                    style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)', background: 'var(--cream)', color: 'var(--ink)' }}
                   />
                 </div>
                 <div>
@@ -356,7 +356,7 @@ export function ProfileModal({
                     value={petBreed}
                     onChange={(e) => setPetBreed(e.target.value)}
                     maxLength={80}
-                    style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)' }}
+                    style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)', background: 'var(--cream)', color: 'var(--ink)' }}
                   />
                 </div>
               </div>
@@ -373,7 +373,7 @@ export function ProfileModal({
                     value={petAge}
                     onChange={(e) => setPetAge(e.target.value)}
                     maxLength={50}
-                    style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)' }}
+                    style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)', background: 'var(--cream)', color: 'var(--ink)' }}
                   />
                 </div>
                 <div>
@@ -384,7 +384,7 @@ export function ProfileModal({
                     id="pet-avatar"
                     value={petAvatar}
                     onChange={(e) => setPetAvatar(e.target.value)}
-                    style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)' }}
+                    style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)', background: 'var(--cream)', color: 'var(--ink)' }}
                   >
                     <option value="🐱">🐱 Tabby</option>
                     <option value="🐈">🐈 Calico</option>
@@ -407,7 +407,7 @@ export function ProfileModal({
                   value={petQuirk}
                   onChange={(e) => setPetQuirk(e.target.value)}
                   maxLength={200}
-                  style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)' }}
+                  style={{ width: '100%', padding: '.5rem', fontSize: '.8rem', border: '1px solid var(--line)', background: 'var(--cream)', color: 'var(--ink)' }}
                 />
               </div>
 

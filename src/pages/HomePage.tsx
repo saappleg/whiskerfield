@@ -94,19 +94,19 @@ export function HomePage({ onOpenAuth, signedIn }: HomePageProps) {
           </div>
 
           <div style={{ display: 'grid', gap: '1rem' }}>
-            <div style={{ padding: '1.2rem', background: '#fff', border: '1px solid var(--line)', borderLeft: '4px solid var(--coral)' }}>
+            <div style={{ padding: '1.2rem', background: 'var(--cream)', border: '1px solid var(--line)', borderLeft: '4px solid var(--coral)' }}>
               <b style={{ fontSize: '.88rem', color: 'var(--ink)' }}>😸 7 Cat Reactions</b>
               <p style={{ margin: '.3rem 0 0', fontSize: '.8rem', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
                 Purr, Give a Treat, Love, Laugh, and more on daily notes.
               </p>
             </div>
-            <div style={{ padding: '1.2rem', background: '#fff', border: '1px solid var(--line)', borderLeft: '4px solid var(--sun)' }}>
+            <div style={{ padding: '1.2rem', background: 'var(--cream)', border: '1px solid var(--line)', borderLeft: '4px solid var(--sun)' }}>
               <b style={{ fontSize: '.88rem', color: 'var(--ink)' }}>💬 Private Reply Threads</b>
               <p style={{ margin: '.3rem 0 0', fontSize: '.8rem', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
                 Gentle discussion with real cat owners, with verified handles.
               </p>
             </div>
-            <div style={{ padding: '1.2rem', background: '#fff', border: '1px solid var(--line)', borderLeft: '4px solid var(--mint)' }}>
+            <div style={{ padding: '1.2rem', background: 'var(--cream)', border: '1px solid var(--line)', borderLeft: '4px solid var(--mint)' }}>
               <b style={{ fontSize: '.88rem', color: 'var(--ink)' }}>✨ Always 100% Free</b>
               <p style={{ margin: '.3rem 0 0', fontSize: '.8rem', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
                 No subscription, no spam. One-tap magic link sign in.

@@ -28,7 +28,7 @@ export function MemberGate({ onOpenAuth }: MemberGateProps) {
         }}
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-          <div style={{ padding: '1rem', background: 'rgba(255,252,246,.7)', borderLeft: '3px solid var(--coral)' }}>
+          <div style={{ padding: '1rem', background: 'var(--paper)', border: '1px solid var(--line)', borderLeft: '3px solid var(--coral)' }}>
             <span style={{ fontSize: '1.6rem', display: 'block', marginBottom: '.4rem' }}>😸</span>
             <b style={{ fontSize: '.92rem', display: 'block', color: 'var(--ink)' }}>Thoughtful Community</b>
             <p style={{ fontSize: '.78rem', color: 'var(--ink-soft)', margin: '.3rem 0 0', lineHeight: 1.45 }}>
@@ -36,7 +36,7 @@ export function MemberGate({ onOpenAuth }: MemberGateProps) {
             </p>
           </div>
 
-          <div style={{ padding: '1rem', background: 'rgba(255,252,246,.7)', borderLeft: '3px solid var(--sun)' }}>
+          <div style={{ padding: '1rem', background: 'var(--paper)', border: '1px solid var(--line)', borderLeft: '3px solid var(--sun)' }}>
             <span style={{ fontSize: '1.6rem', display: 'block', marginBottom: '.4rem' }}>🐟</span>
             <b style={{ fontSize: '.92rem', display: 'block', color: 'var(--ink)' }}>Cat Reactions &amp; Replies</b>
             <p style={{ fontSize: '.78rem', color: 'var(--ink-soft)', margin: '.3rem 0 0', lineHeight: 1.45 }}>
@@ -44,7 +44,7 @@ export function MemberGate({ onOpenAuth }: MemberGateProps) {
             </p>
           </div>
 
-          <div style={{ padding: '1rem', background: 'rgba(255,252,246,.7)', borderLeft: '3px solid var(--blue)' }}>
+          <div style={{ padding: '1rem', background: 'var(--paper)', border: '1px solid var(--line)', borderLeft: '3px solid var(--blue)' }}>
             <span style={{ fontSize: '1.6rem', display: 'block', marginBottom: '.4rem' }}>✨</span>
             <b style={{ fontSize: '.92rem', display: 'block', color: 'var(--ink)' }}>Free to Join</b>
             <p style={{ fontSize: '.78rem', color: 'var(--ink-soft)', margin: '.3rem 0 0', lineHeight: 1.45 }}>
@@ -92,3 +92,4 @@ export function MemberGate({ onOpenAuth }: MemberGateProps) {
     </div>
   );
 }
+

@@ -29,10 +29,10 @@
 .feed { display:grid; gap:14px; }
 .post-card { padding:1.35rem; border:1px solid var(--line); background:var(--cream); }
 .post-card header { display:flex; align-items:center; gap:.7rem; }
-.post-card header > div b { display:block; font-size:.83rem; }
+.post-card header > div b { display:block; font-size:.83rem; color:var(--ink); }
 .post-card header > div p { margin:.15rem 0 0; color:var(--ink-soft); font-size:.71rem; }
 .topic { margin-left:auto; color:var(--coral); font-size:.65rem; font-weight:900; letter-spacing:.07em; text-transform:uppercase; }
-.post-body { margin:1.15rem 0; color:#183b43; font-size:.96rem; line-height:1.6; }
+.post-body { margin:1.15rem 0; color:var(--ink); font-size:.96rem; line-height:1.6; }
 
 .post-interactions { margin:1rem 0 .75rem; }
 .reactions-bar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
@@ -68,11 +68,11 @@
 .comment-header { display:flex; align-items:baseline; gap:.45rem; }
 .comment-header b { font-size:.8rem; color:var(--ink); }
 .comment-header span.comment-time { font-size:.68rem; color:var(--ink-soft); }
-.comment-content p { margin:.25rem 0 0; color:#183b43; }
+.comment-content p { margin:.25rem 0 0; color:var(--ink); }
 
 .comment-composer { display:flex; gap:.5rem; margin-top:.75rem; }
-.comment-composer input { flex:1; border:1px solid var(--line); padding:.55rem .75rem; font-size:.8rem; background:#fff; color:var(--ink); outline-color:var(--coral); }
-.comment-composer button { border:0; background:var(--ink); color:var(--cream); padding:.55rem .95rem; font-size:.74rem; font-weight:800; cursor:pointer; }
+.comment-composer input { flex:1; border:1px solid var(--line); padding:.55rem .75rem; font-size:.8rem; background:var(--cream); color:var(--ink); outline-color:var(--coral); }
+.comment-composer button { border:0; background:var(--coral); color:#fffcf6; padding:.55rem .95rem; font-size:.74rem; font-weight:800; cursor:pointer; }
 .comment-composer button:hover { background:var(--coral); }
 
 .comment-signin-prompt { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:rgba(255,252,246,.85); border:1px dashed var(--line); margin-top:.75rem; }
