@@ -8,9 +8,8 @@ export function Footer() {
       <p>For the life you share.</p>
       <div>
         <a href="#/">Home</a>
-        <a href="#/community">Cat Club</a>
-        <a href="#/stories">Stories</a>
-        <a href="#/members">Members</a>
+        <a href="#/stories">Stories &amp; Guides</a>
+        <a href="#/members">Member Club</a>
         <a href="#/privacy">Privacy</a>
       </div>
     </footer>

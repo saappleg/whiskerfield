@@ -140,6 +140,45 @@ export const practicalGuides: JournalEntry[] = [
     ],
     tone: 'coral',
   },
+  {
+    id: 'fifteen-minute-home-reset',
+    category: 'Gentle guide',
+    readTime: '3 min read',
+    title: 'The 15-minute home reset for calmer evenings',
+    dek: 'A tiny room-by-room routine to wind down the day together.',
+    body: [
+      'Start with the room your cat chooses most often. Refresh their water dish with cool, fresh water. Empty and scoop the litter box so the night begins clean.',
+      'Clear one walking path across the living space, picking up any stray toys that might get stepped on in the dark, and return one favorite comfort blanket or kicker toy back to their chosen sleep spot.',
+      'Finish by sitting down quietly for two whole minutes without looking at a screen or calling your cat over. The point of this reset is not a sterile or showroom home — it is creating a predictable, peaceful cadence your cat can trust.',
+    ],
+    tone: 'paper',
+  },
+  {
+    id: 'vet-visit-observation-log',
+    category: 'Care note',
+    readTime: '4 min read',
+    title: 'What to notice before the next veterinary visit',
+    dek: 'A light-touch observation log that turns worry into clear, concrete observations.',
+    body: [
+      'For three days prior to an appointment, jot down simple timestamps for appetite, water intake, litter-box visits, energy levels, and grooming patterns.',
+      'Bring the pattern, not just the worry. A written note with exact details (“ate half of breakfast on Tuesday and Thursday”) gives a veterinarian a much clearer clinical picture than “she seems a bit off.”',
+      'If your cat exhibits momentary coughing, limping, or odd posturing, take a short 10-second video on your phone to show in the exam room. Cats often mask symptoms at the clinic due to adrenaline.',
+    ],
+    tone: 'sun',
+  },
+  {
+    id: 'two-useful-things',
+    category: 'Field note',
+    readTime: '4 min read',
+    title: 'Two genuinely useful finds for a cat home',
+    dek: 'Small, friction-removing essentials tested in real cat spaces.',
+    body: [
+      'Look for the object that removes one daily point of friction: a washable food-grade silicone feeding mat with a raised lip to contain water drips, and a heavy, stable cardboard wedge scratcher that doesn’t slide across wood floors when stretched against.',
+      'Another perennial favorite is a hard-sided carrier with both top and front door access that stays open in the living room year-round as an ordinary bed. When vet day arrives, there is zero chasing, fear, or apprehension.',
+      'Useful is always more valuable than novel, especially when designing a comfortable shared home.',
+    ],
+    tone: 'mint',
+  },
 ];
 
 export const weeklyPrompt = {

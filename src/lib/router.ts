@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
 
-export type PageRoute = 'home' | 'community' | 'stories' | 'members' | 'privacy';
+export type PageRoute = 'home' | 'stories' | 'members' | 'privacy';
 
 function parseRoute(hash: string): PageRoute {
   const clean = hash.replace(/^#\/?/, '').toLowerCase().trim();
-  if (clean === 'community' || clean === 'cat-club') return 'community';
-  if (clean === 'stories' || clean === 'journal' || clean === 'articles') return 'stories';
-  if (clean === 'members' || clean === 'shelf') return 'members';
-  if (clean === 'privacy' || clean === 'terms') return 'privacy';
+  if (clean === 'community' || clean === 'cat-club' || clean === 'members' || clean === 'shelf' || clean === 'club') {
+    return 'members';
+  }
+  if (clean === 'stories' || clean === 'journal' || clean === 'articles' || clean === 'guides') {
+    return 'stories';
+  }
+  if (clean === 'privacy' || clean === 'terms') {
+    return 'privacy';
+  }
   return 'home';
 }
 

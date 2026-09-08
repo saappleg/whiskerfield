@@ -36,14 +36,11 @@ export function Header({
             <a href="#/" className={currentRoute === 'home' ? 'active' : ''}>
               Home
             </a>
-            <a href="#/community" className={currentRoute === 'community' ? 'active' : ''}>
-              Cat Club
-            </a>
             <a href="#/stories" className={currentRoute === 'stories' ? 'active' : ''}>
-              Stories
+              Stories &amp; Guides
             </a>
             <a href="#/members" className={currentRoute === 'members' ? 'active' : ''}>
-              Members
+              Member Club
             </a>
           </nav>
           {signedIn ? (
@@ -53,7 +50,7 @@ export function Header({
             </div>
           ) : (
             <button type="button" className="header-cta" onClick={onOpenAuth}>
-              Join the cat club <span aria-hidden="true">→</span>
+              Join the club <span aria-hidden="true">→</span>
             </button>
           )}
         </div>
