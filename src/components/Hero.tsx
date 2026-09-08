@@ -1,0 +1,5 @@
+type HeroProps = { onOpenAuth: () => void };
+
+export function Hero({ onOpenAuth }: HeroProps) {
+  return <section className="shell hero" id="top"><div className="hero-copy"><p className="eyebrow light"><i /> A social home for cat people</p><h1>More cat stories.<br /><em>More good company.</em></h1><p className="hero-dek">Whiskerfield is where curious cat people trade small wins, care notes, beautiful homes, and the particular joy of living with a cat.</p><div className="actions"><a className="button coral" href="#community">See the cat club <span aria-hidden="true">↗</span></a><button className="text-link light-link" onClick={onOpenAuth}>Join free <span aria-hidden="true">→</span></button></div></div><div className="hero-image-wrap">{/* oxlint-disable-next-line next/no-img-element -- GitHub Pages needs a plain static image. */}<img src="./cat-at-window.png" alt="A long-haired tabby cat resting in morning light by a window" /><p className="image-caption"><i /> Field notes · for the life you share</p></div></section>;
+}
