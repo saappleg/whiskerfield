@@ -1,6 +1,5 @@
 'use client';
 
-import { ArrowRight, ArrowUpRight, Cat, Check, Mail, Menu, X } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 
 const stories = [
@@ -54,7 +53,7 @@ export default function Home() {
       <header className="site-header">
         <div className="site-shell header-inner">
           <a className="wordmark" href="#top" aria-label="Whiskerfield home">
-            <Cat aria-hidden="true" size={28} strokeWidth={1.7} />
+            <span className="wordmark-mark" aria-hidden="true">W</span>
             <span>Whiskerfield</span>
           </a>
           <nav className="desktop-nav" aria-label="Primary navigation">
@@ -63,9 +62,9 @@ export default function Home() {
             <a href="#culture">Culture</a>
             <a href="#picks">Good things</a>
           </nav>
-          <a className="header-cta" href="#newsletter">Get the Sunday letter <ArrowRight size={16} /></a>
+          <a className="header-cta" href="#newsletter">Get the Sunday letter <span aria-hidden="true">→</span></a>
           <button className="menu-button" aria-label="Toggle navigation" onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            {menuOpen ? 'Close' : 'Menu'}
           </button>
         </div>
         {menuOpen && (
@@ -84,8 +83,8 @@ export default function Home() {
           <h1>More curious cats.<br /><em>More considered</em> homes.</h1>
           <p className="hero-dek">Smart care, easy-to-live-with ideas, and honest finds for the years you get to share.</p>
           <div className="hero-actions">
-            <a className="button button-coral" href="#latest">Read the latest <ArrowUpRight size={17} /></a>
-            <a className="text-link on-dark" href="#newsletter">Join 12,400 cat people <ArrowRight size={16} /></a>
+            <a className="button button-coral" href="#latest">Read the latest <span aria-hidden="true">↗</span></a>
+            <a className="text-link on-dark" href="#newsletter">Join 12,400 cat people <span aria-hidden="true">→</span></a>
           </div>
         </div>
         <div className="hero-image-wrap">
@@ -99,15 +98,15 @@ export default function Home() {
           <p className="eyebrow"><span /> The lead story</p>
           <h2>The 10-minute nightly reset your cat actually notices</h2>
           <p>It is less about a perfect routine and more about a few repeatable signals: a fresh bowl, a soft landing spot, and a room that settles down with them.</p>
-          <a className="story-link" href="#newsletter">Read the guide <ArrowUpRight size={17} /></a>
+          <a className="story-link" href="#newsletter">Read the guide <span aria-hidden="true">↗</span></a>
           <div className="byline"><span className="author-mark">MJ</span> By Marnie Jones <b>·</b> 7 min read</div>
         </article>
         <aside className="welcome-note">
-          <div className="small-cat"><Cat size={30} strokeWidth={1.4} /></div>
+          <div className="small-cat" aria-hidden="true">W</div>
           <p className="eyebrow"><span /> Start here</p>
           <h3>New to Whiskerfield?</h3>
           <p>Three gentle reads for a happier, better-understood cat.</p>
-          <a className="story-link" href="#care">Browse the essentials <ArrowRight size={17} /></a>
+          <a className="story-link" href="#care">Browse the essentials <span aria-hidden="true">→</span></a>
         </aside>
       </section>
 
@@ -117,16 +116,16 @@ export default function Home() {
             <p className="eyebrow"><span /> Fresh on the journal</p>
             <h2>Useful, beautiful, and worth keeping.</h2>
           </div>
-          <a className="text-link" href="#newsletter">All stories <ArrowRight size={16} /></a>
+          <a className="text-link" href="#newsletter">All stories <span aria-hidden="true">→</span></a>
         </div>
         <div className="story-grid">
           {stories.map((story) => (
             <article className={`story-card ${story.tone}`} key={story.title} id={story.category === 'Home' ? 'home' : story.category === 'Culture' ? 'culture' : undefined}>
               <div className="card-topline"><span>{story.category}</span><span>{story.readTime}</span></div>
-              <div className="story-orbit"><Cat size={42} strokeWidth={1.1} /></div>
+              <div className="story-orbit" aria-hidden="true">W</div>
               <h3>{story.title}</h3>
               <p>{story.description}</p>
-              <a className="round-arrow" href="#newsletter" aria-label={`Read ${story.title}`}><ArrowUpRight size={18} /></a>
+              <a className="round-arrow" href="#newsletter" aria-label={`Read ${story.title}`}><span aria-hidden="true">↗</span></a>
             </article>
           ))}
         </div>
@@ -144,7 +143,7 @@ export default function Home() {
             <article className="pick-row" key={title}>
               <div className="pick-number">0{index + 1}</div>
               <div><p className="pick-label">{label}</p><h3>{title}</h3><p>{description}</p></div>
-              <a className="round-arrow light-arrow" href="#newsletter" aria-label={`Explore ${title}`}><ArrowUpRight size={18} /></a>
+              <a className="round-arrow light-arrow" href="#newsletter" aria-label={`Explore ${title}`}><span aria-hidden="true">↗</span></a>
             </article>
           ))}
         </div>
@@ -159,14 +158,14 @@ export default function Home() {
           </div>
           <div className="subscribe-panel">
             {isSubscribed ? (
-              <div className="success-message"><Check size={20} /> <span><strong>You’re on the list.</strong><br />The next letter will find you Sunday.</span></div>
+              <div className="success-message"><span className="success-check" aria-hidden="true">✓</span> <span><strong>You’re on the list.</strong><br />The next letter will find you Sunday.</span></div>
             ) : (
               <form onSubmit={subscribe}>
                 <label htmlFor="email">Your email address</label>
                 <div className="email-row">
-                  <Mail size={18} aria-hidden="true" />
+                  <span className="email-symbol" aria-hidden="true">@</span>
                   <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required />
-                  <button type="submit">Subscribe <ArrowRight size={16} /></button>
+                  <button type="submit">Subscribe <span aria-hidden="true">→</span></button>
                 </div>
                 <p>Free to join. Unsubscribe anytime.</p>
               </form>
@@ -176,7 +175,7 @@ export default function Home() {
       </section>
 
       <footer className="site-shell site-footer">
-        <a className="wordmark footer-mark" href="#top"><Cat aria-hidden="true" size={22} strokeWidth={1.7} /><span>Whiskerfield</span></a>
+        <a className="wordmark footer-mark" href="#top"><span className="wordmark-mark" aria-hidden="true">W</span><span>Whiskerfield</span></a>
         <p>For the life you share.</p>
         <div><a href="#picks">Work with us</a><a href="#newsletter">Newsletter</a><a href="#top">Instagram</a></div>
       </footer>
