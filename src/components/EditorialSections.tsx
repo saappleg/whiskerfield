@@ -1,3 +1,38 @@
+import { AdSlot } from './AdSlot';
+import { JournalSection } from './JournalSection';
+
 export function EditorialSections() {
-  return <><section className="story-band" id="stories"><div className="shell story-grid"><article className="story main-story"><p>CARE NOTE · 6 MIN</p><h2>The quiet art of noticing a change</h2><span>Small observations that make a vet visit more useful — and everyday care feel less mysterious.</span><a href="#members">Read the member note →</a></article><article className="story sun-story"><p>HOME</p><h3>A scratcher that belongs in the living room</h3><span>What a good cat object has in common with good furniture.</span></article><article className="story blue-story"><p>FIELD NOTE</p><h3>Why cat people make better hosts</h3><span>Design cues from the most considerate homes.</span></article></div></section><section className="ad-band" aria-label="Advertisement"><span>Advertisement</span><p>Whiskerfield keeps recommendations honest and labels partnerships clearly.</p></section><section className="shell about-grid" id="privacy"><div><p className="eyebrow"><i /> A good internet corner</p><h2>Built for warm, useful conversation.</h2></div><p>Profiles show only a chosen name and handle. Your email is handled by Supabase Auth and is never displayed in the cat club. We use cookies from advertising partners only when advertising is active. Please keep posts kind, non-medical, and never share someone else’s private information.</p></section></>;
+  return (
+    <>
+      <JournalSection />
+      <AdSlot />
+      <section className="shell about-grid" id="privacy">
+        <div>
+          <p className="eyebrow"><i /> Privacy & Reader Trust</p>
+          <h2>Built for warm conversation and transparent standards.</h2>
+        </div>
+        <div className="privacy-body">
+          <p>
+            <strong>Community &amp; Account Data:</strong> Profiles display only your chosen name and handle. Your email address is handled securely via Supabase Auth for passwordless magic-link sign in and is never displayed publicly or shared with other members.
+          </p>
+          <p>
+            <strong>Advertising &amp; Cookies:</strong> Whiskerfield uses Google AdSense to support independent publishing. Third-party vendors, including Google, use cookies to serve advertisements based on a visitor’s prior visits to this website and other sites across the web.
+          </p>
+          <p>
+            Google’s use of advertising cookies enables it and its partners to serve ads based on visits to Whiskerfield and/or other sites on the Internet. Visitors may opt out of personalized advertising at any time by visiting{' '}
+            <a href="https://www.google.com/settings/ads" target="_blank" rel="noreferrer">
+              Google Ads Settings
+            </a>{' '}
+            or{' '}
+            <a href="https://www.aboutads.info" target="_blank" rel="noreferrer">
+              aboutads.info
+            </a>.
+          </p>
+          <p>
+            <strong>Editorial &amp; Affiliate Disclosure:</strong> All care notes and product field tests are produced independently. Recommendations are never swayed by sponsorships. When affiliate links are included in product notes, they are plainly labeled so readers are always informed.
+          </p>
+        </div>
+      </section>
+    </>
+  );
 }

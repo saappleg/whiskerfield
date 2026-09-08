@@ -1,11 +1,137 @@
+import { useState } from 'react';
 import { topicLabels } from '../data/community';
 import { relativeTime } from '../lib/time';
-import type { CommunityPost } from '../types/community';
+import type { CommunityComment, CommunityPost, ReactionType } from '../types/community';
+import { ReactionsBar } from './ReactionsBar';
 
-type PostCardProps = { post: CommunityPost; currentUserId?: string; onDelete: (id: number) => void };
+type PostCardProps = {
+  post: CommunityPost;
+  comments: CommunityComment[];
+  currentUserId?: string;
+  onDelete: (id: number) => void;
+  onReactPost: (postId: number, reaction: ReactionType) => void;
+  onReactComment: (commentId: number, reaction: ReactionType) => void;
+  onAddComment: (postId: number, body: string) => Promise<string | null>;
+};
 
-export function PostCard({ post, currentUserId, onDelete }: PostCardProps) {
+export function PostCard({
+  post,
+  comments,
+  currentUserId,
+  onDelete,
+  onReactPost,
+  onReactComment,
+  onAddComment,
+}: PostCardProps) {
+  const [showComments, setShowComments] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [replyError, setReplyError] = useState('');
+
   const profile = Array.isArray(post.profiles) ? post.profiles[0] : post.profiles;
   const author = profile || { display_name: 'Cat friend', handle: 'whiskerfriend' };
-  return <article className="post-card"><header><span className="avatar warm">{author.display_name.slice(0, 1)}</span><div><b>{author.display_name}</b><p>@{author.handle} · {relativeTime(post.created_at)}</p></div><span className="topic">{topicLabels[post.topic]}</span></header><p className="post-body">{post.body}</p><footer><span>♡ A thoughtful nod</span>{currentUserId && post.author_id === currentUserId && <button onClick={() => onDelete(post.id)}>Remove</button>}</footer></article>;
+  const postComments = comments.filter((c) => c.post_id === post.id);
+
+  async function handleReply(e: { preventDefault: () => void }) {
+    e.preventDefault();
+    if (!replyText.trim()) return;
+    setBusy(true);
+    setReplyError('');
+    const err = await onAddComment(post.id, replyText);
+    if (err) {
+      setReplyError(err);
+    } else {
+      setReplyText('');
+      setShowComments(true);
+    }
+    setBusy(false);
+  }
+
+  return (
+    <article className="post-card">
+      <header>
+        <span className="avatar warm">{author.display_name.slice(0, 1)}</span>
+        <div>
+          <b>{author.display_name}</b>
+          <p>@{author.handle} · {relativeTime(post.created_at)}</p>
+        </div>
+        <span className="topic">{topicLabels[post.topic]}</span>
+      </header>
+
+      <p className="post-body">{post.body}</p>
+
+      <div className="post-interactions">
+        <ReactionsBar
+          reactions={post.reactions}
+          userReaction={post.userReaction}
+          onReact={(reaction) => onReactPost(post.id, reaction)}
+        />
+      </div>
+
+      <footer>
+        <button
+          type="button"
+          className="comments-toggle"
+          onClick={() => setShowComments(!showComments)}
+          aria-expanded={showComments}
+        >
+          {postComments.length > 0
+            ? `💬 ${postComments.length} ${postComments.length === 1 ? 'reply' : 'replies'}`
+            : '💬 Leave a reply'}
+        </button>
+
+        {currentUserId && post.author_id === currentUserId && (
+          <button type="button" className="delete-button" onClick={() => onDelete(post.id)}>
+            Remove
+          </button>
+        )}
+      </footer>
+
+      {showComments && (
+        <div className="comments-drawer">
+          {postComments.length > 0 && (
+            <div className="comments-list">
+              {postComments.map((comment) => {
+                const cProfile = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
+                const cAuthor = cProfile || { display_name: 'Cat friend', handle: 'friend' };
+                return (
+                  <div className="comment-item" key={comment.id}>
+                    <span className="avatar small">{cAuthor.display_name.slice(0, 1)}</span>
+                    <div className="comment-content">
+                      <div className="comment-header">
+                        <b>{cAuthor.display_name}</b>
+                        <span className="comment-time">@{cAuthor.handle} · {relativeTime(comment.created_at)}</span>
+                      </div>
+                      <p>{comment.body}</p>
+                      <ReactionsBar
+                        reactions={comment.reactions}
+                        userReaction={comment.userReaction}
+                        onReact={(reaction) => onReactComment(comment.id, reaction)}
+                        compact
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <form className="comment-composer" onSubmit={handleReply}>
+            <input
+              type="text"
+              placeholder="Add a gentle reply…"
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              maxLength={500}
+              aria-label="Reply to post"
+            />
+            <button type="submit" disabled={busy || !replyText.trim()}>
+              {busy ? 'Sending…' : 'Reply'}
+            </button>
+          </form>
+          {replyError && <p className="form-error" role="alert">{replyError}</p>}
+        </div>
+      )}
+    </article>
+  );
 }

@@ -29,6 +29,14 @@ create table if not exists public.community_posts (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.community_comments (
+  id bigint generated always as identity primary key,
+  post_id bigint not null references public.community_posts (id) on delete cascade,
+  author_id uuid not null references public.profiles (id) on delete cascade,
+  body text not null check (char_length(body) between 1 and 500),
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.member_resources (
   id bigint generated always as identity primary key,
   slug text not null unique check (slug ~ '^[a-z0-9-]{3,80}$'),
@@ -39,29 +47,38 @@ create table if not exists public.member_resources (
   published_at timestamptz not null default now()
 );
 
--- Index the foreign key and the exact public-feed access pattern.
+-- Index the foreign keys and public-feed access patterns.
 create index if not exists community_posts_author_id_idx
   on public.community_posts (author_id);
 create index if not exists community_posts_public_feed_idx
   on public.community_posts (created_at desc, id desc) where is_published;
+create index if not exists community_comments_post_id_idx
+  on public.community_comments (post_id, created_at asc);
 
 alter table public.profiles enable row level security;
 alter table public.memberships enable row level security;
 alter table public.community_posts enable row level security;
+alter table public.community_comments enable row level security;
 alter table public.member_resources enable row level security;
 
--- Explicit, least-privilege Data API grants. New Supabase projects may no
--- longer grant these automatically.
+-- Explicit, least-privilege Data API grants.
 revoke all on table public.profiles, public.memberships, public.community_posts,
-  public.member_resources from anon, authenticated;
+  public.community_comments, public.member_resources from anon, authenticated;
 
 grant select on table public.profiles to anon, authenticated;
 grant insert, update on table public.profiles to authenticated;
+
 grant select, insert, update on table public.memberships to authenticated;
+
 grant select on table public.community_posts to anon, authenticated;
 grant insert, delete on table public.community_posts to authenticated;
+
+grant select on table public.community_comments to anon, authenticated;
+grant insert, delete on table public.community_comments to authenticated;
+
 grant select on table public.member_resources to authenticated;
 
+-- RLS Policies
 drop policy if exists "public profiles are readable" on public.profiles;
 create policy "public profiles are readable"
   on public.profiles for select to anon, authenticated using (true);
@@ -108,6 +125,21 @@ create policy "members delete their own posts"
   on public.community_posts for delete to authenticated
   using ((select auth.uid()) = author_id);
 
+drop policy if exists "public comments are readable" on public.community_comments;
+create policy "public comments are readable"
+  on public.community_comments for select to anon, authenticated
+  using (true);
+
+drop policy if exists "members publish comments" on public.community_comments;
+create policy "members publish comments"
+  on public.community_comments for insert to authenticated
+  with check ((select auth.uid()) = author_id);
+
+drop policy if exists "members delete own comments" on public.community_comments;
+create policy "members delete own comments"
+  on public.community_comments for delete to authenticated
+  using ((select auth.uid()) = author_id);
+
 drop policy if exists "active members read the shelf" on public.member_resources;
 create policy "active members read the shelf"
   on public.member_resources for select to authenticated
@@ -137,9 +169,3 @@ on conflict (slug) do update set
   title = excluded.title,
   summary = excluded.summary,
   body = excluded.body;
-
--- Verification after applying:
--- select tablename, rowsecurity from pg_tables where schemaname = 'public'
---   and tablename in ('profiles', 'memberships', 'community_posts', 'member_resources');
--- select policyname, tablename from pg_policies where schemaname = 'public'
---   and tablename in ('profiles', 'memberships', 'community_posts', 'member_resources');
