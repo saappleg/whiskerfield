@@ -94,7 +94,19 @@ export function PrivacyPage() {
 
         <section>
           <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
-            7. Contact Us
+            7. European Economic Area (EEA), UK &amp; Switzerland Consent (GDPR / IAB TCF)
+          </h2>
+          <p>
+            For readers in the European Economic Area (EEA), the United Kingdom, and Switzerland, Whiskerfield complies with the General Data Protection Regulation (GDPR), UK GDPR, and Swiss Federal Act on Data Protection (FADP). We use a Google-certified Consent Management Platform (CMP) implementing the IAB Europe Transparency and Consent Framework (TCF v2.2) to collect and record explicit consent prior to storing cookies or serving personalized advertising.
+          </p>
+          <p>
+            You have the right to accept, reject, or customize advertising partners and cookie categories at any time. To modify or revoke your previous choices, use the <strong>Ad &amp; Cookie Choices</strong> link located in the footer of any page on our site, or visit your browser’s privacy settings.
+          </p>
+        </section>
+
+        <section>
+          <h2 style={{ fontSize: '1.45rem', marginBottom: '.6rem', color: 'var(--ink)' }}>
+            8. Contact Us
           </h2>
           <p>
             If you have questions about this privacy policy or your community account, please reach out via GitHub at{' '}
