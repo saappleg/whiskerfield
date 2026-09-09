@@ -1,5 +1,6 @@
 import { AdSlot } from '../components/AdSlot';
 import { JournalSection } from '../components/JournalSection';
+import { CareToolsSection } from '../components/tools/CareToolsSection';
 
 export function StoriesPage() {
   return (
@@ -14,8 +15,10 @@ export function StoriesPage() {
         </p>
       </div>
 
+      <CareToolsSection />
       <JournalSection />
       <AdSlot />
     </div>
   );
 }
+

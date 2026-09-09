@@ -37,6 +37,7 @@ export type CommunityPost = {
   body: string;
   topic: Topic;
   pet_id?: number;
+  image_url?: string | null;
   pets?: Pet | { id: number; name: string; breed?: string; avatar_url?: string } | null;
   created_at: string;
   reactions?: ReactionCounts;

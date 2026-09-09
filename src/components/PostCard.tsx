@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { topicLabels } from '../data/community';
 import { relativeTime } from '../lib/time';
 import type { CommunityComment, CommunityPost, ReactionType } from '../types/community';
+import { ImageLightbox } from './ImageLightbox';
 import { ReactionsBar } from './ReactionsBar';
 
 type PostCardProps = {
   post: CommunityPost;
   comments: CommunityComment[];
   currentUserId?: string;
+  isSaved?: boolean;
+  onToggleSave?: (postId: number) => void;
   onDelete: (id: number) => void;
   onReactPost: (postId: number, reaction: ReactionType) => void;
   onReactComment: (commentId: number, reaction: ReactionType) => void;
@@ -19,6 +22,8 @@ export function PostCard({
   post,
   comments,
   currentUserId,
+  isSaved,
+  onToggleSave,
   onDelete,
   onReactPost,
   onReactComment,
@@ -26,6 +31,7 @@ export function PostCard({
   onOpenAuth,
 }: PostCardProps) {
   const [showComments, setShowComments] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [busy, setBusy] = useState(false);
   const [replyError, setReplyError] = useState('');
@@ -98,6 +104,45 @@ export function PostCard({
 
       <p className="post-body">{post.body}</p>
 
+      {post.image_url && (
+        <div
+          style={{
+            margin: '.6rem 0 1rem',
+            borderRadius: '6px',
+            overflow: 'hidden',
+            border: '1px solid var(--line)',
+            background: 'var(--paper)',
+            maxHeight: '380px',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(true)}
+            style={{ border: 0, padding: 0, background: 'transparent', width: '100%', cursor: 'zoom-in', display: 'block' }}
+            aria-label="Enlarge photo"
+          >
+            {/* oxlint-disable-next-line next/no-img-element */}
+            <img
+              src={post.image_url}
+              alt={post.body.slice(0, 50)}
+              style={{ width: '100%', maxHeight: '380px', objectFit: 'cover', display: 'block' }}
+            />
+          </button>
+        </div>
+      )}
+
+      {lightboxOpen && post.image_url && (
+        <ImageLightbox
+          imageUrl={post.image_url}
+          caption={post.body.slice(0, 120)}
+          petBadge={taggedPet ? `🐾 ${taggedPet.name}` : undefined}
+          authorName={author.display_name}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+
       <div className="post-interactions">
         <ReactionsBar
           reactions={post.reactions}
@@ -117,6 +162,28 @@ export function PostCard({
             ? `💬 ${postComments.length} ${postComments.length === 1 ? 'reply' : 'replies'}`
             : '💬 Leave a reply'}
         </button>
+
+        {onToggleSave && (
+          <button
+            type="button"
+            onClick={() => onToggleSave(post.id)}
+            style={{
+              border: 0,
+              padding: 0,
+              background: 'transparent',
+              color: isSaved ? 'var(--coral)' : 'var(--ink-soft)',
+              fontSize: '.74rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '.25rem',
+            }}
+            title={isSaved ? 'Remove from saved' : 'Save note to bookmarks'}
+          >
+            {isSaved ? '🔖 Saved' : '🔖 Save'}
+          </button>
+        )}
 
         {currentUserId && post.author_id === currentUserId && (
           <button type="button" className="delete-button" onClick={() => onDelete(post.id)}>

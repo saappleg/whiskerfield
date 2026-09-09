@@ -42,6 +42,7 @@ create table if not exists public.community_posts (
   topic text not null default 'cat_life'
     check (topic in ('cat_life', 'care', 'introductions', 'home')),
   pet_id bigint references public.pets (id) on delete set null,
+  image_url text,
   body text not null check (char_length(body) between 1 and 1000),
   is_published boolean not null default true,
   created_at timestamptz not null default now()

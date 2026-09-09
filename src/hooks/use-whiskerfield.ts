@@ -93,7 +93,7 @@ export function useWhiskerfield() {
       const [postsRes, commentsRes, reactionsRes] = await Promise.all([
         supabase
           .from('community_posts')
-          .select('id, author_id, body, topic, pet_id, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
+          .select('id, author_id, body, topic, pet_id, image_url, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
           .eq('is_published', true)
           .order('created_at', { ascending: false })
           .order('id', { ascending: false })
@@ -328,7 +328,7 @@ export function useWhiskerfield() {
     return null;
   }
 
-  async function publishPost(body: string, topic: Topic, petId?: number) {
+  async function publishPost(body: string, topic: Topic, petId?: number, imageUrl?: string) {
     const trimmed = body.trim();
     if (!trimmed || trimmed.length > 1000) return 'Posts need to be between 1 and 1,000 characters.';
 
@@ -337,8 +337,8 @@ export function useWhiskerfield() {
     if (supabase && user && profile) {
       const result = await supabase
         .from('community_posts')
-        .insert({ author_id: user.id, body: trimmed, topic, pet_id: petId || null })
-        .select('id, author_id, body, topic, pet_id, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
+        .insert({ author_id: user.id, body: trimmed, topic, pet_id: petId || null, image_url: imageUrl || null })
+        .select('id, author_id, body, topic, pet_id, image_url, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
         .single();
       if (result.error) return result.error.message;
       if (result.data) {
@@ -353,6 +353,7 @@ export function useWhiskerfield() {
       body: trimmed,
       topic,
       pet_id: petId,
+      image_url: imageUrl || null,
       pets: chosenPet || null,
       created_at: new Date().toISOString(),
       reactions: { like: 1 },
