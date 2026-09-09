@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { topicLabels } from '../data/community';
+import { isImageAvatar } from '../lib/avatar';
 import { useBookmarks } from '../lib/bookmarks';
 import type { Profile } from '../lib/supabase';
 import type { CommunityComment, CommunityPost, Pet, ReactionType, Topic } from '../types/community';
@@ -131,9 +132,9 @@ export function CommunitySection({
           <form className="composer" onSubmit={publish}>
             <div className="composer-head">
               <span className="avatar" style={{ overflow: 'hidden' }}>
-                {profile?.avatar_url && profile.avatar_url.startsWith('http') ? (
+                {isImageAvatar(profile?.avatar_url) ? (
                   /* oxlint-disable-next-line next/no-img-element */
-                  <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={profile?.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   profile?.display_name?.slice(0, 1) || 'W'
                 )}
@@ -175,7 +176,7 @@ export function CommunitySection({
                   <option value="">🐾 No pet tag</option>
                   {userPets.map((pet) => (
                     <option key={pet.id} value={pet.id}>
-                      {pet.avatar_url || '🐱'} {pet.name}
+                      {isImageAvatar(pet.avatar_url) ? '🐱' : (pet.avatar_url || '🐱')} {pet.name}
                     </option>
                   ))}
                 </select>

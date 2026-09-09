@@ -1,3 +1,4 @@
+import { isImageAvatar } from '../lib/avatar';
 import type { Pet } from '../types/community';
 
 type CatOfTheDayProps = {
@@ -74,6 +75,7 @@ export function CatOfTheDay({ userPets = [], onSelectPetFilter }: CatOfTheDayPro
             width: '56px',
             height: '56px',
             borderRadius: '50%',
+            overflow: 'hidden',
             background: 'var(--mint)',
             border: '2px solid var(--line)',
             display: 'grid',
@@ -82,7 +84,16 @@ export function CatOfTheDay({ userPets = [], onSelectPetFilter }: CatOfTheDayPro
             flexShrink: 0,
           }}
         >
-          {featuredCat.avatar_url || '🐱'}
+          {isImageAvatar(featuredCat.avatar_url) ? (
+            /* oxlint-disable-next-line next/no-img-element */
+            <img
+              src={featuredCat.avatar_url || ''}
+              alt={featuredCat.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          ) : (
+            featuredCat.avatar_url || '🐱'
+          )}
         </div>
 
         <div>

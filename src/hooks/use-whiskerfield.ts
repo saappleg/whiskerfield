@@ -328,6 +328,38 @@ export function useWhiskerfield() {
     return null;
   }
 
+  async function updatePet(id: number, name: string, breed: string, age: string, quirk: string, avatarUrl: string) {
+    if (supabase && user) {
+      const result = await supabase
+        .from('pets')
+        .update({
+          name,
+          breed: breed || null,
+          age: age || null,
+          quirk: quirk || null,
+          avatar_url: avatarUrl || '🐱',
+        })
+        .eq('id', id)
+        .eq('owner_id', user.id)
+        .select('*')
+        .single();
+      if (result.error) return result.error.message;
+      if (result.data) {
+        setUserPets((prev) => prev.map((p) => (p.id === id ? (result.data as Pet) : p)));
+        return null;
+      }
+    } else {
+      setUserPets((prev) =>
+        prev.map((p) =>
+          p.id === id
+            ? { ...p, name, breed, age, quirk, avatar_url: avatarUrl || '🐱' }
+            : p
+        )
+      );
+    }
+    return null;
+  }
+
   async function publishPost(body: string, topic: Topic, petId?: number, imageUrl?: string) {
     const trimmed = body.trim();
     if (!trimmed || trimmed.length > 1000) return 'Posts need to be between 1 and 1,000 characters.';
@@ -520,6 +552,7 @@ export function useWhiskerfield() {
     sendMagicLink,
     updateProfile,
     createPet,
+    updatePet,
     deletePet,
     publishPost,
     deletePost,

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isImageAvatar } from '../lib/avatar';
 import { topicLabels } from '../data/community';
 import { relativeTime } from '../lib/time';
 import type { CommunityComment, CommunityPost, ReactionType } from '../types/community';
@@ -61,7 +62,7 @@ export function PostCard({
     <article className="post-card">
       <header>
         <span className="avatar warm" style={{ overflow: 'hidden' }}>
-          {author.avatar_url && author.avatar_url.startsWith('http') ? (
+          {isImageAvatar(author.avatar_url) ? (
             /* oxlint-disable-next-line next/no-img-element */
             <img
               src={author.avatar_url}
@@ -94,7 +95,16 @@ export function PostCard({
                 border: '1px solid rgba(243,108,77,.25)',
               }}
             >
-              <span>{taggedPet.avatar_url || '🐾'}</span>
+              {isImageAvatar(taggedPet.avatar_url) ? (
+                /* oxlint-disable-next-line next/no-img-element */
+                <img
+                  src={taggedPet.avatar_url || ''}
+                  alt=""
+                  style={{ width: '16px', height: '16px', borderRadius: '50%', objectFit: 'cover' }}
+                />
+              ) : (
+                <span>{taggedPet.avatar_url || '🐾'}</span>
+              )}
               <span>{taggedPet.name}</span>
             </span>
           )}
@@ -201,7 +211,18 @@ export function PostCard({
                 const cAuthor = cProfile || { display_name: 'Cat friend', handle: 'friend' };
                 return (
                   <div className="comment-item" key={comment.id}>
-                    <span className="avatar small">{cAuthor.display_name.slice(0, 1)}</span>
+                    <span className="avatar small" style={{ overflow: 'hidden' }}>
+                      {isImageAvatar(cAuthor.avatar_url) ? (
+                        /* oxlint-disable-next-line next/no-img-element */
+                        <img
+                          src={cAuthor.avatar_url}
+                          alt=""
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        cAuthor.display_name.slice(0, 1)
+                      )}
+                    </span>
                     <div className="comment-content">
                       <div className="comment-header">
                         <b>{cAuthor.display_name}</b>

@@ -85,6 +85,7 @@ export default function App() {
           onClose={() => setProfileModalOpen(false)}
           onUpdateProfile={community.updateProfile}
           onCreatePet={community.createPet}
+          onUpdatePet={community.updatePet}
           onDeletePet={community.deletePet}
         />
       )}
