@@ -66,7 +66,7 @@ export function CommunitySection({
   async function publish(event: { preventDefault: () => void }) {
     event.preventDefault();
     if (!user) {
-      setError('Sign in with a quick magic link to share your note with the club.');
+      setError('Sign in with a magic link, email/password, or passkey to share your note with the club.');
       onOpenAuth();
       return;
     }
@@ -147,7 +147,7 @@ export function CommunitySection({
               </span>
               <div>
                 <b>{user ? `Posting as ${profile?.display_name || 'cat friend'}` : 'Your cat club note'}</b>
-                <p>{user ? 'Keep it kind, specific, and cat-shaped.' : 'Sign in with a magic link to share your own note.'}</p>
+                <p>{user ? 'Keep it kind, specific, and cat-shaped.' : 'Sign in with a magic link, email/password, or passkey to share your own note.'}</p>
               </div>
             </div>
 

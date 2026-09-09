@@ -80,6 +80,10 @@ export default function App() {
           configured={community.configured}
           onClose={() => setAuthOpen(false)}
           onSendMagicLink={community.sendMagicLink}
+          onSignInWithPassword={community.signInWithPassword}
+          onSignUpWithPassword={community.signUpWithPassword}
+          onResetPassword={community.resetPassword}
+          onSignInWithPasskey={community.signInWithPasskey}
         />
       )}
 
@@ -92,6 +96,7 @@ export default function App() {
           onCreatePet={community.createPet}
           onUpdatePet={community.updatePet}
           onDeletePet={community.deletePet}
+          onRegisterPasskey={community.registerPasskey}
         />
       )}
     </div>

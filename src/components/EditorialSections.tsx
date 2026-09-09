@@ -13,7 +13,7 @@ export function EditorialSections() {
         </div>
         <div className="privacy-body">
           <p>
-            <strong>Community &amp; Account Data:</strong> Profiles display only your chosen name and handle. Your email address is handled securely via Supabase Auth for passwordless magic-link sign in and is never displayed publicly or shared with other members.
+            <strong>Community &amp; Account Data:</strong> Profiles display only your chosen name and handle. Your email address is handled securely via Supabase Auth for magic-link or email/password sign in, and passkeys stay on your device. Your email is never displayed publicly or shared with other members.
           </p>
           <p>
             <strong>Advertising &amp; Cookies:</strong> Whiskerfield uses Google AdSense to support independent publishing. Third-party vendors, including Google, use cookies to serve advertisements based on a visitor’s prior visits to this website and other sites across the web.

@@ -7,6 +7,23 @@
 .auth-card input, .dialog-card input, .dialog-card textarea, .dialog-card select { width:100%; border:1px solid var(--line); padding:.83rem; background:var(--cream); color:var(--ink); outline-color:var(--coral); }
 .auth-card .full { width:100%; margin-top:.75rem; }
 .auth-message { margin:.95rem 0 0; color:var(--ink-soft); font-size:.8rem; line-height:1.5; }
+.auth-method-switch { display:flex; gap:.5rem; margin:1.25rem 0 .2rem; flex-wrap:wrap; }
+.auth-method-switch button { border:1px solid var(--line); border-radius:999px; padding:.55rem .8rem; background:var(--paper); color:var(--ink); font-size:.75rem; font-weight:800; cursor:pointer; }
+.auth-method-switch button:hover, .auth-method-switch button:focus-visible, .auth-method-switch button.active { border-color:var(--ink); background:var(--ink); color:var(--paper); }
+.auth-form-intro { margin:0 0 1rem; color:var(--ink-soft); font-size:.8rem; line-height:1.5; }
+.auth-divider { display:flex; align-items:center; gap:.7rem; margin:1.3rem 0 .2rem; color:var(--ink-soft); font-size:.7rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+.auth-divider::before, .auth-divider::after { content:''; flex:1; border-top:1px solid var(--line); }
+.auth-hint { margin:.7rem 0 0; color:var(--ink-soft); font-size:.72rem; line-height:1.45; text-align:center; }
+.auth-reset, .auth-switch-copy button { border:0; padding:0; background:transparent; color:var(--coral); font-size:.75rem; font-weight:800; text-decoration:underline; cursor:pointer; }
+.auth-reset { display:block; margin:.8rem auto 0; }
+.auth-reset:disabled { cursor:wait; opacity:.6; }
+.auth-switch-copy { margin:.9rem 0 0; color:var(--ink-soft); font-size:.75rem; text-align:center; }
+.auth-switch-copy .auth-reset { display:inline; margin:0; }
+.profile-security-card { display:grid; gap:.75rem; margin:0 0 1.4rem; padding:1rem; background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--blue); }
+.profile-security-card strong { display:block; margin-bottom:.25rem; font-size:.85rem; }
+.profile-security-card p { margin:0; color:var(--ink-soft); font-size:.78rem; line-height:1.45; }
+.profile-security-card .button { justify-self:start; }
+.profile-security-card .auth-message { margin:0; }
 .close, .dialog-close { position:absolute; top:.8rem; right:.8rem; border:0; background:transparent; color:var(--ink); font-size:1.7rem; line-height:1; cursor:pointer; }
 .close:hover, .dialog-close:hover { color:var(--coral); }
 

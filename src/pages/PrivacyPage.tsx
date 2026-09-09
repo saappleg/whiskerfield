@@ -24,7 +24,7 @@ export function PrivacyPage() {
             2. Community &amp; Account Information
           </h2>
           <p>
-            When you join the Cat Club, we use passwordless magic-link authentication powered by Supabase. Your email address is stored securely and used exclusively to verify your identity and send your sign-in link.
+            When you join the Cat Club, Supabase Auth securely handles your email address for magic-link, email/password, and passkey sign-in. Passkeys use your device’s built-in security credential; Whiskerfield never receives your biometric data or device PIN.
           </p>
           <p>
             Your email address is <strong>never displayed publicly</strong>, never sold to third parties, and never exposed to other members. Only your chosen display name and handle are visible alongside your published notes, replies, and reactions.

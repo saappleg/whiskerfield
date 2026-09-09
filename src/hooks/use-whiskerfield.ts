@@ -268,6 +268,26 @@ export function useWhiskerfield() {
     };
   }, [loadPets, refreshFeed]);
 
+  function authErrorMessage(message: string) {
+    if (/invalid login credentials/i.test(message)) {
+      return 'That email or password did not match. Try again or use a magic link.';
+    }
+    if (/email not confirmed/i.test(message)) {
+      return 'Please confirm your email from your inbox, then try again.';
+    }
+    if (/passkey.*(disabled|enable)|passkey_disabled/i.test(message)) {
+      return 'Passkeys are not enabled for this project yet. Use email sign-in for now.';
+    }
+    return message;
+  }
+
+  function browserSupportsPasskeys() {
+    return typeof window !== 'undefined'
+      && typeof window.PublicKeyCredential !== 'undefined'
+      && typeof navigator !== 'undefined'
+      && Boolean(navigator.credentials);
+  }
+
   async function sendMagicLink(email: string) {
     if (!supabase) return 'The secure sign-in is being connected.';
     const result = await supabase.auth.signInWithOtp({
@@ -275,8 +295,57 @@ export function useWhiskerfield() {
       options: { emailRedirectTo: window.location.origin, shouldCreateUser: true },
     });
     return result.error
-      ? result.error.message
+      ? authErrorMessage(result.error.message)
       : 'Check your inbox for a one-tap sign-in link. Then come straight back to Whiskerfield.';
+  }
+
+  async function signInWithPassword(email: string, password: string) {
+    if (!supabase) return 'The secure sign-in is being connected.';
+    const result = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    return result.error
+      ? authErrorMessage(result.error.message)
+      : 'You are signed in. Welcome back to the Cat Club.';
+  }
+
+  async function signUpWithPassword(email: string, password: string) {
+    if (!supabase) return 'The secure sign-in is being connected.';
+    const result = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    if (result.error) return authErrorMessage(result.error.message);
+    return result.data.session
+      ? 'Your account is ready. Welcome to the Cat Club.'
+      : 'Check your inbox to confirm your email, then come back to Whiskerfield.';
+  }
+
+  async function resetPassword(email: string) {
+    if (!supabase) return 'The secure sign-in is being connected.';
+    const result = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin,
+    });
+    return result.error
+      ? authErrorMessage(result.error.message)
+      : 'If an account uses that email, a password reset link is on its way.';
+  }
+
+  async function signInWithPasskey() {
+    if (!supabase) return 'The secure sign-in is being connected.';
+    if (!browserSupportsPasskeys()) return 'This browser does not support passkeys. Use email sign-in instead.';
+    const result = await supabase.auth.signInWithPasskey();
+    return result.error
+      ? authErrorMessage(result.error.message)
+      : 'You are signed in with your passkey. Welcome back to the Cat Club.';
+  }
+
+  async function registerPasskey() {
+    if (!supabase || !user) return 'Sign in first, then add a passkey from your profile.';
+    if (!browserSupportsPasskeys()) return 'This browser does not support passkeys. Try a supported device or security key.';
+    const result = await supabase.auth.registerPasskey();
+    return result.error
+      ? authErrorMessage(result.error.message)
+      : 'Passkey added. You can use it the next time you sign in.';
   }
 
   async function updateProfile(displayName: string, handle: string, bio: string, avatarUrl: string) {
@@ -594,6 +663,11 @@ export function useWhiskerfield() {
     feedError,
     refreshFeed,
     sendMagicLink,
+    signInWithPassword,
+    signUpWithPassword,
+    resetPassword,
+    signInWithPasskey,
+    registerPasskey,
     updateProfile,
     createPet,
     updatePet,

@@ -48,7 +48,7 @@ export function MemberGate({ onOpenAuth }: MemberGateProps) {
             <span style={{ fontSize: '1.6rem', display: 'block', marginBottom: '.4rem' }}>✨</span>
             <b style={{ fontSize: '.92rem', display: 'block', color: 'var(--ink)' }}>Free to Join</b>
             <p style={{ fontSize: '.78rem', color: 'var(--ink-soft)', margin: '.3rem 0 0', lineHeight: 1.45 }}>
-              No passwords, no subscription fees. Just a quick magic link to your email inbox.
+              No subscription fees. Use a quick magic link, email/password, or passkey to get inside.
             </p>
           </div>
         </div>
@@ -77,7 +77,7 @@ export function MemberGate({ onOpenAuth }: MemberGateProps) {
                 cursor: 'pointer',
               }}
             >
-              Sign in with your magic link
+              Sign in to the Cat Club
             </button>
           </p>
 
@@ -92,4 +92,3 @@ export function MemberGate({ onOpenAuth }: MemberGateProps) {
     </div>
   );
 }
-

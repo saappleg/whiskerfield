@@ -246,7 +246,7 @@ export function PostCard({
             </form>
           ) : (
             <div className="comment-signin-prompt">
-              <p>Sign in with a quick magic link to join the conversation and reply.</p>
+              <p>Sign in with a magic link, email/password, or passkey to join the conversation and reply.</p>
               <button type="button" onClick={onOpenAuth}>
                 Sign in to reply →
               </button>

@@ -36,6 +36,7 @@ type ProfileModalProps = {
   onCreatePet: (name: string, breed: string, age: string, quirk: string, avatarUrl: string) => Promise<string | null>;
   onUpdatePet?: (id: number, name: string, breed: string, age: string, quirk: string, avatarUrl: string) => Promise<string | null>;
   onDeletePet: (id: number) => Promise<string | null>;
+  onRegisterPasskey?: () => Promise<string>;
 };
 
 export function ProfileModal({
@@ -46,6 +47,7 @@ export function ProfileModal({
   onCreatePet,
   onUpdatePet,
   onDeletePet,
+  onRegisterPasskey,
 }: ProfileModalProps) {
   const [activeTab, setActiveTab] = useState<'profile' | 'pets'>('profile');
 
@@ -59,6 +61,8 @@ export function ProfileModal({
   const [profileBusy, setProfileBusy] = useState(false);
   const [profileMsg, setProfileMsg] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
   const [profileImgFailed, setProfileImgFailed] = useState(false);
+  const [passkeyBusy, setPasskeyBusy] = useState(false);
+  const [passkeyMsg, setPasskeyMsg] = useState('');
 
   // Pet form state
   const [editingPetId, setEditingPetId] = useState<number | null>(null);
@@ -152,6 +156,13 @@ export function ProfileModal({
     setProfileBusy(false);
   }
 
+  async function handleRegisterPasskey() {
+    if (!onRegisterPasskey) return;
+    setPasskeyBusy(true);
+    setPasskeyMsg(await onRegisterPasskey());
+    setPasskeyBusy(false);
+  }
+
   async function handleSavePet(e: { preventDefault: () => void }) {
     e.preventDefault();
     if (!petName.trim()) {
@@ -235,6 +246,19 @@ export function ProfileModal({
             <p style={{ fontSize: '.82rem', color: 'var(--ink-soft)', marginBottom: '1.2rem' }}>
               Personalize your member avatar, handle, and bio across the Cat Club.
             </p>
+
+            {onRegisterPasskey && (
+              <div className="profile-security-card">
+                <div>
+                  <strong>Passkey sign-in</strong>
+                  <p>Use Face ID, Touch ID, Windows Hello, a device PIN, or a security key next time.</p>
+                </div>
+                <button type="button" className="button ink" onClick={() => void handleRegisterPasskey()} disabled={passkeyBusy}>
+                  {passkeyBusy ? 'Waiting for passkey…' : 'Add a passkey'}
+                </button>
+                {passkeyMsg && <output className="auth-message" aria-live="polite">{passkeyMsg}</output>}
+              </div>
+            )}
 
             {/* Profile Avatar & Photo Upload Section */}
             <div style={{ marginBottom: '1.4rem', background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: '8px', padding: '1rem' }}>
