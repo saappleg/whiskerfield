@@ -64,7 +64,7 @@ export function Header({
                 cursor: 'pointer',
               }}
               title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              aria-label={theme === 'dark' ? 'Light mode' : 'Night mode'}
               aria-pressed={theme === 'dark'}
             >
               {theme === 'dark' ? '☀️ Light mode' : '🌙 Night mode'}

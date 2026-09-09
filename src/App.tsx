@@ -6,7 +6,7 @@ import { ProfileModal } from './components/ProfileModal';
 import { useWhiskerfield } from './hooks/use-whiskerfield';
 import { useRouter } from './lib/router';
 import { useTheme } from './lib/theme';
-const HomePage = lazy(() => import('./pages/HomePage').then((module) => ({ default: module.HomePage })));
+import { HomePage } from './pages/HomePage';
 const MembersPage = lazy(() => import('./pages/MembersPage').then((module) => ({ default: module.MembersPage })));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then((module) => ({ default: module.PrivacyPage })));
 const StoriesPage = lazy(() => import('./pages/StoriesPage').then((module) => ({ default: module.StoriesPage })));
