@@ -3,6 +3,9 @@ import { AvatarImage } from './AvatarImage';
 import { isImageAvatar, normalizeImageUrl } from '../lib/avatar';
 import type { Profile } from '../lib/supabase';
 import type { Pet } from '../types/community';
+import { CatHealthBinder } from './tools/CatHealthBinder';
+import { CatSitterGuide } from './tools/CatSitterGuide';
+import { LostCatFlyer } from './tools/LostCatFlyer';
 
 const PRESET_AVATARS = [
   { key: 'cat_orange', emoji: '🐱', label: 'Orange Cat' },
@@ -67,6 +70,7 @@ export function ProfileModal({
   const [petBusy, setPetBusy] = useState(false);
   const [petMsg, setPetMsg] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
   const [petImgFailed, setPetImgFailed] = useState(false);
+  const [activeToolModal, setActiveToolModal] = useState<{ tool: 'sitter' | 'binder' | 'lost'; pet: Pet } | null>(null);
 
   // Handlers for profile avatar upload
   function handleProfilePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -527,10 +531,63 @@ export function ProfileModal({
                         {[pet.breed, pet.age].filter(Boolean).join(' · ')}
                       </span>
                       {pet.quirk && (
-                        <p style={{ margin: '.2rem 0 0', fontSize: '.75rem', fontStyle: 'italic', color: 'var(--ink)' }}>
+                        <p style={{ margin: '.2rem 0 .4rem', fontSize: '.75rem', fontStyle: 'italic', color: 'var(--ink)' }}>
                           “{pet.quirk}”
                         </p>
                       )}
+                      <div style={{ display: 'flex', gap: '.3rem', flexWrap: 'wrap', marginTop: '.3rem' }}>
+                        <button
+                          type="button"
+                          onClick={() => setActiveToolModal({ tool: 'sitter', pet })}
+                          title="Generate printable sitter instructions"
+                          style={{
+                            fontSize: '.68rem',
+                            fontWeight: 800,
+                            padding: '.2rem .5rem',
+                            background: 'rgba(243,108,77,.1)',
+                            color: 'var(--coral)',
+                            border: '1px solid rgba(243,108,77,.25)',
+                            borderRadius: '999px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          📋 Sitter Sheet
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setActiveToolModal({ tool: 'binder', pet })}
+                          title="View medical & vaccine records"
+                          style={{
+                            fontSize: '.68rem',
+                            fontWeight: 800,
+                            padding: '.2rem .5rem',
+                            background: 'rgba(46,90,68,.1)',
+                            color: '#2e5a44',
+                            border: '1px solid rgba(46,90,68,.25)',
+                            borderRadius: '999px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          🩺 Health Binder
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setActiveToolModal({ tool: 'lost', pet })}
+                          title="Generate emergency lost cat flyer"
+                          style={{
+                            fontSize: '.68rem',
+                            fontWeight: 800,
+                            padding: '.2rem .5rem',
+                            background: 'rgba(220,38,38,.1)',
+                            color: '#dc2626',
+                            border: '1px solid rgba(220,38,38,.25)',
+                            borderRadius: '999px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          🚨 Lost Flyer
+                        </button>
+                      </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: '.4rem' }}>
@@ -841,6 +898,60 @@ export function ProfileModal({
           </div>
         )}
       </div>
+
+      {activeToolModal && (
+        <dialog
+          open
+          className="modal-backdrop"
+          aria-label="Cat Care Toolkit"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(19, 34, 39, 0.75)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 1100,
+            display: 'grid',
+            placeItems: 'center',
+            padding: '1rem',
+            border: 0,
+            width: '100%',
+            height: '100%',
+            boxSizing: 'border-box',
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '860px',
+              maxHeight: '92vh',
+              overflowY: 'auto',
+              borderRadius: '14px',
+            }}
+          >
+            {activeToolModal.tool === 'sitter' && (
+              <CatSitterGuide
+                pet={activeToolModal.pet}
+                pets={pets}
+                onClose={() => setActiveToolModal(null)}
+              />
+            )}
+            {activeToolModal.tool === 'binder' && (
+              <CatHealthBinder
+                pet={activeToolModal.pet}
+                pets={pets}
+                onClose={() => setActiveToolModal(null)}
+              />
+            )}
+            {activeToolModal.tool === 'lost' && (
+              <LostCatFlyer
+                pet={activeToolModal.pet}
+                pets={pets}
+                onClose={() => setActiveToolModal(null)}
+              />
+            )}
+          </div>
+        </dialog>
+      )}
     </dialog>
   );
 }
