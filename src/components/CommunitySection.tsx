@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { topicLabels } from '../data/community';
-import { isImageAvatar } from '../lib/avatar';
 import { useBookmarks } from '../lib/bookmarks';
 import type { Profile } from '../lib/supabase';
-import type { CommunityComment, CommunityPost, Pet, ReactionType, Topic } from '../types/community';
+import { type CommunityComment, type CommunityPost, type Pet, type ReactionType, type Topic, getTaggedPets } from '../types/community';
 import { AvatarImage } from './AvatarImage';
 import { CatOfTheDay } from './CatOfTheDay';
 import { PostCard } from './PostCard';
@@ -19,7 +18,7 @@ type CommunitySectionProps = {
   feedError: string;
   isLoading: boolean;
   onRefresh: () => void;
-  onPublish: (body: string, topic: Topic, petId?: number, imageUrl?: string) => Promise<string | null>;
+  onPublish: (body: string, topic: Topic, petIds?: number[], imageUrl?: string) => Promise<string | null>;
   onDelete: (id: number) => void;
   onReactPost: (postId: number, reaction: ReactionType) => void;
   onReactComment: (commentId: number, reaction: ReactionType) => void;
@@ -47,7 +46,7 @@ export function CommunitySection({
 }: CommunitySectionProps) {
   const [body, setBody] = useState('');
   const [topic, setTopic] = useState<Topic>('cat_life');
-  const [selectedPetId, setSelectedPetId] = useState<number | undefined>(undefined);
+  const [selectedPetIds, setSelectedPetIds] = useState<number[]>([]);
   const [imageUrl, setImageUrl] = useState('');
   const [showPhotoInput, setShowPhotoInput] = useState(false);
   const [activeTopicFilter, setActiveTopicFilter] = useState<string>('all');
@@ -58,6 +57,12 @@ export function CommunitySection({
 
   const { savedPostIds, isPostSaved, toggleSavePost } = useBookmarks();
 
+  function togglePet(id: number) {
+    setSelectedPetIds((prev) =>
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
+    );
+  }
+
   async function publish(event: { preventDefault: () => void }) {
     event.preventDefault();
     if (!user) {
@@ -67,12 +72,12 @@ export function CommunitySection({
     }
     setBusy(true);
     setError('');
-    const result = await onPublish(body, topic, selectedPetId, imageUrl.trim() || undefined);
+    const result = await onPublish(body, topic, selectedPetIds.length > 0 ? selectedPetIds : undefined, imageUrl.trim() || undefined);
     if (result) {
       setError(result);
     } else {
       setBody('');
-      setSelectedPetId(undefined);
+      setSelectedPetIds([]);
       setImageUrl('');
       setShowPhotoInput(false);
     }
@@ -101,12 +106,13 @@ export function CommunitySection({
 
     const q = searchQuery.toLowerCase();
     const matchesBody = p.body.toLowerCase().includes(q);
-    const matchesPet = p.pets && 'name' in p.pets && p.pets.name.toLowerCase().includes(q);
+    const taggedPets = getTaggedPets(p);
+    const matchesPet = taggedPets.some((pet) => pet.name.toLowerCase().includes(q));
     const pProfile = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles;
     const matchesAuthor =
       pProfile?.display_name.toLowerCase().includes(q) ||
       pProfile?.handle.toLowerCase().includes(q);
-    return matchesBody || Boolean(matchesPet) || Boolean(matchesAuthor);
+    return matchesBody || matchesPet || Boolean(matchesAuthor);
   });
 
   return (
@@ -167,19 +173,64 @@ export function CommunitySection({
               </select>
 
               {userPets.length > 0 && (
-                <select
-                  value={selectedPetId || ''}
-                  onChange={(e) => setSelectedPetId(e.target.value ? Number(e.target.value) : undefined)}
-                  aria-label="Tag a cat"
-                  style={{ maxWidth: '160px' }}
+                <div
+                  className="pet-tag-selector"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '.35rem',
+                    flexWrap: 'wrap',
+                    padding: '.2rem 0',
+                  }}
+                  aria-label="Tag cats in your note"
                 >
-                  <option value="">🐾 No pet tag</option>
-                  {userPets.map((pet) => (
-                    <option key={pet.id} value={pet.id}>
-                      {isImageAvatar(pet.avatar_url) ? '🐱' : (pet.avatar_url || '🐱')} {pet.name}
-                    </option>
-                  ))}
-                </select>
+                  <span style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--ink-soft)' }}>Tag:</span>
+                  {userPets.map((pet) => {
+                    const isSelected = selectedPetIds.includes(pet.id);
+                    return (
+                      <button
+                        key={pet.id}
+                        type="button"
+                        onClick={() => togglePet(pet.id)}
+                        aria-pressed={isSelected}
+                        title={isSelected ? `Untag ${pet.name}` : `Tag ${pet.name}`}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '.3rem',
+                          padding: '.25rem .6rem',
+                          borderRadius: '999px',
+                          fontSize: '.74rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          border: isSelected ? '1px solid var(--coral)' : '1px solid var(--line)',
+                          background: isSelected ? 'rgba(243,108,77,.14)' : 'var(--cream)',
+                          color: isSelected ? 'var(--coral)' : 'var(--ink)',
+                          boxShadow: isSelected ? '0 1px 3px rgba(243,108,77,.2)' : 'none',
+                          transition: 'all .15s ease',
+                        }}
+                      >
+                        <AvatarImage
+                          src={pet.avatar_url}
+                          alt=""
+                          fallback={<span>{pet.avatar_url || '🐾'}</span>}
+                          style={{ width: '15px', height: '15px', borderRadius: '50%' }}
+                        />
+                        <span>{pet.name}</span>
+                        {isSelected ? (
+                          <span style={{ fontSize: '.65rem', fontWeight: 900 }}>✓</span>
+                        ) : (
+                          <span style={{ fontSize: '.75rem', opacity: 0.5 }}>+</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                  {selectedPetIds.length > 1 && (
+                    <span style={{ fontSize: '.7rem', fontWeight: 700, color: 'var(--coral)' }}>
+                      ({selectedPetIds.length} cats)
+                    </span>
+                  )}
+                </div>
               )}
 
               <button

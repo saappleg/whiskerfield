@@ -360,21 +360,34 @@ export function useWhiskerfield() {
     return null;
   }
 
-  async function publishPost(body: string, topic: Topic, petId?: number, imageUrl?: string) {
+  async function publishPost(body: string, topic: Topic, petIds?: number | number[], imageUrl?: string) {
     const trimmed = body.trim();
     if (!trimmed || trimmed.length > 1000) return 'Posts need to be between 1 and 1,000 characters.';
 
-    const chosenPet = userPets.find((p) => p.id === petId);
+    const normalizedPetIds: number[] = Array.isArray(petIds)
+      ? petIds
+      : typeof petIds === 'number'
+      ? [petIds]
+      : [];
+    const primaryPetId = normalizedPetIds[0] || undefined;
+    const chosenPets = userPets
+      .filter((p) => normalizedPetIds.includes(p.id))
+      .map((p) => ({ id: p.id, name: p.name, breed: p.breed, avatar_url: p.avatar_url }));
 
     if (supabase && user && profile) {
       const result = await supabase
         .from('community_posts')
-        .insert({ author_id: user.id, body: trimmed, topic, pet_id: petId || null, image_url: imageUrl || null })
+        .insert({ author_id: user.id, body: trimmed, topic, pet_id: primaryPetId || null, image_url: imageUrl || null })
         .select('id, author_id, body, topic, pet_id, image_url, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
         .single();
       if (result.error) return result.error.message;
       if (result.data) {
-        setPosts((current) => [(result.data as unknown as CommunityPost), ...current.filter((post) => post.id !== result.data.id)]);
+        const postData = result.data as unknown as CommunityPost;
+        if (chosenPets.length > 1) {
+          postData.pets = chosenPets;
+          postData.pet_ids = normalizedPetIds;
+        }
+        setPosts((current) => [postData, ...current.filter((post) => post.id !== postData.id)]);
         return null;
       }
     }
@@ -384,9 +397,10 @@ export function useWhiskerfield() {
       author_id: user?.id || 'guest',
       body: trimmed,
       topic,
-      pet_id: petId,
+      pet_id: primaryPetId,
+      pet_ids: normalizedPetIds.length > 0 ? normalizedPetIds : undefined,
       image_url: imageUrl || null,
-      pets: chosenPet || null,
+      pets: chosenPets.length > 0 ? (chosenPets.length === 1 ? chosenPets[0] : chosenPets) : null,
       created_at: new Date().toISOString(),
       reactions: { like: 1 },
       userReaction: 'like',

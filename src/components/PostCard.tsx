@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AvatarImage } from './AvatarImage';
 import { topicLabels } from '../data/community';
 import { relativeTime } from '../lib/time';
-import type { CommunityComment, CommunityPost, ReactionType } from '../types/community';
+import { type CommunityComment, type CommunityPost, type ReactionType, getTaggedPets } from '../types/community';
 import { ImageLightbox } from './ImageLightbox';
 import { ReactionsBar } from './ReactionsBar';
 
@@ -56,7 +56,7 @@ export function PostCard({
     setBusy(false);
   }
 
-  const taggedPet = post.pets;
+  const taggedPets = getTaggedPets(post);
 
   return (
     <article className="post-card">
@@ -73,10 +73,11 @@ export function PostCard({
           <p>@{author.handle} · {relativeTime(post.created_at)}</p>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '.6rem', flexWrap: 'wrap' }}>
-          {taggedPet && (
+          {taggedPets.map((pet) => (
             <span
+              key={pet.id}
               className="pet-badge"
-              title={taggedPet.breed ? `${taggedPet.name} (${taggedPet.breed})` : taggedPet.name}
+              title={pet.breed ? `${pet.name} (${pet.breed})` : pet.name}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -91,14 +92,14 @@ export function PostCard({
               }}
             >
               <AvatarImage
-                src={taggedPet.avatar_url}
+                src={pet.avatar_url}
                 alt=""
-                fallback={<span>{taggedPet.avatar_url || '🐾'}</span>}
+                fallback={<span>{pet.avatar_url || '🐾'}</span>}
                 style={{ width: '16px', height: '16px', borderRadius: '50%' }}
               />
-              <span>{taggedPet.name}</span>
+              <span>{pet.name}</span>
             </span>
-          )}
+          ))}
           <span className="topic">{topicLabels[post.topic]}</span>
         </div>
       </header>
@@ -139,7 +140,7 @@ export function PostCard({
         <ImageLightbox
           imageUrl={post.image_url}
           caption={post.body.slice(0, 120)}
-          petBadge={taggedPet ? `🐾 ${taggedPet.name}` : undefined}
+          petBadge={taggedPets.length > 0 ? `🐾 ${taggedPets.map((p) => p.name).join(', ')}` : undefined}
           authorName={author.display_name}
           onClose={() => setLightboxOpen(false)}
         />

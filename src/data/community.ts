@@ -11,11 +11,14 @@ export const previewPosts: CommunityPost[] = [
   {
     id: 1,
     author_id: 'seed-1',
-    body: 'Miso has decided that any closed laptop is an invitation, but an open one is a personal insult. We compromise by having a decoy notebook nearby.',
+    body: 'Miso and Clover have reached a truce on the windowsill. Any closed laptop is an invitation, but two cats in a single sunbeam is pure bliss.',
     topic: 'cat_life',
     pet_id: 1,
     image_url: './cat-at-window.png',
-    pets: { id: 1, name: 'Miso', breed: 'Tuxedo', avatar_url: '🐱' },
+    pets: [
+      { id: 1, name: 'Miso', breed: 'Tuxedo', avatar_url: '🐱' },
+      { id: 2, name: 'Clover', breed: 'Tabby', avatar_url: '🐈' },
+    ],
     created_at: '2026-09-08T14:15:00.000Z',
     reactions: { like: 14, love: 7, treat: 3, laugh: 9 },
     profiles: { display_name: 'Sylvie & Miso', handle: 'sylvie_miso' },

@@ -31,19 +31,34 @@ export type Pet = {
   created_at?: string;
 };
 
+export type TaggedPet = {
+  id: number;
+  name: string;
+  breed?: string;
+  avatar_url?: string;
+};
+
 export type CommunityPost = {
   id: number;
   author_id?: string;
   body: string;
   topic: Topic;
   pet_id?: number;
+  pet_ids?: number[];
   image_url?: string | null;
-  pets?: Pet | { id: number; name: string; breed?: string; avatar_url?: string } | null;
+  pets?: TaggedPet | TaggedPet[] | null;
   created_at: string;
   reactions?: ReactionCounts;
   userReaction?: ReactionType;
   profiles?: { display_name: string; handle: string; avatar_url?: string } | { display_name: string; handle: string; avatar_url?: string }[] | null;
 };
+
+export function getTaggedPets(post: CommunityPost): TaggedPet[] {
+  if (Array.isArray(post.pets)) return post.pets;
+  if (post.pets && typeof post.pets === 'object') return [post.pets];
+  return [];
+}
+
 
 export type CommunityComment = {
   id: number;

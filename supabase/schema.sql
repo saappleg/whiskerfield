@@ -50,6 +50,7 @@ create table if not exists public.community_posts (
 
 -- Migration helper if community_posts already exists
 alter table public.community_posts add column if not exists pet_id bigint references public.pets (id) on delete set null;
+alter table public.community_posts add column if not exists pet_ids bigint[];
 
 create table if not exists public.community_comments (
   id bigint generated always as identity primary key,

@@ -13,7 +13,7 @@ type MembersPageProps = {
   feedError: string;
   isLoading: boolean;
   onRefresh: () => void;
-  onPublish: (body: string, topic: Topic, petId?: number) => Promise<string | null>;
+  onPublish: (body: string, topic: Topic, petIds?: number | number[], imageUrl?: string) => Promise<string | null>;
   onDelete: (id: number) => void;
   onReactPost: (postId: number, reaction: ReactionType) => void;
   onReactComment: (commentId: number, reaction: ReactionType) => void;
