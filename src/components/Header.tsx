@@ -1,3 +1,4 @@
+import { Logo } from './Logo';
 import { isImageAvatar } from '../lib/avatar';
 import type { Profile } from '../lib/supabase';
 import type { PageRoute } from '../lib/router';
@@ -57,9 +58,8 @@ export function Header({
       </div>
       <header className="site-header">
         <div className="shell header-inner">
-          <a className="wordmark" href="#/" aria-label="Whiskerfield home">
-            <b>W</b>
-            <span>Whiskerfield</span>
+          <a href="#/" aria-label="Whiskerfield home" style={{ textDecoration: 'none' }}>
+            <Logo size={32} />
           </a>
           <nav aria-label="Main navigation">
             <a href="#/" className={currentRoute === 'home' ? 'active' : ''}>

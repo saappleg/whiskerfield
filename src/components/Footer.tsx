@@ -1,9 +1,10 @@
+import { Logo } from './Logo';
+
 export function Footer() {
   return (
     <footer className="shell site-footer">
-      <a className="wordmark" href="#/">
-        <b>W</b>
-        <span>Whiskerfield</span>
+      <a href="#/" aria-label="Whiskerfield home" style={{ textDecoration: 'none' }}>
+        <Logo size={36} />
       </a>
       <p>For the life you share.</p>
       <div>
