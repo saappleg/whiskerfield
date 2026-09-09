@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" width="600" height="120" fill="none">
+  <defs>
+    <linearGradient id="wfCoralGrad" x1="20" y1="20" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF7E62"/>
+      <stop offset="50%" stop-color="#F36C4D"/>
+      <stop offset="100%" stop-color="#D95334"/>
+    </linearGradient>
+    <linearGradient id="wfSunGrad" x1="50" y1="35" x2="80" y2="65" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFE3A8"/>
+      <stop offset="100%" stop-color="#F2C572"/>
+    </linearGradient>
+    <filter id="wfDrop" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Cat Emblem (Center at x=66, y=60, radius=48) -->
+  <g transform="translate(6, 0)">
+    <!-- Circular emblem background -->
+    <circle cx="60" cy="60" r="48" fill="url(#wfCoralGrad)" />
+    <circle cx="60" cy="60" r="44" stroke="#FFF" stroke-width="1.2" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+
+    <!-- Cat Silhouette & Face in warm ivory (#FFFDF9) -->
+    <g filter="url(#wfDrop)">
+      <!-- Left Ear Outer -->
+      <path d="M 32 53 C 31 42, 28 32, 27 25 C 35 28, 45 35, 49 42 Z" fill="#FFFDF9"/>
+      <!-- Left Ear Inner -->
+      <path d="M 33 48 C 32 41, 30 33, 29 28 C 34 31, 41 37, 45 42 Z" fill="#FFCBBF" opacity="0.85"/>
+
+      <!-- Right Ear Outer -->
+      <path d="M 88 53 C 89 42, 92 32, 93 25 C 85 28, 75 35, 71 42 Z" fill="#FFFDF9"/>
+      <!-- Right Ear Inner -->
+      <path d="M 87 48 C 88 41, 90 33, 91 28 C 86 31, 79 37, 75 42 Z" fill="#FFCBBF" opacity="0.85"/>
+
+      <!-- Main Head / Cheeks / Chin -->
+      <path d="M 35 48 
+               C 44 44, 76 44, 85 48 
+               C 94 55, 95 72, 88 82 
+               C 80 92, 67 94, 60 94 
+               C 53 94, 40 92, 32 82 
+               C 25 72, 26 55, 35 48 Z" 
+            fill="#FFFDF9"/>
+
+      <!-- Serene Happy Eyes -->
+      <path d="M 41 60 C 44 56, 48 56, 51 60" stroke="#132227" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M 69 60 C 72 56, 76 56, 79 60" stroke="#132227" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+      <!-- Nose -->
+      <path d="M 57 66 C 58 64, 62 64, 63 66 C 63.5 67, 61 70, 60 70 C 59 70, 56.5 67, 57 66 Z" fill="#F36C4D"/>
+
+      <!-- Mouth (W) -->
+      <path d="M 54 71 C 54 75, 59 75, 60 72 C 61 75, 66 75, 66 71" stroke="#132227" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+      <!-- Whiskers Left -->
+      <path d="M 42 68 C 33 67, 22 65, 15 64" stroke="#132227" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 41 72 C 31 73, 21 73, 14 76" stroke="#132227" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 42 76 C 34 80, 24 83, 17 88" stroke="#132227" stroke-width="2" stroke-linecap="round"/>
+
+      <!-- Whiskers Right -->
+      <path d="M 78 68 C 87 67, 98 65, 105 64" stroke="#132227" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 79 72 C 89 73, 99 73, 106 76" stroke="#132227" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 78 76 C 86 80, 96 83, 103 88" stroke="#132227" stroke-width="2" stroke-linecap="round"/>
+
+      <!-- Forehead Sparkle -->
+      <path d="M 60 47 L 61 50 L 64 51 L 61 52 L 60 55 L 59 52 L 56 51 L 59 50 Z" fill="url(#wfSunGrad)"/>
+    </g>
+  </g>
+
+  <!-- Wordmark Text on the right -->
+  <!-- "Whiskerfield" in classic editorial serif typography -->
+  <text x="136" y="70" 
+        font-family="Georgia, 'Times New Roman', 'Source Serif Pro', serif" 
+        font-size="52" 
+        font-weight="bold" 
+        letter-spacing="-1.2" 
+        fill="#132227">Whiskerfield</text>
+
+  <!-- Tagline below -->
+  <text x="138" y="95" 
+        font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+        font-size="13.5" 
+        font-weight="700" 
+        letter-spacing="3.5" 
+        fill="#F36C4D">FOR THE LIFE YOU SHARE</text>
+</svg>
