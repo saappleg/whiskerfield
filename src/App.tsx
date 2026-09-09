@@ -75,14 +75,19 @@ export default function App() {
 
       <Footer />
 
-      {authOpen && (
+      {(authOpen || community.passwordRecovery) && (
         <AuthDialog
           configured={community.configured}
-          onClose={() => setAuthOpen(false)}
+          onClose={() => {
+            setAuthOpen(false);
+            if (community.passwordRecovery) community.dismissPasswordRecovery();
+          }}
           onSendMagicLink={community.sendMagicLink}
           onSignInWithPassword={community.signInWithPassword}
           onSignUpWithPassword={community.signUpWithPassword}
           onResetPassword={community.resetPassword}
+          passwordRecovery={community.passwordRecovery}
+          onUpdatePassword={community.updatePassword}
           onSignInWithPasskey={community.signInWithPasskey}
         />
       )}

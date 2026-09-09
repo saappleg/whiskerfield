@@ -11,6 +11,8 @@ type AuthDialogProps = {
   onSignInWithPassword: (email: string, password: string) => Promise<string>;
   onSignUpWithPassword: (email: string, password: string) => Promise<string>;
   onResetPassword: (email: string) => Promise<string>;
+  passwordRecovery?: boolean;
+  onUpdatePassword?: (password: string) => Promise<string>;
   onSignInWithPasskey: () => Promise<string>;
 };
 
@@ -21,10 +23,13 @@ export function AuthDialog({
   onSignInWithPassword,
   onSignUpWithPassword,
   onResetPassword,
+  passwordRecovery = false,
+  onUpdatePassword,
   onSignInWithPasskey,
 }: AuthDialogProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [recoveryPassword, setRecoveryPassword] = useState('');
   const [method, setMethod] = useState<AuthMethod>('magic');
   const [passwordMode, setPasswordMode] = useState<PasswordMode>('sign-in');
   const [message, setMessage] = useState('');
@@ -69,14 +74,41 @@ export function AuthDialog({
     setBusy(false);
   }
 
+  async function submitPasswordRecovery(event: { preventDefault: () => void }) {
+    event.preventDefault();
+    if (!onUpdatePassword) return;
+    setBusy(true);
+    setMessage(await onUpdatePassword(recoveryPassword));
+    setBusy(false);
+  }
+
   return (
     <dialog ref={dialogRef} className="auth-overlay" open aria-modal="true" aria-labelledby="auth-title" tabIndex={-1}>
       <div className="auth-card">
         <button type="button" className="close" onClick={onClose} aria-label="Close sign in">×</button>
         <p className="eyebrow"><i /> Welcome in</p>
-        <h2 id="auth-title">A small door into the cat club.</h2>
-        <p>Choose the sign-in method that feels easiest: a one-tap email link, an email and password, or a passkey.</p>
-        {configured ? (
+        <h2 id="auth-title">{passwordRecovery ? 'Set a new password.' : 'A small door into the cat club.'}</h2>
+        <p>{passwordRecovery ? 'Your reset link worked. Choose a new password to get back into the Cat Club.' : 'Choose the sign-in method that feels easiest: a one-tap email link, an email and password, or a passkey.'}</p>
+        {configured ? passwordRecovery ? (
+          <form onSubmit={submitPasswordRecovery}>
+            <p className="auth-form-intro">Choose a new password for your Cat Club account.</p>
+            <label htmlFor="recovery-password">New password</label>
+            <input
+              id="recovery-password"
+              type="password"
+              value={recoveryPassword}
+              onChange={(event) => setRecoveryPassword(event.target.value)}
+              placeholder="At least 6 characters"
+              autoComplete="new-password"
+              minLength={6}
+              required
+            />
+            <button type="submit" className="button ink full" disabled={busy}>
+              {busy ? 'Saving…' : 'Save new password →'}
+            </button>
+            {message && <output className="auth-message" aria-live="polite">{message}</output>}
+          </form>
+        ) : (
           <>
             <div className="auth-method-switch" aria-label="Sign-in method">
               <button

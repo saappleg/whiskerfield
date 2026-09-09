@@ -28,6 +28,7 @@ function updateReactions(
 export function useWhiskerfield() {
   const [user, setUser] = useState<User | null>(null);
   const userRef = useRef<User | null>(null);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
 
   useEffect(() => {
     userRef.current = user;
@@ -225,8 +226,9 @@ export function useWhiskerfield() {
       if (currentUser) void hydrateMember(currentUser);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       const currentUser = session?.user ?? null;
+      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
       setUser(currentUser);
       if (currentUser) {
         void hydrateMember(currentUser);
@@ -328,6 +330,18 @@ export function useWhiskerfield() {
     return result.error
       ? authErrorMessage(result.error.message)
       : 'If an account uses that email, a password reset link is on its way.';
+  }
+
+  async function updatePassword(password: string) {
+    if (!supabase) return 'The secure sign-in is being connected.';
+    const result = await supabase.auth.updateUser({ password });
+    if (result.error) return authErrorMessage(result.error.message);
+    setPasswordRecovery(false);
+    return 'Your password has been updated. You can use it next time you sign in.';
+  }
+
+  function dismissPasswordRecovery() {
+    setPasswordRecovery(false);
   }
 
   async function signInWithPasskey() {
@@ -644,6 +658,7 @@ export function useWhiskerfield() {
 
   async function signOut() {
     if (supabase) await supabase.auth.signOut();
+    setPasswordRecovery(false);
     setUser(null);
     setProfile(null);
     setUserPets([]);
@@ -653,6 +668,7 @@ export function useWhiskerfield() {
   return {
     configured: isSupabaseConfigured,
     user,
+    passwordRecovery,
     profile,
     userPets,
     isMember,
@@ -666,6 +682,8 @@ export function useWhiskerfield() {
     signInWithPassword,
     signUpWithPassword,
     resetPassword,
+    updatePassword,
+    dismissPasswordRecovery,
     signInWithPasskey,
     registerPasskey,
     updateProfile,
