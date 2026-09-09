@@ -115,8 +115,8 @@ export function ToxicPlantChecker() {
               style={{
                 border: '1px solid var(--line)',
                 borderRadius: '999px',
-                background: categoryFilter === cat ? 'var(--coral)' : 'var(--paper)',
-                color: categoryFilter === cat ? '#ffffff' : 'var(--ink)',
+                background: categoryFilter === cat ? 'var(--ink)' : 'var(--paper)',
+                color: categoryFilter === cat ? 'var(--paper)' : 'var(--ink)',
                 fontSize: '.72rem',
                 fontWeight: 800,
                 padding: '.25rem .65rem',
@@ -138,8 +138,8 @@ export function ToxicPlantChecker() {
               style={{
                 border: '1px solid var(--line)',
                 borderRadius: '999px',
-                background: statusFilter === st ? 'var(--coral)' : 'var(--paper)',
-                color: statusFilter === st ? '#ffffff' : 'var(--ink)',
+                background: statusFilter === st ? 'var(--ink)' : 'var(--paper)',
+                color: statusFilter === st ? 'var(--paper)' : 'var(--ink)',
                 fontSize: '.72rem',
                 fontWeight: 800,
                 padding: '.25rem .65rem',

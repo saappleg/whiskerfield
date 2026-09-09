@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { AuthDialog } from './components/AuthDialog';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
@@ -6,10 +6,10 @@ import { ProfileModal } from './components/ProfileModal';
 import { useWhiskerfield } from './hooks/use-whiskerfield';
 import { useRouter } from './lib/router';
 import { useTheme } from './lib/theme';
-import { HomePage } from './pages/HomePage';
-import { MembersPage } from './pages/MembersPage';
-import { PrivacyPage } from './pages/PrivacyPage';
-import { StoriesPage } from './pages/StoriesPage';
+const HomePage = lazy(() => import('./pages/HomePage').then((module) => ({ default: module.HomePage })));
+const MembersPage = lazy(() => import('./pages/MembersPage').then((module) => ({ default: module.MembersPage })));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then((module) => ({ default: module.PrivacyPage })));
+const StoriesPage = lazy(() => import('./pages/StoriesPage').then((module) => ({ default: module.StoriesPage })));
 
 export default function App() {
   const [authOpen, setAuthOpen] = useState(false);
@@ -23,6 +23,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <Header
         configured={community.configured}
         profile={community.profile}
@@ -35,39 +36,41 @@ export default function App() {
         onSignOut={() => void community.signOut()}
       />
 
-      <main>
-        {currentRoute === 'home' && (
-          <HomePage
-            onOpenAuth={openAuth}
-            signedIn={Boolean(community.user)}
-          />
-        )}
+      <main id="main-content" tabIndex={-1}>
+        <Suspense fallback={<output className="shell page-loading">Loading Whiskerfield…</output>}>
+          {currentRoute === 'home' && (
+            <HomePage
+              onOpenAuth={openAuth}
+              signedIn={Boolean(community.user)}
+            />
+          )}
 
-        {currentRoute === 'stories' && (
-          <StoriesPage user={community.user} userPets={community.userPets} />
-        )}
+          {currentRoute === 'stories' && (
+            <StoriesPage user={community.user} userPets={community.userPets} />
+          )}
 
-        {currentRoute === 'members' && (
-          <MembersPage
-            user={community.user}
-            profile={community.profile}
-            userPets={community.userPets}
-            posts={community.posts}
-            comments={community.comments}
-            feedError={community.feedError}
-            isLoading={community.isLoadingFeed}
-            onRefresh={() => void community.refreshFeed()}
-            onPublish={community.publishPost}
-            onDelete={(id) => void community.deletePost(id)}
-            onReactPost={community.reactToPost}
-            onReactComment={community.reactToComment}
-            onAddComment={community.publishComment}
-            onOpenAuth={openAuth}
-            onOpenProfile={openProfile}
-          />
-        )}
+          {currentRoute === 'members' && (
+            <MembersPage
+              user={community.user}
+              profile={community.profile}
+              userPets={community.userPets}
+              posts={community.posts}
+              comments={community.comments}
+              feedError={community.feedError}
+              isLoading={community.isLoadingFeed}
+              onRefresh={() => void community.refreshFeed()}
+              onPublish={community.publishPost}
+              onDelete={(id) => void community.deletePost(id)}
+              onReactPost={community.reactToPost}
+              onReactComment={community.reactToComment}
+              onAddComment={community.publishComment}
+              onOpenAuth={openAuth}
+              onOpenProfile={openProfile}
+            />
+          )}
 
-        {currentRoute === 'privacy' && <PrivacyPage />}
+          {currentRoute === 'privacy' && <PrivacyPage />}
+        </Suspense>
       </main>
 
       <Footer />

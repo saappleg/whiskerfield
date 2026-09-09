@@ -14,7 +14,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Miso and Clover have reached a truce on the windowsill. Any closed laptop is an invitation, but two cats in a single sunbeam is pure bliss.',
     topic: 'cat_life',
     pet_id: 1,
-    image_url: './cat-at-window.png',
+    image_url: './cat-at-window.webp',
     pets: [
       { id: 1, name: 'Miso', breed: 'Tuxedo', avatar_url: '🐱' },
       { id: 2, name: 'Clover', breed: 'Tabby', avatar_url: '🐈' },

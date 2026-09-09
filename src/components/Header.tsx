@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Logo } from './Logo';
 import { AvatarImage } from './AvatarImage';
 import type { Profile } from '../lib/supabase';
@@ -27,6 +28,21 @@ export function Header({
   onOpenProfile,
   onSignOut,
 }: HeaderProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuRoute, setMenuRoute] = useState(currentRoute);
+  const menuVisible = mobileMenuOpen && menuRoute === currentRoute;
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileMenuOpen]);
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
   return (
     <>
       <div className="utility-bar">
@@ -48,7 +64,8 @@ export function Header({
                 cursor: 'pointer',
               }}
               title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              aria-label="Toggle dark mode"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              aria-pressed={theme === 'dark'}
             >
               {theme === 'dark' ? '☀️ Light mode' : '🌙 Night mode'}
             </button>
@@ -62,16 +79,29 @@ export function Header({
             <Logo size={32} />
           </a>
           <nav aria-label="Main navigation">
-            <a href="#/" className={currentRoute === 'home' ? 'active' : ''}>
+            <a href="#/" className={currentRoute === 'home' ? 'active' : ''} aria-current={currentRoute === 'home' ? 'page' : undefined}>
               Home
             </a>
-            <a href="#/stories" className={currentRoute === 'stories' ? 'active' : ''}>
+            <a href="#/stories" className={currentRoute === 'stories' ? 'active' : ''} aria-current={currentRoute === 'stories' ? 'page' : undefined}>
               Stories &amp; Guides
             </a>
-            <a href="#/members" className={currentRoute === 'members' ? 'active' : ''}>
+            <a href="#/members" className={currentRoute === 'members' ? 'active' : ''} aria-current={currentRoute === 'members' ? 'page' : undefined}>
               Member Club
             </a>
           </nav>
+          <button
+            type="button"
+            className="mobile-menu-toggle"
+            onClick={() => {
+              setMenuRoute(currentRoute);
+              setMobileMenuOpen((open) => !open);
+            }}
+            aria-expanded={menuVisible}
+            aria-controls="mobile-navigation"
+            aria-label={menuVisible ? 'Close menu' : 'Open menu'}
+          >
+            <span aria-hidden="true">{menuVisible ? '✕' : '☰'}</span>
+          </button>
           {signedIn ? (
             <div className="account-area">
               <button
@@ -107,6 +137,19 @@ export function Header({
             </button>
           )}
         </div>
+        {menuVisible && (
+          <nav id="mobile-navigation" className="mobile-navigation shell" aria-label="Mobile navigation">
+            <a href="#/" onClick={closeMobileMenu} className={currentRoute === 'home' ? 'active' : ''} aria-current={currentRoute === 'home' ? 'page' : undefined}>
+              Home
+            </a>
+            <a href="#/stories" onClick={closeMobileMenu} className={currentRoute === 'stories' ? 'active' : ''} aria-current={currentRoute === 'stories' ? 'page' : undefined}>
+              Stories &amp; Guides
+            </a>
+            <a href="#/members" onClick={closeMobileMenu} className={currentRoute === 'members' ? 'active' : ''} aria-current={currentRoute === 'members' ? 'page' : undefined}>
+              Member Club
+            </a>
+          </nav>
+        )}
       </header>
     </>
   );

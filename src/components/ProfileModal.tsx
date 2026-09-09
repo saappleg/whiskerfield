@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useModalFocus } from '../hooks/use-modal-focus';
 import { AvatarImage } from './AvatarImage';
 import { isImageAvatar, normalizeImageUrl } from '../lib/avatar';
 import type { Profile } from '../lib/supabase';
@@ -71,6 +72,8 @@ export function ProfileModal({
   const [petMsg, setPetMsg] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
   const [petImgFailed, setPetImgFailed] = useState(false);
   const [activeToolModal, setActiveToolModal] = useState<{ tool: 'sitter' | 'binder' | 'lost'; pet: Pet } | null>(null);
+  const dialogRef = useModalFocus(true, onClose);
+  const toolDialogRef = useModalFocus(Boolean(activeToolModal), () => setActiveToolModal(null));
 
   // Handlers for profile avatar upload
   function handleProfilePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -183,7 +186,7 @@ export function ProfileModal({
   const currentProfileAvatarSrc = customAvatar.trim() || avatarUrl;
 
   return (
-    <dialog className="dialog-overlay" open aria-labelledby="profile-dialog-title">
+    <dialog ref={dialogRef} className="dialog-overlay" open aria-modal="true" aria-labelledby="profile-dialog-title" tabIndex={-1}>
       <div className="dialog-card" style={{ maxWidth: '580px', maxHeight: '90vh', overflowY: 'auto' }}>
         <button type="button" className="dialog-close" onClick={onClose} aria-label="Close profile modal">
           ×
@@ -270,7 +273,7 @@ export function ProfileModal({
                         padding: '.4rem .8rem',
                         fontSize: '.75rem',
                         borderRadius: '999px',
-                        background: 'var(--coral)',
+                        background: 'var(--coral-bg)',
                         color: '#fff',
                         fontWeight: 800,
                         display: 'inline-flex',
@@ -901,8 +904,10 @@ export function ProfileModal({
 
       {activeToolModal && (
         <dialog
+          ref={toolDialogRef}
           open
           className="modal-backdrop"
+          aria-modal="true"
           aria-label="Cat Care Toolkit"
           style={{
             position: 'fixed',

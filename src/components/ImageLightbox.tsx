@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useModalFocus } from '../hooks/use-modal-focus';
 
 type ImageLightboxProps = {
   imageUrl: string;
@@ -15,21 +15,16 @@ export function ImageLightbox({
   authorName,
   onClose,
 }: ImageLightboxProps) {
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  const dialogRef = useModalFocus(true, onClose);
 
   return (
     <dialog
+      ref={dialogRef}
       className="dialog-overlay"
       open
+      aria-modal="true"
       aria-label="Enlarged photo preview"
+      tabIndex={-1}
     >
       <button
         type="button"

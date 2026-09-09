@@ -57,7 +57,7 @@ details[open] .toggle-arrow { transform:rotate(180deg); }
 .guide-card.paper { background:var(--cream); }
 .guide-card.sun { background:var(--sun); color:var(--ink); }
 .guide-card.mint { background:var(--mint); color:var(--ink); }
-.guide-card.coral { background:var(--coral); color:var(--cream); }
+.guide-card.coral { background:var(--coral-bg); color:var(--cream); }
 .guide-meta { margin-bottom:.8rem; font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; opacity:.85; }
 .guide-card h3 { margin:0 0 .7rem; font-size:1.6rem; line-height:1.1; }
 .guide-dek { font-size:.88rem; line-height:1.5; opacity:.88; display:block; margin-bottom:1rem; }

@@ -412,8 +412,8 @@ export function CommunitySection({
                 padding: '.3rem .75rem',
                 fontSize: '.72rem',
                 fontWeight: 800,
-                background: !showSavedOnly && activeTopicFilter === 'all' ? 'var(--coral)' : 'var(--cream)',
-                color: !showSavedOnly && activeTopicFilter === 'all' ? '#fff' : 'var(--ink)',
+                background: !showSavedOnly && activeTopicFilter === 'all' ? 'var(--ink)' : 'var(--cream)',
+                color: !showSavedOnly && activeTopicFilter === 'all' ? 'var(--paper)' : 'var(--ink)',
                 cursor: 'pointer',
               }}
             >
@@ -433,8 +433,8 @@ export function CommunitySection({
                   padding: '.3rem .75rem',
                   fontSize: '.72rem',
                   fontWeight: 800,
-                  background: !showSavedOnly && activeTopicFilter === t ? 'var(--coral)' : 'var(--cream)',
-                  color: !showSavedOnly && activeTopicFilter === t ? '#fff' : 'var(--ink)',
+                  background: !showSavedOnly && activeTopicFilter === t ? 'var(--ink)' : 'var(--cream)',
+                  color: !showSavedOnly && activeTopicFilter === t ? 'var(--paper)' : 'var(--ink)',
                   cursor: 'pointer',
                 }}
               >

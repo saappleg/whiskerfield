@@ -3,7 +3,8 @@
   --ink-soft:#426066;
   --paper:#f5f0e6;
   --cream:#fffcf6;
-  --coral:#f36c4d;
+  --coral:#a33a26;
+  --coral-bg:#a33a26;
   --sun:#ffd663;
   --mint:#b8ddd0;
   --blue:#afcfdf;
@@ -20,7 +21,8 @@
   --ink-soft:#9db5bb;
   --paper:#0b1518;
   --cream:#122228;
-  --coral:#ff7d5e;
+  --coral:#ffab96;
+  --coral-bg:#a33a26;
   --sun:#fed462;
   --mint:#162f34;
   --blue:#183340;
@@ -45,7 +47,7 @@ h1, h2, h3 { font-family:Georgia, "Times New Roman", serif; font-weight:500; let
 .button { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border:0; padding:.9rem 1.05rem; border-radius:999px; font-size:.82rem; font-weight:800; transition:transform .2s, background .2s; }
 .button:hover { transform:translateY(-1px); }
 .button:disabled { cursor:wait; opacity:.7; transform:none; }
-.coral { background:var(--coral); color:#fffaf1; }
+.coral { background:var(--coral-bg); color:#fffaf1; }
 .ink { background:var(--ink); color:var(--paper); }
 .text-link { border:0; background:transparent; font-weight:800; font-size:.85rem; }
 .light-link { color:#e0e9e4; }
@@ -80,7 +82,7 @@ h1, h2, h3 { font-family:Georgia, "Times New Roman", serif; font-weight:500; let
 /* Coral Cards: always guaranteed white typeface */
 .guide-card.coral,
 .resource.coral-block {
-  background:var(--coral) !important;
+  background:var(--coral-bg) !important;
   color:#ffffff !important;
 }
 
@@ -88,6 +90,29 @@ h1, h2, h3 { font-family:Georgia, "Times New Roman", serif; font-weight:500; let
 .resource.coral-block h3, .resource.coral-block p, .resource.coral-block span, .resource.coral-block b, .resource.coral-block summary, .resource.coral-block details p {
   color:#ffffff !important;
 }
+
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, summary:focus-visible {
+  outline:3px solid var(--sun);
+  outline-offset:3px;
+}
+
+.skip-link {
+  position:fixed;
+  top:.75rem;
+  left:.75rem;
+  z-index:100;
+  padding:.65rem .9rem;
+  border-radius:999px;
+  background:var(--sun);
+  color:#102d35;
+  font-size:.8rem;
+  font-weight:900;
+  transform:translateY(-160%);
+  transition:transform .15s ease;
+}
+.skip-link:focus { transform:translateY(0); }
+.page-loading { min-height:40vh; display:grid; place-items:center; color:var(--ink-soft); font-weight:800; }
+.story[id], .guide-card[id], #tools { scroll-margin-top:100px; }
 
 /* Dark mode specific element adjustments */
 [data-theme="dark"] .site-header {
@@ -204,4 +229,3 @@ h1, h2, h3 { font-family:Georgia, "Times New Roman", serif; font-weight:500; let
 [data-theme="dark"] .reaction-pill.active.laugh { background:#372e08; border-color:#ca8a04; color:#fde047; }
 [data-theme="dark"] .reaction-pill.active.omg { background:#2e184a; border-color:#7c3aed; color:#c4b5fd; }
 [data-theme="dark"] .reaction-pill.active.angry { background:#3e1c10; border-color:#ea580c; color:#fdba74; }
-

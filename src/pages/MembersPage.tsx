@@ -1,6 +1,5 @@
 import type { User } from '@supabase/supabase-js';
 import { CommunitySection } from '../components/CommunitySection';
-import { MemberGate } from '../components/MemberGate';
 import type { Profile } from '../lib/supabase';
 import type { CommunityComment, CommunityPost, Pet, ReactionType, Topic } from '../types/community';
 
@@ -23,12 +22,21 @@ type MembersPageProps = {
 };
 
 export function MembersPage(props: MembersPageProps) {
-  if (!props.user) {
-    return <MemberGate onOpenAuth={props.onOpenAuth} />;
-  }
-
   return (
     <div className="members-page" style={{ paddingBottom: '96px' }}>
+      {!props.user && (
+        <div className="shell" style={{ paddingTop: '48px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', padding: '1rem 1.4rem', background: 'var(--mint)', border: '1px solid var(--line)' }}>
+            <div>
+              <p className="eyebrow" style={{ margin: 0 }}><i /> The Cat Club</p>
+              <h1 style={{ fontSize: '1.35rem', margin: '.25rem 0 0', color: 'var(--ink)' }}>Browse the latest notes, then join the conversation.</h1>
+              <p style={{ margin: '.35rem 0 0', color: 'var(--ink-soft)', fontSize: '.86rem' }}>Read the public feed without an account. A free magic link unlocks posting, replies, and your cat profile.</p>
+            </div>
+            <button type="button" className="button ink" onClick={props.onOpenAuth}>Join free →</button>
+          </div>
+        </div>
+      )}
+      {props.user && (
       <div className="shell" style={{ paddingTop: '60px', marginBottom: '-60px' }}>
         <div
           style={{
@@ -83,6 +91,7 @@ export function MembersPage(props: MembersPageProps) {
           </div>
         </div>
       </div>
+      )}
 
       <CommunitySection {...props} />
     </div>

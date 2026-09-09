@@ -28,19 +28,19 @@ export function HomePage({ onOpenAuth, signedIn }: HomePageProps) {
           </div>
 
           <div className="story-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
-            <article className="story main-story">
+            <article className="story main-story" id={`story-${leadStory.id}`}>
               <p className="story-meta">{leadStory.category.toUpperCase()} · {leadStory.readTime.toUpperCase()}</p>
               <h2>{leadStory.title}</h2>
               <span className="story-dek">{leadStory.dek}</span>
-              <a href="#/stories" className="button ink" style={{ marginTop: 'auto', alignSelf: 'flex-start' }}>
+              <a href={`#/stories#story-${leadStory.id}`} className="button ink" style={{ marginTop: 'auto', alignSelf: 'flex-start' }}>
                 Read free article →
               </a>
             </article>
-            <article className="story sun-story">
+            <article className="story sun-story" id={`story-${secondStory.id}`}>
               <p className="story-meta">{secondStory.category.toUpperCase()} · {secondStory.readTime.toUpperCase()}</p>
               <h3>{secondStory.title}</h3>
               <span className="story-dek">{secondStory.dek}</span>
-              <a href="#/stories" className="button ink" style={{ marginTop: 'auto', alignSelf: 'flex-start' }}>
+              <a href={`#/stories#story-${secondStory.id}`} className="button ink" style={{ marginTop: 'auto', alignSelf: 'flex-start' }}>
                 Read free article →
               </a>
             </article>
@@ -179,11 +179,11 @@ export function HomePage({ onOpenAuth, signedIn }: HomePageProps) {
 
         <div className="guide-grid">
           {guideHighlights.map((guide) => (
-            <article className={`guide-card ${guide.tone}`} key={guide.id}>
+            <article className={`guide-card ${guide.tone}`} key={guide.id} id={`story-${guide.id}`}>
               <p className="guide-meta">{guide.category} · {guide.readTime}</p>
               <h3>{guide.title}</h3>
               <span className="guide-dek">{guide.dek}</span>
-              <a href="#/stories" style={{ marginTop: 'auto', paddingTop: '1rem', fontWeight: 800, fontSize: '.82rem', color: 'inherit', textDecoration: 'underline' }}>
+              <a href={`#/stories#story-${guide.id}`} style={{ marginTop: 'auto', paddingTop: '1rem', fontWeight: 800, fontSize: '.82rem', color: 'inherit', textDecoration: 'underline' }}>
                 Read guide →
               </a>
             </article>

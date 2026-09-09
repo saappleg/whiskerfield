@@ -23,19 +23,19 @@ export function JournalSection() {
     <section id="stories">
       <section className="story-band">
         <div className="shell story-grid">
-          <article className="story main-story">
+          <article className="story main-story" id={`story-${lead.id}`}>
             <p className="story-meta">{lead.category.toUpperCase()} · {lead.readTime.toUpperCase()}</p>
             <h2>{lead.title}</h2>
             <span className="story-dek">{lead.dek}</span>
             <StoryBody entry={lead} />
           </article>
-          <article className="story sun-story">
+          <article className="story sun-story" id={`story-${sideOne.id}`}>
             <p className="story-meta">{sideOne.category.toUpperCase()} · {sideOne.readTime.toUpperCase()}</p>
             <h3>{sideOne.title}</h3>
             <span className="story-dek">{sideOne.dek}</span>
             <StoryBody entry={sideOne} />
           </article>
-          <article className="story blue-story">
+          <article className="story blue-story" id={`story-${sideTwo.id}`}>
             <p className="story-meta">{sideTwo.category.toUpperCase()} · {sideTwo.readTime.toUpperCase()}</p>
             <h3>{sideTwo.title}</h3>
             <span className="story-dek">{sideTwo.dek}</span>
@@ -54,7 +54,7 @@ export function JournalSection() {
         </div>
         <div className="guide-grid">
           {practicalGuides.map((guide) => (
-            <article className={`guide-card ${guide.tone}`} key={guide.id}>
+            <article className={`guide-card ${guide.tone}`} key={guide.id} id={`story-${guide.id}`}>
               <p className="guide-meta">{guide.category} · {guide.readTime}</p>
               <h3>{guide.title}</h3>
               <span className="guide-dek">{guide.dek}</span>

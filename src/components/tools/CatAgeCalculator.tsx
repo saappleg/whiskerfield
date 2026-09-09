@@ -69,8 +69,8 @@ export function CatAgeCalculator() {
                 style={{
                   border: '1px solid var(--line)',
                   borderRadius: '999px',
-                  background: catAge === preset ? 'var(--coral)' : 'var(--cream)',
-                  color: catAge === preset ? '#ffffff' : 'var(--ink)',
+                  background: catAge === preset ? 'var(--ink)' : 'var(--cream)',
+                  color: catAge === preset ? 'var(--paper)' : 'var(--ink)',
                   fontSize: '.7rem',
                   fontWeight: 800,
                   padding: '.2rem .55rem',
@@ -136,4 +136,3 @@ export function CatAgeCalculator() {
     </div>
   );
 }
-

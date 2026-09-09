@@ -3,7 +3,7 @@ import type { User } from '@supabase/supabase-js';
 import { previewComments, previewPosts } from '../data/community';
 import { ensureProfile, isSupabaseConfigured, supabase, type Profile } from '../lib/supabase';
 import { getVisitorId } from '../lib/visitor';
-import type { CommunityComment, CommunityPost, MemberResource, Pet, ReactionCounts, ReactionType, Topic } from '../types/community';
+import type { CommunityComment, CommunityPost, MemberResource, Pet, ReactionCounts, ReactionType, TaggedPet, Topic } from '../types/community';
 
 function updateReactions(
   currentReactions: ReactionCounts = {},
@@ -93,7 +93,7 @@ export function useWhiskerfield() {
       const [postsRes, commentsRes, reactionsRes] = await Promise.all([
         supabase
           .from('community_posts')
-          .select('id, author_id, body, topic, pet_id, image_url, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
+          .select('id, author_id, body, topic, pet_id, pet_ids, image_url, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
           .eq('is_published', true)
           .order('created_at', { ascending: false })
           .order('id', { ascending: false })
@@ -145,9 +145,32 @@ export function useWhiskerfield() {
       }
 
       const dbPosts = (postsRes.data || []) as unknown as CommunityPost[];
-      const dbPostIds = new Set(dbPosts.map((p) => p.id));
+      const taggedPetIds = [...new Set(dbPosts.flatMap((post) => {
+        if (Array.isArray(post.pet_ids) && post.pet_ids.length > 0) return post.pet_ids;
+        return post.pet_id ? [post.pet_id] : [];
+      }))];
+      let taggedPets: TaggedPet[] = [];
+      if (taggedPetIds.length > 0) {
+        const taggedPetsRes = await supabase
+          .from('pets')
+          .select('id, name, breed, avatar_url')
+          .in('id', taggedPetIds);
+        if (!taggedPetsRes.error && taggedPetsRes.data) taggedPets = taggedPetsRes.data as TaggedPet[];
+      }
+      const hydratedPosts = dbPosts.map((post) => {
+        const ids = Array.isArray(post.pet_ids) && post.pet_ids.length > 0
+          ? post.pet_ids
+          : post.pet_id
+          ? [post.pet_id]
+          : [];
+        const pets = ids
+          .map((id) => taggedPets.find((pet) => pet.id === id))
+          .filter((pet): pet is TaggedPet => Boolean(pet));
+        return pets.length > 0 ? { ...post, pets: pets.length === 1 ? pets[0] : pets } : post;
+      });
+      const dbPostIds = new Set(hydratedPosts.map((p) => p.id));
       const mergedPosts = [
-        ...dbPosts,
+        ...hydratedPosts,
         ...previewPosts.filter((p) => !dbPostIds.has(p.id)),
       ].map((post) => {
         const extraCounts = postReactionCounts[post.id] || {};
@@ -377,13 +400,20 @@ export function useWhiskerfield() {
     if (supabase && user && profile) {
       const result = await supabase
         .from('community_posts')
-        .insert({ author_id: user.id, body: trimmed, topic, pet_id: primaryPetId || null, image_url: imageUrl || null })
-        .select('id, author_id, body, topic, pet_id, image_url, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
+        .insert({
+          author_id: user.id,
+          body: trimmed,
+          topic,
+          pet_id: primaryPetId || null,
+          pet_ids: normalizedPetIds.length > 0 ? normalizedPetIds : null,
+          image_url: imageUrl || null,
+        })
+        .select('id, author_id, body, topic, pet_id, pet_ids, image_url, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
         .single();
       if (result.error) return result.error.message;
       if (result.data) {
         const postData = result.data as unknown as CommunityPost;
-        if (chosenPets.length > 1) {
+        if (chosenPets.length > 0) {
           postData.pets = chosenPets;
           postData.pet_ids = normalizedPetIds;
         }

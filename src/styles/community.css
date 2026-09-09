@@ -72,8 +72,8 @@
 
 .comment-composer { display:flex; gap:.5rem; margin-top:.75rem; }
 .comment-composer input { flex:1; border:1px solid var(--line); padding:.55rem .75rem; font-size:.8rem; background:var(--cream); color:var(--ink); outline-color:var(--coral); }
-.comment-composer button { border:0; background:var(--coral); color:#fffcf6; padding:.55rem .95rem; font-size:.74rem; font-weight:800; cursor:pointer; }
-.comment-composer button:hover { background:var(--coral); }
+.comment-composer button { border:0; background:var(--coral-bg); color:#fffcf6; padding:.55rem .95rem; font-size:.74rem; font-weight:800; cursor:pointer; }
+.comment-composer button:hover { background:var(--coral-bg); }
 
 .comment-signin-prompt { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.8rem 1rem; background:rgba(255,252,246,.85); border:1px dashed var(--line); margin-top:.75rem; }
 .comment-signin-prompt p { margin:0; font-size:.78rem; color:var(--ink-soft); }

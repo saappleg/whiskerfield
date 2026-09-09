@@ -50,6 +50,7 @@ create table if not exists public.community_posts (
 
 -- Migration helper if community_posts already exists
 alter table public.community_posts add column if not exists pet_id bigint references public.pets (id) on delete set null;
+alter table public.community_posts add column if not exists image_url text;
 alter table public.community_posts add column if not exists pet_ids bigint[];
 
 create table if not exists public.community_comments (
@@ -87,6 +88,8 @@ create index if not exists community_posts_public_feed_idx
   on public.community_posts (created_at desc, id desc) where is_published;
 create index if not exists community_comments_post_id_idx
   on public.community_comments (post_id, created_at asc);
+create index if not exists community_comments_author_id_idx
+  on public.community_comments (author_id);
 create index if not exists pets_owner_id_idx
   on public.pets (owner_id);
 create index if not exists community_reactions_target_idx

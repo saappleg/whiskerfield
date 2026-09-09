@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { adsenseClient, adsenseSlotId, requestAd } from '../lib/adsense';
+import { adsenseClient, adsenseSlotId, loadAdsense, requestAd } from '../lib/adsense';
 
 export function AdSlot() {
   useEffect(() => {
     if (adsenseSlotId) {
-      requestAd();
+      void loadAdsense().then(requestAd);
     }
   }, []);
 

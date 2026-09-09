@@ -14,9 +14,23 @@ type CareToolsSectionProps = {
 };
 
 export function CareToolsSection({ userPets = [] }: CareToolsSectionProps) {
-  const [activeTool, setActiveTool] = useState<
-    'age' | 'safety' | 'hydration' | 'sitter' | 'binder' | 'lost'
-  >('age');
+  type ToolId = 'age' | 'safety' | 'hydration' | 'sitter' | 'binder' | 'lost';
+  const [activeTool, setActiveTool] = useState<ToolId>('age');
+  const tabs: Array<{ id: ToolId; label: string }> = [
+    { id: 'age', label: '🎂 Human Age' },
+    { id: 'safety', label: '🌿 Plant & Food Safety' },
+    { id: 'hydration', label: '💧 Hydration' },
+    { id: 'sitter', label: '📋 Sitter Guide' },
+    { id: 'binder', label: '🩺 Health Binder' },
+    { id: 'lost', label: '🚨 Lost Cat Flyer' },
+  ];
+
+  const activePanel = activeTool === 'age' ? <CatAgeCalculator />
+    : activeTool === 'safety' ? <ToxicPlantChecker />
+    : activeTool === 'hydration' ? <HydrationCalculator />
+    : activeTool === 'sitter' ? <CatSitterGuide pets={userPets} pet={userPets[0]} />
+    : activeTool === 'binder' ? <CatHealthBinder pets={userPets} pet={userPets[0]} />
+    : <LostCatFlyer pets={userPets} pet={userPets[0]} />;
 
   return (
     <section className="shell care-tools-section" id="tools" style={{ marginTop: '80px' }}>
@@ -35,114 +49,46 @@ export function CareToolsSection({ userPets = [] }: CareToolsSectionProps) {
           </div>
 
           {/* Tool Tab Switcher */}
-          <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              onClick={() => setActiveTool('age')}
-              style={{
-                padding: '.5rem .85rem',
-                border: '1px solid var(--line)',
-                borderRadius: '999px',
-                fontSize: '.76rem',
-                fontWeight: 800,
-                background: activeTool === 'age' ? 'var(--coral)' : 'var(--cream)',
-                color: activeTool === 'age' ? '#ffffff' : 'var(--ink)',
-                cursor: 'pointer',
-              }}
-            >
-              🎂 Human Age
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTool('safety')}
-              style={{
-                padding: '.5rem .85rem',
-                border: '1px solid var(--line)',
-                borderRadius: '999px',
-                fontSize: '.76rem',
-                fontWeight: 800,
-                background: activeTool === 'safety' ? 'var(--coral)' : 'var(--cream)',
-                color: activeTool === 'safety' ? '#ffffff' : 'var(--ink)',
-                cursor: 'pointer',
-              }}
-            >
-              🌿 Plant &amp; Food Safety
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTool('hydration')}
-              style={{
-                padding: '.5rem .85rem',
-                border: '1px solid var(--line)',
-                borderRadius: '999px',
-                fontSize: '.76rem',
-                fontWeight: 800,
-                background: activeTool === 'hydration' ? 'var(--coral)' : 'var(--cream)',
-                color: activeTool === 'hydration' ? '#ffffff' : 'var(--ink)',
-                cursor: 'pointer',
-              }}
-            >
-              💧 Hydration
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTool('sitter')}
-              style={{
-                padding: '.5rem .85rem',
-                border: '1px solid var(--line)',
-                borderRadius: '999px',
-                fontSize: '.76rem',
-                fontWeight: 800,
-                background: activeTool === 'sitter' ? 'var(--coral)' : 'var(--cream)',
-                color: activeTool === 'sitter' ? '#ffffff' : 'var(--ink)',
-                cursor: 'pointer',
-              }}
-            >
-              📋 Sitter Guide
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTool('binder')}
-              style={{
-                padding: '.5rem .85rem',
-                border: '1px solid var(--line)',
-                borderRadius: '999px',
-                fontSize: '.76rem',
-                fontWeight: 800,
-                background: activeTool === 'binder' ? 'var(--coral)' : 'var(--cream)',
-                color: activeTool === 'binder' ? '#ffffff' : 'var(--ink)',
-                cursor: 'pointer',
-              }}
-            >
-              🩺 Health Binder
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTool('lost')}
-              style={{
-                padding: '.5rem .85rem',
-                border: '1px solid var(--line)',
-                borderRadius: '999px',
-                fontSize: '.76rem',
-                fontWeight: 800,
-                background: activeTool === 'lost' ? '#dc2626' : 'var(--cream)',
-                color: activeTool === 'lost' ? '#ffffff' : 'var(--ink)',
-                cursor: 'pointer',
-              }}
-            >
-              🚨 Lost Cat Flyer
-            </button>
+          <div role="tablist" aria-label="Cat care tools" style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
+            {tabs.map((tab) => {
+              const selected = activeTool === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  id={`care-tool-tab-${tab.id}`}
+                  aria-selected={selected}
+                  aria-controls={`care-tool-panel-${tab.id}`}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setActiveTool(tab.id)}
+                  style={{
+                    padding: '.5rem .85rem',
+                    border: '1px solid var(--line)',
+                    borderRadius: '999px',
+                    fontSize: '.76rem',
+                    fontWeight: 800,
+                    background: selected ? 'var(--ink)' : 'var(--cream)',
+                    color: selected ? 'var(--paper)' : 'var(--ink)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {activeTool === 'age' && <CatAgeCalculator />}
-      {activeTool === 'safety' && <ToxicPlantChecker />}
-      {activeTool === 'hydration' && <HydrationCalculator />}
-      {activeTool === 'sitter' && <CatSitterGuide pets={userPets} pet={userPets[0]} />}
-      {activeTool === 'binder' && <CatHealthBinder pets={userPets} pet={userPets[0]} />}
-      {activeTool === 'lost' && <LostCatFlyer pets={userPets} pet={userPets[0]} />}
+      <div
+        id={`care-tool-panel-${activeTool}`}
+        role="tabpanel"
+        aria-labelledby={`care-tool-tab-${activeTool}`}
+        tabIndex={0}
+      >
+        {activePanel}
+      </div>
     </section>
   );
 }
-
