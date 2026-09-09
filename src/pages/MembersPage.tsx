@@ -30,7 +30,7 @@ export function MembersPage(props: MembersPageProps) {
             <div>
               <p className="eyebrow" style={{ margin: 0 }}><i /> The Cat Club</p>
               <h1 style={{ fontSize: '1.35rem', margin: '.25rem 0 0', color: 'var(--ink)' }}>Browse the latest notes, then join the conversation.</h1>
-              <p style={{ margin: '.35rem 0 0', color: 'var(--ink-soft)', fontSize: '.86rem' }}>Read the public feed without an account. A free magic link unlocks posting, replies, and your cat profile.</p>
+              <p style={{ margin: '.35rem 0 0', color: 'var(--ink-soft)', fontSize: '.86rem' }}>Read the public feed without an account. A free magic link, email/password, or passkey unlocks posting, replies, and your cat profile.</p>
             </div>
             <button type="button" className="button ink" onClick={props.onOpenAuth}>Join free →</button>
           </div>

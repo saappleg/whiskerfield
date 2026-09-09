@@ -130,7 +130,7 @@ export function HomePage({ onOpenAuth, signedIn }: HomePageProps) {
                     cursor: 'pointer',
                   }}
                 >
-                  Sign in with magic link →
+                  Sign in to the Cat Club →
                 </button>
               )}
             </div>

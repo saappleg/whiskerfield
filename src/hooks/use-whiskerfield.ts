@@ -598,7 +598,7 @@ export function useWhiskerfield() {
 
   async function publishComment(postId: number, body: string) {
     if (!user || !profile) {
-      return 'You must sign in with a magic link before leaving a reply.';
+      return 'You must sign in before leaving a reply.';
     }
 
     const trimmed = body.trim();
