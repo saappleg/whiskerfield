@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { isImageAvatar } from '../lib/avatar';
+import { AvatarImage } from './AvatarImage';
+import { isImageAvatar, normalizeImageUrl } from '../lib/avatar';
 import type { Profile } from '../lib/supabase';
 import type { Pet } from '../types/community';
 
@@ -53,6 +54,7 @@ export function ProfileModal({
   const [customAvatar, setCustomAvatar] = useState(initialIsImage ? (profile?.avatar_url || '') : '');
   const [profileBusy, setProfileBusy] = useState(false);
   const [profileMsg, setProfileMsg] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
+  const [profileImgFailed, setProfileImgFailed] = useState(false);
 
   // Pet form state
   const [editingPetId, setEditingPetId] = useState<number | null>(null);
@@ -64,6 +66,7 @@ export function ProfileModal({
   const [petPhotoUrl, setPetPhotoUrl] = useState('');
   const [petBusy, setPetBusy] = useState(false);
   const [petMsg, setPetMsg] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
+  const [petImgFailed, setPetImgFailed] = useState(false);
 
   // Handlers for profile avatar upload
   function handleProfilePhotoSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -123,6 +126,7 @@ export function ProfileModal({
     setPetAvatarEmoji('🐱');
     setPetPhotoUrl('');
     setPetMsg(null);
+    setPetImgFailed(false);
   }
 
   async function handleSaveProfile(e: { preventDefault: () => void }) {
@@ -130,7 +134,7 @@ export function ProfileModal({
     setProfileBusy(true);
     setProfileMsg(null);
 
-    const chosenAvatar = customAvatar.trim() || avatarUrl;
+    const chosenAvatar = customAvatar.trim() ? normalizeImageUrl(customAvatar.trim()) : avatarUrl;
     const err = await onUpdateProfile(displayName.trim(), handle.trim(), bio.trim(), chosenAvatar);
 
     if (err) {
@@ -150,7 +154,7 @@ export function ProfileModal({
     setPetBusy(true);
     setPetMsg(null);
 
-    const finalAvatar = petPhotoUrl.trim() || petAvatarEmoji || '🐱';
+    const finalAvatar = petPhotoUrl.trim() ? normalizeImageUrl(petPhotoUrl.trim()) : (petAvatarEmoji || '🐱');
 
     if (editingPetId && onUpdatePet) {
       const err = await onUpdatePet(editingPetId, petName.trim(), petBreed.trim(), petAge.trim(), petQuirk.trim(), finalAvatar);
@@ -246,16 +250,12 @@ export function ProfileModal({
                     flexShrink: 0,
                   }}
                 >
-                  {isImageAvatar(currentProfileAvatarSrc) ? (
-                    /* oxlint-disable-next-line next/no-img-element */
-                    <img
-                      src={currentProfileAvatarSrc}
-                      alt="Profile preview"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    PRESET_AVATARS.find((a) => a.key === avatarUrl)?.emoji || avatarUrl || '🐱'
-                  )}
+                  <AvatarImage
+                    src={currentProfileAvatarSrc}
+                    alt="Profile preview"
+                    fallback={PRESET_AVATARS.find((a) => a.key === avatarUrl)?.emoji || avatarUrl || '🐱'}
+                    onLoadError={() => setProfileImgFailed(true)}
+                  />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
@@ -278,7 +278,10 @@ export function ProfileModal({
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={handleProfilePhotoSelect}
+                        onChange={(e) => {
+                          setProfileImgFailed(false);
+                          handleProfilePhotoSelect(e);
+                        }}
                         style={{ display: 'none' }}
                       />
                     </label>
@@ -289,6 +292,7 @@ export function ProfileModal({
                         onClick={() => {
                           setCustomAvatar('');
                           setAvatarUrl('cat_orange');
+                          setProfileImgFailed(false);
                         }}
                         style={{
                           border: '1px solid var(--line)',
@@ -320,19 +324,40 @@ export function ProfileModal({
                   value={customAvatar.startsWith('data:') ? '' : customAvatar}
                   onChange={(e) => {
                     setCustomAvatar(e.target.value);
+                    setProfileImgFailed(false);
                     if (e.target.value) setAvatarUrl('');
                   }}
                   style={{
                     width: '100%',
                     padding: '.5rem .75rem',
                     fontSize: '.8rem',
-                    border: '1px solid var(--line)',
+                    border: profileImgFailed ? '1px solid var(--coral)' : '1px solid var(--line)',
                     background: 'var(--cream)',
                     color: 'var(--ink)',
                     borderRadius: '6px',
                     boxSizing: 'border-box',
                   }}
                 />
+                {profileImgFailed && customAvatar && !customAvatar.startsWith('data:') && (
+                  <div
+                    style={{
+                      padding: '.6rem .8rem',
+                      background: 'rgba(243,108,77,.1)',
+                      border: '1px solid var(--coral)',
+                      borderRadius: '8px',
+                      marginTop: '.5rem',
+                    }}
+                  >
+                    <b style={{ color: 'var(--coral)', fontSize: '.76rem', display: 'block', marginBottom: '.2rem' }}>
+                      ⚠️ Could not load image from this web link
+                    </b>
+                    <p style={{ color: 'var(--ink)', fontSize: '.72rem', margin: 0, lineHeight: 1.4 }}>
+                      External hosts (such as Discord, Pinterest, Google Photos, or Reddit) frequently block other sites from displaying their images directly.
+                      <br />
+                      <strong>Recommended:</strong> Right-click or save the picture to your device, then click <strong>&quot;📷 Upload Photo&quot;</strong> above to upload it directly!
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Preset Emoji Avatars */}
@@ -489,16 +514,11 @@ export function ProfileModal({
                         flexShrink: 0,
                       }}
                     >
-                      {isImageAvatar(pet.avatar_url) ? (
-                        /* oxlint-disable-next-line next/no-img-element */
-                        <img
-                          src={pet.avatar_url || ''}
-                          alt={pet.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                      ) : (
-                        pet.avatar_url || '🐱'
-                      )}
+                      <AvatarImage
+                        src={pet.avatar_url}
+                        alt={pet.name}
+                        fallback={pet.avatar_url || '🐱'}
+                      />
                     </div>
 
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -604,16 +624,12 @@ export function ProfileModal({
                       flexShrink: 0,
                     }}
                   >
-                    {isImageAvatar(petPhotoUrl) ? (
-                      /* oxlint-disable-next-line next/no-img-element */
-                      <img
-                        src={petPhotoUrl}
-                        alt="Cat preview"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    ) : (
-                      petAvatarEmoji || '🐱'
-                    )}
+                    <AvatarImage
+                      src={petPhotoUrl}
+                      alt="Cat preview"
+                      fallback={petAvatarEmoji || '🐱'}
+                      onLoadError={() => setPetImgFailed(true)}
+                    />
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
@@ -636,7 +652,10 @@ export function ProfileModal({
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={handlePetPhotoSelect}
+                          onChange={(e) => {
+                            setPetImgFailed(false);
+                            handlePetPhotoSelect(e);
+                          }}
                           style={{ display: 'none' }}
                         />
                       </label>
@@ -644,7 +663,10 @@ export function ProfileModal({
                       {petPhotoUrl && (
                         <button
                           type="button"
-                          onClick={() => setPetPhotoUrl('')}
+                          onClick={() => {
+                            setPetPhotoUrl('');
+                            setPetImgFailed(false);
+                          }}
                           style={{
                             border: '1px solid var(--line)',
                             background: 'transparent',
@@ -671,18 +693,39 @@ export function ProfileModal({
                     type="url"
                     placeholder="Or paste cat photo URL (https://…)"
                     value={petPhotoUrl.startsWith('data:') ? '' : petPhotoUrl}
-                    onChange={(e) => setPetPhotoUrl(e.target.value)}
+                    onChange={(e) => {
+                      setPetPhotoUrl(e.target.value);
+                      setPetImgFailed(false);
+                    }}
                     style={{
                       width: '100%',
                       padding: '.45rem .65rem',
                       fontSize: '.78rem',
-                      border: '1px solid var(--line)',
+                      border: petImgFailed ? '1px solid var(--coral)' : '1px solid var(--line)',
                       background: 'var(--cream)',
                       color: 'var(--ink)',
                       borderRadius: '6px',
                       boxSizing: 'border-box',
                     }}
                   />
+                  {petImgFailed && petPhotoUrl && !petPhotoUrl.startsWith('data:') && (
+                    <div
+                      style={{
+                        padding: '.6rem .8rem',
+                        background: 'rgba(243,108,77,.1)',
+                        border: '1px solid var(--coral)',
+                        borderRadius: '8px',
+                        marginTop: '.5rem',
+                      }}
+                    >
+                      <b style={{ color: 'var(--coral)', fontSize: '.76rem', display: 'block', marginBottom: '.2rem' }}>
+                        ⚠️ Could not load image from this web link
+                      </b>
+                      <p style={{ color: 'var(--ink)', fontSize: '.72rem', margin: 0, lineHeight: 1.4 }}>
+                        The host site may block hotlinking. You can save the photo to your device and click <strong>&quot;📷 Upload Photo&quot;</strong> above!
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <div>

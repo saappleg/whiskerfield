@@ -1,5 +1,5 @@
 import { Logo } from './Logo';
-import { isImageAvatar } from '../lib/avatar';
+import { AvatarImage } from './AvatarImage';
 import type { Profile } from '../lib/supabase';
 import type { PageRoute } from '../lib/router';
 import type { Theme } from '../lib/theme';
@@ -91,16 +91,12 @@ export function Header({
                   color: 'var(--ink)',
                 }}
               >
-                {isImageAvatar(profile?.avatar_url) ? (
-                  /* oxlint-disable-next-line next/no-img-element */
-                  <img
-                    src={profile?.avatar_url}
-                    alt=""
-                    style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <span>{profile?.avatar_url || '🐾'}</span>
-                )}
+                <AvatarImage
+                  src={profile?.avatar_url}
+                  alt=""
+                  fallback={<span>{profile?.avatar_url || '🐾'}</span>}
+                  style={{ width: '18px', height: '18px', borderRadius: '50%' }}
+                />
                 <span>@{profile?.handle || 'catfriend'}</span>
               </button>
               <button type="button" onClick={onSignOut}>Sign out</button>

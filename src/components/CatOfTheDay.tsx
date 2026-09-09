@@ -1,4 +1,4 @@
-import { isImageAvatar } from '../lib/avatar';
+import { AvatarImage } from './AvatarImage';
 import type { Pet } from '../types/community';
 
 type CatOfTheDayProps = {
@@ -84,16 +84,11 @@ export function CatOfTheDay({ userPets = [], onSelectPetFilter }: CatOfTheDayPro
             flexShrink: 0,
           }}
         >
-          {isImageAvatar(featuredCat.avatar_url) ? (
-            /* oxlint-disable-next-line next/no-img-element */
-            <img
-              src={featuredCat.avatar_url || ''}
-              alt={featuredCat.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          ) : (
-            featuredCat.avatar_url || '🐱'
-          )}
+          <AvatarImage
+            src={featuredCat.avatar_url}
+            alt={featuredCat.name}
+            fallback={featuredCat.avatar_url || '🐱'}
+          />
         </div>
 
         <div>

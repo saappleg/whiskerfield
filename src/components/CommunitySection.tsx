@@ -5,6 +5,7 @@ import { isImageAvatar } from '../lib/avatar';
 import { useBookmarks } from '../lib/bookmarks';
 import type { Profile } from '../lib/supabase';
 import type { CommunityComment, CommunityPost, Pet, ReactionType, Topic } from '../types/community';
+import { AvatarImage } from './AvatarImage';
 import { CatOfTheDay } from './CatOfTheDay';
 import { PostCard } from './PostCard';
 import { PromptCard } from './PromptCard';
@@ -132,12 +133,11 @@ export function CommunitySection({
           <form className="composer" onSubmit={publish}>
             <div className="composer-head">
               <span className="avatar" style={{ overflow: 'hidden' }}>
-                {isImageAvatar(profile?.avatar_url) ? (
-                  /* oxlint-disable-next-line next/no-img-element */
-                  <img src={profile?.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  profile?.display_name?.slice(0, 1) || 'W'
-                )}
+                <AvatarImage
+                  src={profile?.avatar_url}
+                  alt=""
+                  fallback={profile?.display_name?.slice(0, 1) || 'W'}
+                />
               </span>
               <div>
                 <b>{user ? `Posting as ${profile?.display_name || 'cat friend'}` : 'Your cat club note'}</b>
