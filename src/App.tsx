@@ -1,15 +1,16 @@
-import { lazy, Suspense, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { AuthDialog } from './components/AuthDialog';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { ProfileModal } from './components/ProfileModal';
 import { useWhiskerfield } from './hooks/use-whiskerfield';
+import { lazyWithReload } from './lib/lazy-with-reload';
 import { useRouter } from './lib/router';
 import { useTheme } from './lib/theme';
 import { HomePage } from './pages/HomePage';
-const MembersPage = lazy(() => import('./pages/MembersPage').then((module) => ({ default: module.MembersPage })));
-const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then((module) => ({ default: module.PrivacyPage })));
-const StoriesPage = lazy(() => import('./pages/StoriesPage').then((module) => ({ default: module.StoriesPage })));
+const MembersPage = lazyWithReload('MembersPage', () => import('./pages/MembersPage').then((module) => ({ default: module.MembersPage })));
+const PrivacyPage = lazyWithReload('PrivacyPage', () => import('./pages/PrivacyPage').then((module) => ({ default: module.PrivacyPage })));
+const StoriesPage = lazyWithReload('StoriesPage', () => import('./pages/StoriesPage').then((module) => ({ default: module.StoriesPage })));
 
 export default function App() {
   const [authOpen, setAuthOpen] = useState(false);
