@@ -22,6 +22,16 @@ function getAnchor(hash: string) {
   return anchorIndex === -1 ? '' : decodeURIComponent(hash.slice(anchorIndex + 1));
 }
 
+function scrollToAnchor(anchor: string, attempt = 0) {
+  if (!anchor || typeof window === 'undefined') return;
+  const target = document.getElementById(anchor);
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  if (attempt < 20) window.setTimeout(() => scrollToAnchor(anchor, attempt + 1), 50);
+}
+
 export function useRouter() {
   const [currentRoute, setCurrentRoute] = useState<PageRoute>(() => {
     return typeof window !== 'undefined' ? parseRoute(window.location.hash) : 'home';
@@ -33,11 +43,7 @@ export function useRouter() {
       setCurrentRoute(nextRoute);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       const anchor = getAnchor(window.location.hash);
-      if (anchor) {
-        window.setTimeout(() => {
-          document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 0);
-      }
+      scrollToAnchor(anchor);
     };
 
     window.addEventListener('hashchange', handleHashChange);
