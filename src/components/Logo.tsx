@@ -77,3 +77,4 @@ export function Logo({ size = 32, showWordmark = true, className = 'wordmark' }:
     </span>
   );
 }
+
