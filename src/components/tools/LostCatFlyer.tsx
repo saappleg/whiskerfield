@@ -59,6 +59,20 @@ export function LostCatFlyer({ pet, pets = [], onSelectPet, onClose }: LostCatFl
     }));
   }
 
+  const activePet = pets.find((p) => p.id === selectedPetId) || pet;
+
+  function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) return;
+    const reader = new FileReader();
+    reader.onload = (loadEvt) => {
+      const dataUrl = loadEvt.target?.result as string;
+      updateField('photoUrl', dataUrl);
+    };
+    reader.readAsDataURL(file);
+  }
+
   function handlePetChange(pId: number) {
     setSelectedPetId(pId);
     const chosen = pets.find((p) => p.id === pId);
@@ -198,6 +212,71 @@ Please check under your porch, shed, garage, or crawlspace! Thank you so much!`;
             </button>
           )}
         </div>
+      </div>
+
+      {/* Flyer Photo Selector (Hidden in Print) */}
+      <div className="no-print" style={{ display: 'flex', alignItems: 'center', gap: '.6rem', flexWrap: 'wrap', marginBottom: '1rem', background: 'var(--cream)', padding: '.75rem 1rem', borderRadius: '8px', border: '1px solid var(--line)' }}>
+        <span style={{ fontSize: '.76rem', fontWeight: 800, color: 'var(--ink)' }}>Flyer Photo:</span>
+        {activePet?.avatar_url && (
+          <button
+            type="button"
+            onClick={() => updateField('photoUrl', activePet.avatar_url || '')}
+            style={{
+              fontSize: '.74rem',
+              fontWeight: 800,
+              padding: '.3rem .75rem',
+              background: 'rgba(243,108,77,.14)',
+              color: 'var(--coral)',
+              border: '1px solid rgba(243,108,77,.3)',
+              borderRadius: '999px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '.3rem',
+            }}
+          >
+            📷 Use {activePet.name}’s Profile Photo
+          </button>
+        )}
+        <label
+          style={{
+            cursor: 'pointer',
+            padding: '.3rem .75rem',
+            fontSize: '.74rem',
+            borderRadius: '999px',
+            background: 'var(--paper)',
+            color: 'var(--ink)',
+            border: '1px solid var(--line)',
+            fontWeight: 700,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '.3rem',
+          }}
+        >
+          📁 Upload Photo
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoUpload}
+            style={{ display: 'none' }}
+          />
+        </label>
+        {data.photoUrl && (
+          <button
+            type="button"
+            onClick={() => updateField('photoUrl', '')}
+            style={{
+              border: 0,
+              background: 'transparent',
+              color: '#888',
+              fontSize: '.72rem',
+              cursor: 'pointer',
+              padding: '.2rem .4rem',
+            }}
+          >
+            ✕ Remove photo
+          </button>
+        )}
       </div>
 
       {/* Editor Controls Grid (Hidden in Print) */}

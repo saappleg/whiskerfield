@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import type { User } from '@supabase/supabase-js';
+import type { Pet } from '../../types/community';
 import { CatAgeCalculator } from './CatAgeCalculator';
 import { CatHealthBinder } from './CatHealthBinder';
 import { CatSitterGuide } from './CatSitterGuide';
@@ -6,7 +8,12 @@ import { HydrationCalculator } from './HydrationCalculator';
 import { LostCatFlyer } from './LostCatFlyer';
 import { ToxicPlantChecker } from './ToxicPlantChecker';
 
-export function CareToolsSection() {
+type CareToolsSectionProps = {
+  user?: User | null;
+  userPets?: Pet[];
+};
+
+export function CareToolsSection({ userPets = [] }: CareToolsSectionProps) {
   const [activeTool, setActiveTool] = useState<
     'age' | 'safety' | 'hydration' | 'sitter' | 'binder' | 'lost'
   >('age');
@@ -132,9 +139,9 @@ export function CareToolsSection() {
       {activeTool === 'age' && <CatAgeCalculator />}
       {activeTool === 'safety' && <ToxicPlantChecker />}
       {activeTool === 'hydration' && <HydrationCalculator />}
-      {activeTool === 'sitter' && <CatSitterGuide />}
-      {activeTool === 'binder' && <CatHealthBinder />}
-      {activeTool === 'lost' && <LostCatFlyer />}
+      {activeTool === 'sitter' && <CatSitterGuide pets={userPets} pet={userPets[0]} />}
+      {activeTool === 'binder' && <CatHealthBinder pets={userPets} pet={userPets[0]} />}
+      {activeTool === 'lost' && <LostCatFlyer pets={userPets} pet={userPets[0]} />}
     </section>
   );
 }

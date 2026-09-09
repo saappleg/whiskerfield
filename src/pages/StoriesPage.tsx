@@ -1,8 +1,15 @@
+import type { User } from '@supabase/supabase-js';
 import { AdSlot } from '../components/AdSlot';
 import { JournalSection } from '../components/JournalSection';
 import { CareToolsSection } from '../components/tools/CareToolsSection';
+import type { Pet } from '../types/community';
 
-export function StoriesPage() {
+type StoriesPageProps = {
+  user?: User | null;
+  userPets?: Pet[];
+};
+
+export function StoriesPage({ user, userPets }: StoriesPageProps) {
   return (
     <div className="stories-page" style={{ paddingBottom: '96px' }}>
       <div className="shell" style={{ paddingTop: '80px', marginBottom: '-50px' }}>
@@ -15,7 +22,7 @@ export function StoriesPage() {
         </p>
       </div>
 
-      <CareToolsSection />
+      <CareToolsSection user={user} userPets={userPets} />
       <JournalSection />
       <AdSlot />
     </div>

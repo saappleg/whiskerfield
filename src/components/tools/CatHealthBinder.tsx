@@ -35,6 +35,7 @@ type HealthBinderData = {
   bloodType: string;
   allergies: string;
   chronicConditions: string;
+  photoUrl: string;
   weights: WeightEntry[];
   vaccines: VaccineEntry[];
 };
@@ -47,13 +48,18 @@ export function CatHealthBinder({ pet, pets = [], onSelectPet, onClose }: CatHea
     const saved = localStorage.getItem(`wf_health_binder_${initialPet?.id || 'default'}`);
     if (saved) {
       try {
-        return JSON.parse(saved) as HealthBinderData;
+        const parsed = JSON.parse(saved) as HealthBinderData;
+        return {
+          ...parsed,
+          photoUrl: parsed.photoUrl || initialPet?.avatar_url || '',
+        };
       } catch {
         // fallback
       }
     }
     return {
       catName: initialPet?.name || '',
+      photoUrl: initialPet?.avatar_url || '',
       microchipNumber: '985141002348912',
       microchipRegistry: 'HomeAgain (homeagain.com)',
       insuranceProvider: 'Trupanion',
@@ -93,7 +99,12 @@ export function CatHealthBinder({ pet, pets = [], onSelectPet, onClose }: CatHea
     const saved = localStorage.getItem(`wf_health_binder_${pet.id}`);
     if (saved) {
       try {
-        setData(JSON.parse(saved) as HealthBinderData);
+        const parsed = JSON.parse(saved) as HealthBinderData;
+        setData({
+          ...parsed,
+          photoUrl: pet.avatar_url || parsed.photoUrl || '',
+          catName: pet.name || parsed.catName,
+        });
       } catch {
         // ignore
       }
@@ -101,8 +112,23 @@ export function CatHealthBinder({ pet, pets = [], onSelectPet, onClose }: CatHea
       setData((prev) => ({
         ...prev,
         catName: pet.name,
+        photoUrl: pet.avatar_url || prev.photoUrl,
       }));
     }
+  }
+
+  const activePet = pets.find((p) => p.id === selectedPetId) || pet;
+
+  function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) return;
+    const reader = new FileReader();
+    reader.onload = (loadEvt) => {
+      const dataUrl = loadEvt.target?.result as string;
+      updateField('photoUrl', dataUrl);
+    };
+    reader.readAsDataURL(file);
   }
 
   function handlePetChange(pId: number) {
@@ -113,7 +139,12 @@ export function CatHealthBinder({ pet, pets = [], onSelectPet, onClose }: CatHea
       const saved = localStorage.getItem(`wf_health_binder_${chosen.id}`);
       if (saved) {
         try {
-          setData(JSON.parse(saved) as HealthBinderData);
+          const parsed = JSON.parse(saved) as HealthBinderData;
+          setData({
+            ...parsed,
+            photoUrl: chosen.avatar_url || parsed.photoUrl || '',
+            catName: chosen.name || parsed.catName,
+          });
           return;
         } catch {
           // ignore
@@ -122,6 +153,7 @@ export function CatHealthBinder({ pet, pets = [], onSelectPet, onClose }: CatHea
       setData((prev) => ({
         ...prev,
         catName: chosen.name,
+        photoUrl: chosen.avatar_url || '',
       }));
     }
   }
@@ -295,7 +327,7 @@ export function CatHealthBinder({ pet, pets = [], onSelectPet, onClose }: CatHea
               flexShrink: 0,
             }}
           >
-            <AvatarImage src={pet?.avatar_url} alt={data.catName} fallback="🐱" />
+            <AvatarImage src={data.photoUrl || activePet?.avatar_url} alt={data.catName} fallback="🐱" />
           </div>
 
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -310,6 +342,70 @@ export function CatHealthBinder({ pet, pets = [], onSelectPet, onClose }: CatHea
             <p style={{ margin: '.25rem 0 0', fontSize: '.85rem', color: '#555' }}>
               {[pet?.breed, pet?.age].filter(Boolean).join(' · ') || 'Feline Patient'}
             </p>
+
+            <div className="no-print" style={{ display: 'flex', gap: '.4rem', alignItems: 'center', flexWrap: 'wrap', marginTop: '.6rem' }}>
+              {activePet?.avatar_url && (
+                <button
+                  type="button"
+                  onClick={() => updateField('photoUrl', activePet.avatar_url || '')}
+                  title={`Pull photo from ${activePet.name}'s profile`}
+                  style={{
+                    fontSize: '.72rem',
+                    fontWeight: 800,
+                    padding: '.25rem .65rem',
+                    borderRadius: '999px',
+                    background: 'rgba(46,90,68,.12)',
+                    color: '#2e5a44',
+                    border: '1px solid rgba(46,90,68,.25)',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '.3rem',
+                  }}
+                >
+                  📷 Use {activePet.name}’s Profile Photo
+                </button>
+              )}
+              <label
+                style={{
+                  cursor: 'pointer',
+                  padding: '.25rem .65rem',
+                  fontSize: '.72rem',
+                  borderRadius: '999px',
+                  background: 'var(--cream)',
+                  color: 'var(--ink)',
+                  border: '1px solid var(--line)',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '.3rem',
+                }}
+              >
+                📁 Upload Photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  style={{ display: 'none' }}
+                />
+              </label>
+              {data.photoUrl && (
+                <button
+                  type="button"
+                  onClick={() => updateField('photoUrl', '')}
+                  style={{
+                    border: 0,
+                    background: 'transparent',
+                    color: '#888',
+                    fontSize: '.7rem',
+                    cursor: 'pointer',
+                    padding: '.2rem',
+                  }}
+                >
+                  ✕ Clear
+                </button>
+              )}
+            </div>
           </div>
 
           {latestWeight && (

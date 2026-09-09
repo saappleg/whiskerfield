@@ -91,6 +91,20 @@ export function CatSitterGuide({ pet, pets = [], onSelectPet, onClose }: CatSitt
     }
   }
 
+  const activePet = pets.find((p) => p.id === selectedPetId) || pet;
+
+  function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) return;
+    const reader = new FileReader();
+    reader.onload = (loadEvt) => {
+      const dataUrl = loadEvt.target?.result as string;
+      updateField('photoUrl', dataUrl);
+    };
+    reader.readAsDataURL(file);
+  }
+
   function handlePetChange(pId: number) {
     setSelectedPetId(pId);
     const chosen = pets.find((p) => p.id === pId);
@@ -99,7 +113,14 @@ export function CatSitterGuide({ pet, pets = [], onSelectPet, onClose }: CatSitt
       const saved = localStorage.getItem(`wf_sitter_guide_${chosen.id}`);
       if (saved) {
         try {
-          setData(JSON.parse(saved) as SitterData);
+          const parsed = JSON.parse(saved) as SitterData;
+          setData({
+            ...parsed,
+            photoUrl: chosen.avatar_url || parsed.photoUrl || '',
+            catName: chosen.name || parsed.catName,
+            breed: chosen.breed || parsed.breed,
+            age: chosen.age || parsed.age,
+          });
           return;
         } catch {
           // ignore
@@ -295,6 +316,70 @@ Generated via Whiskerfield Cat Club`;
             <p style={{ margin: '.25rem 0 0', fontSize: '.85rem', color: '#555' }}>
               {[data.breed, data.age].filter(Boolean).join(' · ') || 'Feline Companion'}
             </p>
+
+            <div className="no-print" style={{ display: 'flex', gap: '.4rem', alignItems: 'center', flexWrap: 'wrap', marginTop: '.6rem' }}>
+              {activePet?.avatar_url && (
+                <button
+                  type="button"
+                  onClick={() => updateField('photoUrl', activePet.avatar_url || '')}
+                  title={`Pull photo from ${activePet.name}'s profile`}
+                  style={{
+                    fontSize: '.72rem',
+                    fontWeight: 800,
+                    padding: '.25rem .65rem',
+                    borderRadius: '999px',
+                    background: 'rgba(243,108,77,.1)',
+                    color: 'var(--coral)',
+                    border: '1px solid rgba(243,108,77,.25)',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '.3rem',
+                  }}
+                >
+                  📷 Use {activePet.name}’s Profile Photo
+                </button>
+              )}
+              <label
+                style={{
+                  cursor: 'pointer',
+                  padding: '.25rem .65rem',
+                  fontSize: '.72rem',
+                  borderRadius: '999px',
+                  background: 'var(--cream)',
+                  color: 'var(--ink)',
+                  border: '1px solid var(--line)',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '.3rem',
+                }}
+              >
+                📁 Upload Photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  style={{ display: 'none' }}
+                />
+              </label>
+              {data.photoUrl && (
+                <button
+                  type="button"
+                  onClick={() => updateField('photoUrl', '')}
+                  style={{
+                    border: 0,
+                    background: 'transparent',
+                    color: '#888',
+                    fontSize: '.7rem',
+                    cursor: 'pointer',
+                    padding: '.2rem',
+                  }}
+                >
+                  ✕ Clear
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

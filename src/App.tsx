@@ -43,7 +43,9 @@ export default function App() {
           />
         )}
 
-        {currentRoute === 'stories' && <StoriesPage />}
+        {currentRoute === 'stories' && (
+          <StoriesPage user={community.user} userPets={community.userPets} />
+        )}
 
         {currentRoute === 'members' && (
           <MembersPage
