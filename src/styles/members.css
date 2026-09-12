@@ -42,7 +42,8 @@
 .member-roster-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:.7rem; }
 .member-pet-card { display:flex; align-items:center; gap:.7rem; min-width:0; padding:.8rem; border:1px solid var(--line); background:var(--cream); }
 .member-pet-avatar { width:2.8rem; height:2.8rem; border-radius:50%; background:var(--sun); font-size:.95rem; }
-.member-pet-card h4 { margin:0 0 .15rem; font-size:.95rem; }
+.member-pet-card > div:last-child { min-width:0; }
+.member-pet-card h4 { margin:0 0 .15rem; overflow:hidden; font-size:.95rem; text-overflow:ellipsis; white-space:nowrap; }
 .member-pet-card p, .member-pet-card small { display:block; margin:0; overflow:hidden; color:var(--ink-soft); font-size:.68rem; line-height:1.35; text-overflow:ellipsis; white-space:nowrap; }
 .member-pet-card small { margin-top:.2rem; color:var(--ink); font-size:.65rem; }
 .member-roster-empty { display:flex; align-items:center; justify-content:space-between; width:100%; padding:.8rem; border:1px dashed var(--line); color:var(--ink-soft); font-size:.78rem; font-weight:700; line-height:1.4; text-align:left; }
