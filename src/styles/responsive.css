@@ -10,3 +10,30 @@
   .mobile-navigation a.active { background:var(--mint); }
   .feed-result-count { margin-left:0; width:100%; }
 }
+
+/* Keep text readable when accent cards use dark-mode surfaces. */
+[data-theme="dark"] .editorial-pathway-card.mint,
+[data-theme="dark"] .editorial-pathway-card.blue,
+[data-theme="dark"] .discovery-card.mint,
+[data-theme="dark"] .principle-card,
+[data-theme="dark"] .recommendation-card.mint,
+[data-theme="dark"] .dispatch-story-card.mint,
+[data-theme="dark"] .dispatch-grid article:nth-child(3) {
+  color:#eef6f7;
+}
+
+[data-theme="dark"] .principle-card {
+  border-color:var(--line);
+}
+
+[data-theme="dark"] .principle-card > span {
+  background:#0b1518;
+}
+
+[data-theme="dark"] .recommendation-card.mint dl > div {
+  border-top-color:rgba(238,246,247,.2);
+}
+
+[data-theme="dark"] .dispatch-grid article:nth-child(3) span {
+  color:#b8ccd1;
+}
