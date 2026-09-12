@@ -1,4 +1,4 @@
-import { copyFile, mkdir, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 
 const publisherId = process.env.VITE_ADSENSE_PUBLISHER_ID?.trim()
   || 'pub-2209406347192595';
@@ -11,10 +11,14 @@ const routeDirectories = ['stories', 'care', 'products', 'news', 'privacy', 'mem
 // shell keeps the existing hash router intact while allowing /stories?article=…
 // to resolve to the same public Journal reader.
 await copyFile(distIndexPath, notFoundPath);
+const routeShell = (await readFile(distIndexPath, 'utf8')).replace(
+  '<head>',
+  '<head>\n    <!-- Route shells live in subdirectories; keep Vite assets rooted at the site origin. -->\n    <base href="/" />',
+);
 await Promise.all(routeDirectories.map(async (route) => {
   const routeDirectory = new URL(`../dist/${route}/`, import.meta.url);
   await mkdir(routeDirectory, { recursive: true });
-  await copyFile(distIndexPath, new URL('index.html', routeDirectory));
+  await writeFile(new URL('index.html', routeDirectory), routeShell, 'utf8');
 }));
 
 if (publisherId && /^pub-\d{16}$/.test(publisherId)) {
