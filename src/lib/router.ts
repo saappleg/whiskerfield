@@ -4,7 +4,10 @@ export type PageRoute = 'home' | 'stories' | 'members' | 'care' | 'products' | '
 
 function parseRoute(locationValue: string): PageRoute {
   const clean = locationValue.replace(/^#\/?/, '').replace(/^\/+/, '').toLowerCase().trim();
-  const path = clean.split(/[?#]/, 1)[0];
+  // Static hosting redirects clean routes such as `/stories` to `/stories/`.
+  // Treat both forms as the same app route so deep links still render the
+  // Journal (and its selected article) instead of falling back to Home.
+  const path = clean.split(/[?#]/, 1)[0].replace(/\/+$/, '');
   if (path === 'community' || path === 'cat-club' || path === 'members' || path === 'shelf' || path === 'club') {
     return 'members';
   }

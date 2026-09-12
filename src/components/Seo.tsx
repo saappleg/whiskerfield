@@ -40,7 +40,9 @@ function getRouteFromLocation() {
   if (typeof window === 'undefined') return { route: 'home', articleId: '' };
   const source = window.location.hash || window.location.pathname;
   const clean = source.replace(/^#\/?/, '').replace(/^\/+/, '').toLowerCase();
-  const path = clean.split(/[?#]/, 1)[0];
+  // Keep metadata routing in sync with the app router after static hosts add
+  // a trailing slash to route directories.
+  const path = clean.split(/[?#]/, 1)[0].replace(/\/+$/, '');
   const route = path === 'stories' || path === 'journal' || path === 'articles' || path === 'guides' || path.startsWith('stories/article/') || path.startsWith('stories/member/')
     ? 'stories'
     : path === 'care' || path === 'health' || path === 'wellness'
