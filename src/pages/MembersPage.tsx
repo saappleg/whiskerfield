@@ -1,7 +1,9 @@
 import type { User } from '@supabase/supabase-js';
 import { CommunitySection } from '../components/CommunitySection';
+import { MemberGate } from '../components/MemberGate';
+import { MemberContributionStudio } from '../components/MemberContributionStudio';
 import type { Profile } from '../lib/supabase';
-import type { CommunityComment, CommunityPost, Pet, ReactionType, Topic } from '../types/community';
+import type { CommunityComment, CommunityPost, MemberReview, MemberStory, Pet, ReactionType, ReviewCategory, ReviewVerdict, StoryCategory, Topic } from '../types/community';
 
 type MembersPageProps = {
   user: User | null;
@@ -17,83 +19,47 @@ type MembersPageProps = {
   onReactPost: (postId: number, reaction: ReactionType) => void;
   onReactComment: (commentId: number, reaction: ReactionType) => void;
   onAddComment: (postId: number, body: string) => Promise<string | null>;
+  reviews: MemberReview[];
+  memberStories: MemberStory[];
+  onPublishReview: (productName: string, category: ReviewCategory, rating: number, title: string, body: string, verdict: ReviewVerdict) => Promise<string | null>;
+  onPublishMemberStory: (title: string, category: StoryCategory, body: string, submitForFeature: boolean) => Promise<string | null>;
+  onDeleteReview: (id: number) => Promise<void>;
+  onDeleteMemberStory: (id: number) => Promise<void>;
   onOpenAuth: () => void;
   onOpenProfile: () => void;
 };
 
 export function MembersPage(props: MembersPageProps) {
+  if (!props.user) {
+    return (
+      <div className="members-page" style={{ paddingBottom: '96px' }}>
+        <MemberGate onOpenAuth={props.onOpenAuth} />
+      </div>
+    );
+  }
+
   return (
     <div className="members-page" style={{ paddingBottom: '96px' }}>
-      {!props.user && (
-        <div className="shell" style={{ paddingTop: '48px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', padding: '1rem 1.4rem', background: 'var(--mint)', border: '1px solid var(--line)' }}>
-            <div>
-              <p className="eyebrow" style={{ margin: 0 }}><i /> The Cat Club</p>
-              <h1 style={{ fontSize: '1.35rem', margin: '.25rem 0 0', color: 'var(--ink)' }}>Browse the latest notes, then join the conversation.</h1>
-              <p style={{ margin: '.35rem 0 0', color: 'var(--ink-soft)', fontSize: '.86rem' }}>Read the public feed without an account. A free magic link, email/password, or passkey unlocks posting, replies, and your cat profile.</p>
-            </div>
-            <button type="button" className="button ink" onClick={props.onOpenAuth}>Join free →</button>
-          </div>
+      <div className="shell member-welcome">
+        <div>
+          <p className="eyebrow" style={{ margin: 0 }}><i /> Member Club Active</p>
+          <h2>Welcome back, {props.profile?.display_name || 'Cat Friend'} (@{props.profile?.handle || 'friend'})</h2>
         </div>
-      )}
-      {props.user && (
-      <div className="shell" style={{ paddingTop: '60px', marginBottom: '-60px' }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '1rem',
-            padding: '1rem 1.4rem',
-            background: 'var(--mint)',
-            border: '1px solid var(--line)',
-          }}
-        >
-          <div>
-            <p className="eyebrow" style={{ margin: 0 }}>
-              <i /> Member Club Active
-            </p>
-            <h2 style={{ fontSize: '1.25rem', margin: '.25rem 0 0', color: 'var(--ink)' }}>
-              Welcome back, {props.profile?.display_name || 'Cat Friend'} (@{props.profile?.handle || 'friend'})
-            </h2>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem' }}>
-            <button
-              type="button"
-              onClick={props.onOpenProfile}
-              style={{
-                fontSize: '.72rem',
-                fontWeight: 800,
-                padding: '.35rem .75rem',
-                background: 'var(--cream)',
-                border: '1px solid var(--line)',
-                borderRadius: '999px',
-                color: 'var(--ink)',
-                cursor: 'pointer',
-              }}
-            >
-              ⚙️ Profile &amp; Cats ({props.userPets.length})
-            </button>
-            <span
-              style={{
-                fontSize: '.72rem',
-                fontWeight: 800,
-                padding: '.35rem .75rem',
-                background: 'var(--cream)',
-                border: '1px solid var(--line)',
-                borderRadius: '999px',
-                color: 'var(--coral)',
-              }}
-            >
-              ✓ Club Member
-            </span>
-          </div>
+        <div className="member-welcome-actions">
+          <button type="button" onClick={props.onOpenProfile}>⚙️ Profile &amp; Cats ({props.userPets.length})</button>
+          <span>✓ Club Member</span>
         </div>
       </div>
-      )}
-
       <CommunitySection {...props} />
+      <MemberContributionStudio
+        userId={props.user.id}
+        reviews={props.reviews}
+        stories={props.memberStories}
+        onPublishReview={props.onPublishReview}
+        onPublishStory={props.onPublishMemberStory}
+        onDeleteReview={props.onDeleteReview}
+        onDeleteStory={props.onDeleteMemberStory}
+      />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { lazyWithReload } from './lib/lazy-with-reload';
 import { useRouter } from './lib/router';
 import { useTheme } from './lib/theme';
 import { HomePage } from './pages/HomePage';
+import { DiscoveryPage } from './pages/DiscoveryPage';
 const MembersPage = lazyWithReload('MembersPage', () => import('./pages/MembersPage').then((module) => ({ default: module.MembersPage })));
 const PrivacyPage = lazyWithReload('PrivacyPage', () => import('./pages/PrivacyPage').then((module) => ({ default: module.PrivacyPage })));
 const StoriesPage = lazyWithReload('StoriesPage', () => import('./pages/StoriesPage').then((module) => ({ default: module.StoriesPage })));
@@ -47,8 +48,14 @@ export default function App() {
           )}
 
           {currentRoute === 'stories' && (
-            <StoriesPage user={community.user} userPets={community.userPets} />
+            <StoriesPage user={community.user} userPets={community.userPets} memberStories={community.memberStories} />
           )}
+
+          {currentRoute === 'care' && <DiscoveryPage route="care" />}
+
+          {currentRoute === 'products' && <DiscoveryPage route="products" reviews={community.reviews} user={community.user} onOpenAuth={openAuth} />}
+
+          {currentRoute === 'news' && <DiscoveryPage route="news" />}
 
           {currentRoute === 'members' && (
             <MembersPage
@@ -65,6 +72,12 @@ export default function App() {
               onReactPost={community.reactToPost}
               onReactComment={community.reactToComment}
               onAddComment={community.publishComment}
+              reviews={community.reviews}
+              memberStories={community.memberStories}
+              onPublishReview={community.publishReview}
+              onPublishMemberStory={community.publishMemberStory}
+              onDeleteReview={community.deleteReview}
+              onDeleteMemberStory={community.deleteMemberStory}
               onOpenAuth={openAuth}
               onOpenProfile={openProfile}
             />

@@ -1,20 +1,41 @@
 import { useEffect, useState } from 'react';
 
-export type PageRoute = 'home' | 'stories' | 'members' | 'privacy';
+export type PageRoute = 'home' | 'stories' | 'members' | 'care' | 'products' | 'news' | 'privacy';
 
 function parseRoute(hash: string): PageRoute {
   const clean = hash.replace(/^#\/?/, '').toLowerCase().trim();
-  const path = clean.split('#', 1)[0];
+  const path = clean.split(/[?#]/, 1)[0];
   if (path === 'community' || path === 'cat-club' || path === 'members' || path === 'shelf' || path === 'club') {
     return 'members';
   }
-  if (path === 'stories' || path === 'journal' || path === 'articles' || path === 'guides') {
+  if (path === 'stories' || path === 'journal' || path === 'articles' || path === 'guides' || path.startsWith('stories/article/') || path.startsWith('stories/member/')) {
     return 'stories';
+  }
+  if (path === 'care' || path === 'health' || path === 'wellness') {
+    return 'care';
+  }
+  if (path === 'products' || path === 'reviews' || path === 'product-lab' || path === 'shop') {
+    return 'products';
+  }
+  if (path === 'news' || path === 'dispatch' || path === 'cat-news') {
+    return 'news';
   }
   if (path === 'privacy' || path === 'terms') {
     return 'privacy';
   }
   return 'home';
+}
+
+export function getArticleId(hash: string) {
+  const clean = hash.replace(/^#\/?/, '').trim();
+  const match = clean.match(/^stories\/article\/([^?#/]+)/i);
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
+export function getMemberStoryId(hash: string) {
+  const clean = hash.replace(/^#\/?/, '').trim();
+  const match = clean.match(/^stories\/member\/([^?#/]+)/i);
+  return match ? decodeURIComponent(match[1]) : '';
 }
 
 function getAnchor(hash: string) {

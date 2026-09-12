@@ -9,8 +9,11 @@ export function Footer() {
       <p>For the life you share.</p>
       <div>
         <a href="#/">Home</a>
-        <a href="#/stories">Stories &amp; Guides</a>
-        <a href="#/members">Member Club</a>
+        <a href="#/members">Community</a>
+        <a href="#/care">Care</a>
+        <a href="#/products">Product Lab</a>
+        <a href="#/news">Dispatch</a>
+        <a href="#/stories">Journal</a>
         <a href="#/privacy">Privacy</a>
         <button
           type="button"

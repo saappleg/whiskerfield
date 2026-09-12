@@ -24,6 +24,7 @@ Run `npm run lint` and `npm run build` before publishing.
 ## Supabase setup
 
 1. Apply [`supabase/schema.sql`](supabase/schema.sql) to the Whiskerfield Supabase project.
+   If the project already has the original schema, apply [`supabase/migrations/20260912000432_member_contributions.sql`](supabase/migrations/20260912000432_member_contributions.sql) instead to add member reviews and Journal stories.
 2. In Supabase Auth URL Configuration, set the Site URL to `https://whiskerfield.social` and add the GitHub Pages preview URL while testing.
 3. Copy the project URL and **publishable** API key into GitHub repository secrets named `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`.
 

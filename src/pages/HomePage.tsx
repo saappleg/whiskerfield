@@ -1,4 +1,6 @@
 import { featuredStories, practicalGuides } from '../data/editorial';
+import { previewPosts, topicLabels } from '../data/community';
+import { communityTopics, discoveryHubs, productPrinciples } from '../data/discovery';
 import { Hero } from '../components/Hero';
 
 type HomePageProps = {
@@ -11,181 +13,145 @@ export function HomePage({ onOpenAuth, signedIn }: HomePageProps) {
   const guideHighlights = practicalGuides.slice(0, 3);
 
   return (
-    <div className="home-page" style={{ paddingBottom: '96px' }}>
+    <div className="home-page">
       <Hero onOpenAuth={onOpenAuth} />
 
-      {/* Featured Free Stories */}
-      <section className="story-band" style={{ marginTop: '72px' }}>
-        <div className="shell">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-            <div>
-              <p className="eyebrow light"><i /> Free Journal &amp; Guides</p>
-              <h2 style={{ fontSize: 'clamp(2.2rem, 3.8vw, 3.4rem)', margin: 0 }}>Stories for the life you share</h2>
-            </div>
-            <a href="#/stories" className="button coral">
-              All stories &amp; guides →
-            </a>
+      <section className="shell discovery-section" aria-labelledby="find-your-place">
+        <div className="section-kicker-row">
+          <div>
+            <p className="eyebrow"><i /> A bigger, kinder cat internet</p>
+            <h2 id="find-your-place">Find your place in Whiskerfield.</h2>
           </div>
+          <p>Come for good company, care you can actually use, gear with a point of view, and a quieter way to keep up with the cat world.</p>
+        </div>
+        <div className="discovery-grid">
+          <a href="#/members" className="discovery-card community-card">
+            <p>THE CAT CLUB</p>
+            <h3>Come in. Your cat has a seat saved.</h3>
+            <span>Questions, tiny wins, photo replies, and people who understand why the box is part of the décor.</span>
+            <b>Meet the community →</b>
+          </a>
+          {discoveryHubs.map((hub) => (
+            <a href={`#/${hub.route}`} className={`discovery-card ${hub.accent}`} key={hub.route}>
+              <p>{hub.eyebrow.toUpperCase()}</p>
+              <h3>{hub.title}</h3>
+              <span>{hub.summary}</span>
+              <b>{hub.action} →</b>
+            </a>
+          ))}
+        </div>
+      </section>
 
-          <div className="story-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
+      <section className="shell care-now-panel">
+        <div>
+          <p className="eyebrow light"><i /> Care now</p>
+          <h2>Helpful when something is on your mind.</h2>
+          <p>Open a plant and food safety checker, organize a health binder, create a sitter guide, or find a gentle starting point for the everyday questions.</p>
+        </div>
+        <div className="care-now-actions">
+          <a href="#/stories#tools" className="button care-tool-button">Open free tools →</a>
+          <a href="#/care" className="care-link">Browse care guides →</a>
+        </div>
+      </section>
+
+      <section className="community-showcase">
+        <div className="shell community-showcase-inner">
+          <div className="community-showcase-copy">
+            <p className="eyebrow light"><i /> The social part</p>
+            <h2>For the life that happens between the big moments.</h2>
+            <p>The Cat Club is a calm, member-led feed for help, happy tears, windowsill supervision, and every breed of cat question. It is free to join and designed to feel welcoming from the first post.</p>
+            <div className="community-actions">
+              <a href="#/members" className="button coral">{signedIn ? 'Open the Cat Club →' : 'Join the Cat Club →'}</a>
+              {!signedIn && <button type="button" className="text-link light-link" onClick={onOpenAuth}>Sign in →</button>}
+            </div>
+          </div>
+          <div className="community-topic-list">
+            {communityTopics.map((topic) => (
+              <div className="community-topic" key={topic.title}>
+                <span aria-hidden="true">{topic.icon}</span>
+                <div><h3>{topic.title}</h3><p>{topic.detail}</p></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="shell live-preview-section" aria-labelledby="latest-cat-club">
+        <div className="home-section-heading">
+          <div><p className="eyebrow"><i /> A public look inside the Cat Club</p><h2 id="latest-cat-club">A little of what members are sharing.</h2></div>
+          <a href="#/members" className="button ink">Join to see the full community →</a>
+        </div>
+        <div className="home-post-grid">
+          {previewPosts.slice(0, 3).map((post) => {
+            const profile = Array.isArray(post.profiles) ? post.profiles[0] : post.profiles;
+            const reactionCount = Object.values(post.reactions ?? {}).reduce((sum, count) => sum + (count ?? 0), 0);
+            return (
+              <article className="home-post-preview" key={post.id}>
+                <header><span className="home-post-avatar">{profile?.display_name?.slice(0, 1) || '🐾'}</span><div><b>{profile?.display_name || 'Cat friend'}</b><p>@{profile?.handle || 'whiskerfriend'} · {topicLabels[post.topic]}</p></div></header>
+                <p>{post.body}</p>
+                {post.image_url && <><span className="sr-only">Photo shared with this note</span>{/* oxlint-disable-next-line next/no-img-element -- Static community preview image. */}<img src={post.image_url} alt="A cat-home moment shared by a Whiskerfield member" /></>}
+                <footer><span>🐾 {reactionCount} reactions</span><span>🔒 Sign in to reply</span></footer>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="shell product-home-feature">
+        <div className="product-home-image">
+          {/* oxlint-disable-next-line next/no-img-element -- Static WebP is optimized for this Vite/GitHub Pages site. */}
+          <img src="./images/editorial/product-lab-home.webp" alt="A tabby cat relaxing beside a scratching post, water fountain, and carrier in a sunlit home" width="1536" height="1024" loading="lazy" />
+          <span>Product Lab</span>
+        </div>
+        <div className="product-home-copy">
+          <p className="eyebrow"><i /> A better product shelf</p>
+          <h2>Recommendations should be useful, not just adorable.</h2>
+          <p>We are building product notes around what truly matters in a cat home: a cat using the thing, a person living with it, and no fine-print surprises.</p>
+          <div className="mini-principles">
+            {productPrinciples.map((principle) => <span key={principle.title}>{principle.icon} {principle.title}</span>)}
+          </div>
+          <a href="#/products" className="button ink">Visit Product Lab →</a>
+        </div>
+      </section>
+
+      <section className="story-band story-band-home">
+        <div className="shell">
+          <div className="home-section-heading">
+            <div>
+              <p className="eyebrow light"><i /> From the Whiskerfield journal</p>
+              <h2>Stories for the life you share.</h2>
+            </div>
+            <a href="#/stories" className="button coral">Open the journal →</a>
+          </div>
+          <div className="story-grid home-story-grid">
             <article className="story main-story" id={`story-${leadStory.id}`}>
               <p className="story-meta">{leadStory.category.toUpperCase()} · {leadStory.readTime.toUpperCase()}</p>
               <h2>{leadStory.title}</h2>
               <span className="story-dek">{leadStory.dek}</span>
-              <a href={`#/stories#story-${leadStory.id}`} className="button ink" style={{ marginTop: 'auto', alignSelf: 'flex-start' }}>
-                Read free article →
-              </a>
+              <a href={`#/stories/article/${leadStory.id}`} className="button coral story-button">Read the piece →</a>
             </article>
             <article className="story sun-story" id={`story-${secondStory.id}`}>
               <p className="story-meta">{secondStory.category.toUpperCase()} · {secondStory.readTime.toUpperCase()}</p>
               <h3>{secondStory.title}</h3>
               <span className="story-dek">{secondStory.dek}</span>
-              <a href={`#/stories#story-${secondStory.id}`} className="button ink" style={{ marginTop: 'auto', alignSelf: 'flex-start' }}>
-                Read free article →
-              </a>
+              <a href={`#/stories/article/${secondStory.id}`} className="button ink story-button">Read the piece →</a>
             </article>
           </div>
         </div>
       </section>
 
-      {/* Free Interactive Tools Teaser */}
-      <section className="shell" style={{ marginTop: '60px' }}>
-        <div
-          style={{
-            background: 'var(--moss, #2e5a44)',
-            color: '#fff',
-            borderRadius: '16px',
-            padding: 'clamp(1.8rem, 3.5vw, 2.5rem)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '1.5rem',
-          }}
-        >
-          <div>
-            <p className="eyebrow" style={{ color: '#d8eedf' }}>
-              <i style={{ background: '#74c69d' }} /> Free Interactive Utilities
-            </p>
-            <h3 style={{ fontSize: 'clamp(1.4rem, 2.4vw, 1.9rem)', margin: '.2rem 0 .5rem', color: '#fff' }}>
-              Everyday Cat Care Calculators &amp; Safety Checkers
-            </h3>
-            <p style={{ margin: 0, fontSize: '.9rem', color: '#b7e4c7', maxWidth: '540px', lineHeight: 1.5 }}>
-              Check your cat&apos;s biological human age, search 35+ plants and human foods for toxicity, or calculate custom daily hydration and calorie targets — 100% free and open.
-            </p>
-          </div>
-          <a
-            href="#/stories#tools"
-            className="button"
-            style={{
-              background: '#fff',
-              color: 'var(--moss, #2e5a44)',
-              fontWeight: 800,
-              border: 'none',
-              padding: '.75rem 1.4rem',
-              borderRadius: '999px',
-            }}
-          >
-            Open Cat Care Tools →
-          </a>
+      <section className="shell guide-preview-section">
+        <div className="home-section-heading">
+          <div><p className="eyebrow"><i /> Cat care, at your pace</p><h2>Practical reading for every home.</h2></div>
+          <a href="#/care" className="button ink">Explore the Care Center →</a>
         </div>
-      </section>
-
-      {/* Member Club Showcase */}
-      <section className="shell" style={{ marginTop: '80px' }}>
-        <div
-          style={{
-            background: 'var(--cream)',
-            border: '1px solid var(--line)',
-            padding: 'clamp(2.5rem, 5vw, 4rem)',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '3rem',
-            alignItems: 'center',
-          }}
-        >
-          <div>
-            <p className="eyebrow"><i /> The Member Club</p>
-            <h2 style={{ fontSize: 'clamp(2.2rem, 3.8vw, 3.2rem)', lineHeight: 1.05, margin: '.4rem 0 1.2rem' }}>
-              A private, calm social space for cat lovers.
-            </h2>
-            <p style={{ color: 'var(--ink-soft)', lineHeight: 1.6, fontSize: '1.02rem', marginBottom: '1.8rem' }}>
-              Behind our member panel is the Cat Club — a gentle community where members trade real care notes, celebrate tiny cat quirks, share high-res photos with lightbox galleries, give 7 cat reactions, and share advice with zero spam or ads.
-            </p>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-              <a href="#/members" className="button ink">
-                {signedIn ? 'Enter Member Club →' : 'Join Member Club (Free) →'}
-              </a>
-              {!signedIn && (
-                <button
-                  type="button"
-                  onClick={onOpenAuth}
-                  style={{
-                    border: 0,
-                    background: 'transparent',
-                    color: 'var(--ink)',
-                    fontSize: '.85rem',
-                    fontWeight: 800,
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Sign in to the Cat Club →
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            <div style={{ padding: '1.2rem', background: 'var(--cream)', border: '1px solid var(--line)', borderLeft: '4px solid var(--coral)' }}>
-              <b style={{ fontSize: '.88rem', color: 'var(--ink)' }}>📷 Photo Sharing &amp; Fullscreen Gallery</b>
-              <p style={{ margin: '.3rem 0 0', fontSize: '.8rem', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
-                Attach favorite cat portraits to notes with crisp thumbnails and edge-to-edge lightbox modal viewing.
-              </p>
-            </div>
-            <div style={{ padding: '1.2rem', background: 'var(--cream)', border: '1px solid var(--line)', borderLeft: '4px solid var(--sun)' }}>
-              <b style={{ fontSize: '.88rem', color: 'var(--ink)' }}>🌟 Cat of the Day Spotlight</b>
-              <p style={{ margin: '.3rem 0 0', fontSize: '.8rem', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
-                Every 24 hours, a registered member&apos;s cat is featured front-and-center across the club feed.
-              </p>
-            </div>
-            <div style={{ padding: '1.2rem', background: 'var(--cream)', border: '1px solid var(--line)', borderLeft: '4px solid var(--mint)' }}>
-              <b style={{ fontSize: '.88rem', color: 'var(--ink)' }}>😸 7 Cat Reactions &amp; Replies</b>
-              <p style={{ margin: '.3rem 0 0', fontSize: '.8rem', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
-                Purr, Give a Treat, Love, Laugh, and more on daily notes, with gentle private reply threads.
-              </p>
-            </div>
-            <div style={{ padding: '1.2rem', background: 'var(--cream)', border: '1px solid var(--line)', borderLeft: '4px solid var(--moss, #2e5a44)' }}>
-              <b style={{ fontSize: '.88rem', color: 'var(--ink)' }}>🔖 Saved Notes &amp; Instant Search</b>
-              <p style={{ margin: '.3rem 0 0', fontSize: '.8rem', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
-                Bookmark helpful routines for later with 1 tap, and filter notes instantly by cat name or keyword.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Free Practical Guides Preview */}
-      <section className="shell" style={{ marginTop: '80px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-          <div>
-            <p className="eyebrow"><i /> Care &amp; Routine Guides</p>
-            <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', margin: 0 }}>Practical reading for every home</h2>
-          </div>
-          <a href="#/stories" className="button ink">
-            View all 9 free guides →
-          </a>
-        </div>
-
         <div className="guide-grid">
           {guideHighlights.map((guide) => (
             <article className={`guide-card ${guide.tone}`} key={guide.id} id={`story-${guide.id}`}>
               <p className="guide-meta">{guide.category} · {guide.readTime}</p>
               <h3>{guide.title}</h3>
               <span className="guide-dek">{guide.dek}</span>
-              <a href={`#/stories#story-${guide.id}`} style={{ marginTop: 'auto', paddingTop: '1rem', fontWeight: 800, fontSize: '.82rem', color: 'inherit', textDecoration: 'underline' }}>
-                Read guide →
-              </a>
+              <a href={`#/stories/article/${guide.id}`} className="guide-link">Read guide →</a>
             </article>
           ))}
         </div>

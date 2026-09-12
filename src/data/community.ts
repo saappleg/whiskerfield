@@ -29,7 +29,7 @@ export const previewPosts: CommunityPost[] = [
     body: 'Moved the living room scratcher 18 inches to the left so it aligns with Clover’s morning stretch path. Immediate adoption. Territory really is micro-geography.',
     topic: 'home',
     pet_id: 2,
-    image_url: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=1200&q=80',
+    image_url: './images/editorial/product-lab-home.webp',
     pets: { id: 2, name: 'Clover', breed: 'Tabby', avatar_url: '🐈' },
     created_at: '2026-09-08T11:00:00.000Z',
     reactions: { love: 18, treat: 8, like: 11 },

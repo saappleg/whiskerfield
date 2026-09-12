@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { previewComments, previewPosts } from '../data/community';
+import { previewMemberReviews, previewMemberStories } from '../data/member-contributions';
 import { ensureProfile, isSupabaseConfigured, supabase, type Profile } from '../lib/supabase';
 import { getVisitorId } from '../lib/visitor';
-import type { CommunityComment, CommunityPost, MemberResource, Pet, ReactionCounts, ReactionType, TaggedPet, Topic } from '../types/community';
+import type { CommunityComment, CommunityPost, MemberResource, MemberReview, MemberStory, Pet, ReactionCounts, ReactionType, ReviewCategory, ReviewVerdict, StoryCategory, TaggedPet, Topic } from '../types/community';
 
 function updateReactions(
   currentReactions: ReactionCounts = {},
@@ -40,6 +41,8 @@ export function useWhiskerfield() {
   const [posts, setPosts] = useState<CommunityPost[]>(previewPosts);
   const [comments, setComments] = useState<CommunityComment[]>(previewComments);
   const [resources, setResources] = useState<MemberResource[]>([]);
+  const [reviews, setReviews] = useState<MemberReview[]>(previewMemberReviews);
+  const [memberStories, setMemberStories] = useState<MemberStory[]>(previewMemberStories);
   const [isLoadingFeed, setIsLoadingFeed] = useState(isSupabaseConfigured);
   const [feedError, setFeedError] = useState('');
   const isFetchingRef = useRef(false);
@@ -91,7 +94,7 @@ export function useWhiskerfield() {
     setFeedError('');
 
     try {
-      const [postsRes, commentsRes, reactionsRes] = await Promise.all([
+      const [postsRes, commentsRes, reactionsRes, reviewsRes, storiesRes] = await Promise.all([
         supabase
           .from('community_posts')
           .select('id, author_id, body, topic, pet_id, pet_ids, image_url, created_at, profiles(display_name, handle, avatar_url), pets(id, name, breed, avatar_url)')
@@ -108,6 +111,21 @@ export function useWhiskerfield() {
           .from('community_reactions')
           .select('target_type, target_id, user_identifier, reaction')
           .limit(2000),
+        supabase
+          .from('member_reviews')
+          .select('id, author_id, product_name, product_category, rating, title, body, verdict, is_published, created_at, profiles(display_name, handle, avatar_url)')
+          .eq('is_published', true)
+          .order('created_at', { ascending: false })
+          .order('id', { ascending: false })
+          .limit(40),
+        supabase
+          .from('member_stories')
+          .select('id, author_id, title, category, body, submitted_for_feature, is_featured, is_published, created_at, profiles(display_name, handle, avatar_url)')
+          .eq('is_published', true)
+          .order('is_featured', { ascending: false })
+          .order('created_at', { ascending: false })
+          .order('id', { ascending: false })
+          .limit(40),
       ]);
 
       if (postsRes.error) {
@@ -209,6 +227,20 @@ export function useWhiskerfield() {
         };
       });
       setComments(mergedComments);
+
+      const dbReviews = reviewsRes.error ? [] : (reviewsRes.data || []) as unknown as MemberReview[];
+      const dbReviewIds = new Set(dbReviews.map((review) => review.id));
+      setReviews([
+        ...dbReviews,
+        ...previewMemberReviews.filter((review) => !dbReviewIds.has(review.id)),
+      ]);
+
+      const dbStories = storiesRes.error ? [] : (storiesRes.data || []) as unknown as MemberStory[];
+      const dbStoryIds = new Set(dbStories.map((story) => story.id));
+      setMemberStories([
+        ...dbStories,
+        ...previewMemberStories.filter((story) => !dbStoryIds.has(story.id)),
+      ]);
     } finally {
       isFetchingRef.current = false;
       setIsLoadingFeed(false);
@@ -257,6 +289,12 @@ export function useWhiskerfield() {
         void refreshFeed();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'community_posts' }, () => {
+        void refreshFeed();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'member_reviews' }, () => {
+        void refreshFeed();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'member_stories' }, () => {
         void refreshFeed();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pets' }, () => {
@@ -532,6 +570,116 @@ export function useWhiskerfield() {
     setPosts((current) => current.filter((post) => post.id !== id));
   }
 
+  async function publishReview(
+    productName: string,
+    productCategory: ReviewCategory,
+    rating: number,
+    title: string,
+    body: string,
+    verdict: ReviewVerdict,
+  ) {
+    if (!user || !profile) return 'Sign in before adding your experience to the Product Lab.';
+    const trimmedProduct = productName.trim();
+    const trimmedTitle = title.trim();
+    const trimmedBody = body.trim();
+    if (trimmedProduct.length < 2 || trimmedProduct.length > 120) return 'Add a product name between 2 and 120 characters.';
+    if (trimmedTitle.length < 3 || trimmedTitle.length > 120) return 'Add a review title between 3 and 120 characters.';
+    if (trimmedBody.length < 20 || trimmedBody.length > 2000) return 'Reviews need to be between 20 and 2,000 characters.';
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) return 'Choose a rating from 1 to 5 stars.';
+
+    if (supabase) {
+      const result = await supabase
+        .from('member_reviews')
+        .insert({
+          author_id: user.id,
+          product_name: trimmedProduct,
+          product_category: productCategory,
+          rating,
+          title: trimmedTitle,
+          body: trimmedBody,
+          verdict,
+          is_published: true,
+        })
+        .select('id, author_id, product_name, product_category, rating, title, body, verdict, is_published, created_at, profiles(display_name, handle, avatar_url)')
+        .single();
+      if (result.error) return result.error.message;
+      if (result.data) {
+        setReviews((current) => [result.data as unknown as MemberReview, ...current.filter((review) => review.id !== result.data.id)]);
+        return null;
+      }
+    }
+
+    const optimisticReview: MemberReview = {
+      id: Date.now(),
+      author_id: user.id,
+      product_name: trimmedProduct,
+      product_category: productCategory,
+      rating,
+      title: trimmedTitle,
+      body: trimmedBody,
+      verdict,
+      is_published: true,
+      created_at: new Date().toISOString(),
+      profiles: { display_name: profile.display_name, handle: profile.handle, avatar_url: profile.avatar_url },
+    };
+    setReviews((current) => [optimisticReview, ...current]);
+    return null;
+  }
+
+  async function publishMemberStory(title: string, category: StoryCategory, body: string, submitForFeature: boolean) {
+    if (!user || !profile) return 'Sign in before sending a story to the Journal.';
+    const trimmedTitle = title.trim();
+    const trimmedBody = body.trim();
+    if (trimmedTitle.length < 3 || trimmedTitle.length > 140) return 'Story titles need to be between 3 and 140 characters.';
+    if (trimmedBody.length < 40 || trimmedBody.length > 5000) return 'Stories need to be between 40 and 5,000 characters.';
+
+    if (supabase) {
+      const result = await supabase
+        .from('member_stories')
+        .insert({
+          author_id: user.id,
+          title: trimmedTitle,
+          category,
+          body: trimmedBody,
+          submitted_for_feature: submitForFeature,
+          is_featured: false,
+          is_published: true,
+        })
+        .select('id, author_id, title, category, body, submitted_for_feature, is_featured, is_published, created_at, profiles(display_name, handle, avatar_url)')
+        .single();
+      if (result.error) return result.error.message;
+      if (result.data) {
+        setMemberStories((current) => [result.data as unknown as MemberStory, ...current.filter((story) => story.id !== result.data.id)]);
+        return null;
+      }
+    }
+
+    const optimisticStory: MemberStory = {
+      id: Date.now(),
+      author_id: user.id,
+      title: trimmedTitle,
+      category,
+      body: trimmedBody,
+      submitted_for_feature: submitForFeature,
+      is_featured: false,
+      is_published: true,
+      created_at: new Date().toISOString(),
+      profiles: { display_name: profile.display_name, handle: profile.handle, avatar_url: profile.avatar_url },
+    };
+    setMemberStories((current) => [optimisticStory, ...current]);
+    return null;
+  }
+
+  async function deleteReview(id: number) {
+    if (supabase) await supabase.from('member_reviews').delete().eq('id', id);
+    setReviews((current) => current.filter((review) => review.id !== id));
+  }
+
+  async function deleteMemberStory(id: number) {
+    if (supabase) await supabase.from('member_stories').delete().eq('id', id);
+    setMemberStories((current) => current.filter((story) => story.id !== id));
+  }
+
   function reactToPost(postId: number, reaction: ReactionType) {
     const visitorId = user?.id || getVisitorId();
     let isRemoving = false;
@@ -675,6 +823,8 @@ export function useWhiskerfield() {
     posts,
     comments,
     resources,
+    reviews,
+    memberStories,
     isLoadingFeed,
     feedError,
     refreshFeed,
@@ -692,6 +842,10 @@ export function useWhiskerfield() {
     deletePet,
     publishPost,
     deletePost,
+    publishReview,
+    deleteReview,
+    publishMemberStory,
+    deleteMemberStory,
     reactToPost,
     reactToComment,
     publishComment,

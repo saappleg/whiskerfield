@@ -78,15 +78,21 @@ export function Header({
           <a href="#/" aria-label="Whiskerfield home" style={{ textDecoration: 'none' }}>
             <Logo size={32} />
           </a>
-          <nav aria-label="Main navigation">
-            <a href="#/" className={currentRoute === 'home' ? 'active' : ''} aria-current={currentRoute === 'home' ? 'page' : undefined}>
-              Home
+          <nav className="desktop-navigation" aria-label="Main navigation">
+            <a href="#/members" className={currentRoute === 'members' ? 'active' : ''} aria-current={currentRoute === 'members' ? 'page' : undefined}>
+              Community
+            </a>
+            <a href="#/care" className={currentRoute === 'care' ? 'active' : ''} aria-current={currentRoute === 'care' ? 'page' : undefined}>
+              Care
+            </a>
+            <a href="#/products" className={currentRoute === 'products' ? 'active' : ''} aria-current={currentRoute === 'products' ? 'page' : undefined}>
+              Product Lab
+            </a>
+            <a href="#/news" className={currentRoute === 'news' ? 'active' : ''} aria-current={currentRoute === 'news' ? 'page' : undefined}>
+              Dispatch
             </a>
             <a href="#/stories" className={currentRoute === 'stories' ? 'active' : ''} aria-current={currentRoute === 'stories' ? 'page' : undefined}>
-              Stories &amp; Guides
-            </a>
-            <a href="#/members" className={currentRoute === 'members' ? 'active' : ''} aria-current={currentRoute === 'members' ? 'page' : undefined}>
-              Member Club
+              Journal
             </a>
           </nav>
           <button
@@ -142,11 +148,20 @@ export function Header({
             <a href="#/" onClick={closeMobileMenu} className={currentRoute === 'home' ? 'active' : ''} aria-current={currentRoute === 'home' ? 'page' : undefined}>
               Home
             </a>
-            <a href="#/stories" onClick={closeMobileMenu} className={currentRoute === 'stories' ? 'active' : ''} aria-current={currentRoute === 'stories' ? 'page' : undefined}>
-              Stories &amp; Guides
-            </a>
             <a href="#/members" onClick={closeMobileMenu} className={currentRoute === 'members' ? 'active' : ''} aria-current={currentRoute === 'members' ? 'page' : undefined}>
-              Member Club
+              Community
+            </a>
+            <a href="#/care" onClick={closeMobileMenu} className={currentRoute === 'care' ? 'active' : ''} aria-current={currentRoute === 'care' ? 'page' : undefined}>
+              Care Center
+            </a>
+            <a href="#/products" onClick={closeMobileMenu} className={currentRoute === 'products' ? 'active' : ''} aria-current={currentRoute === 'products' ? 'page' : undefined}>
+              Product Lab
+            </a>
+            <a href="#/news" onClick={closeMobileMenu} className={currentRoute === 'news' ? 'active' : ''} aria-current={currentRoute === 'news' ? 'page' : undefined}>
+              The Dispatch
+            </a>
+            <a href="#/stories" onClick={closeMobileMenu} className={currentRoute === 'stories' ? 'active' : ''} aria-current={currentRoute === 'stories' ? 'page' : undefined}>
+              Journal
             </a>
           </nav>
         )}

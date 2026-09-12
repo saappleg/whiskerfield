@@ -27,6 +27,12 @@
 .prompt-link { margin-top:.4rem; font-size:.78rem; font-weight:800; color:var(--ink); text-decoration:underline; }
 
 .feed { display:grid; gap:14px; }
+.feed-sort-row { display:flex; align-items:center; gap:.42rem; flex-wrap:wrap; padding:.2rem 0 .35rem; }
+.feed-sort-label { color:var(--ink-soft); font-size:.69rem; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
+.feed-sort-button { border:1px solid var(--line); border-radius:999px; padding:.34rem .68rem; background:var(--cream); color:var(--ink-soft); font-size:.7rem; font-weight:800; cursor:pointer; transition:all .15s ease; }
+.feed-sort-button:hover { border-color:var(--ink); color:var(--ink); }
+.feed-sort-button.active { border-color:var(--ink); background:var(--ink); color:var(--paper); }
+.feed-result-count { margin-left:auto; color:var(--ink-soft); font-size:.69rem; font-weight:700; }
 .post-card { padding:1.35rem; border:1px solid var(--line); background:var(--cream); }
 .post-card header { display:flex; align-items:center; gap:.7rem; }
 .post-card header > div b { display:block; font-size:.83rem; color:var(--ink); }

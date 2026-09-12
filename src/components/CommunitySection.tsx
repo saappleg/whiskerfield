@@ -27,6 +27,8 @@ type CommunitySectionProps = {
   onOpenProfile?: () => void;
 };
 
+type FeedSort = 'latest' | 'popular' | 'discussed';
+
 export function CommunitySection({
   user,
   profile,
@@ -52,6 +54,7 @@ export function CommunitySection({
   const [activeTopicFilter, setActiveTopicFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showSavedOnly, setShowSavedOnly] = useState(false);
+  const [feedSort, setFeedSort] = useState<FeedSort>('latest');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -113,6 +116,22 @@ export function CommunitySection({
       pProfile?.display_name.toLowerCase().includes(q) ||
       pProfile?.handle.toLowerCase().includes(q);
     return matchesBody || matchesPet || Boolean(matchesAuthor);
+  });
+
+  // Keep the feed useful even after it grows beyond the seeded set: members can
+  // catch up with new notes, discover the community's most-loved notes, or jump
+  // into the conversations with the most replies. This stays client-side so it
+  // works for the preview feed as well as live Supabase data.
+  const sortedPosts = [...filteredPosts].sort((a, b) => {
+    if (feedSort === 'popular') {
+      const score = (post: CommunityPost) => Object.values(post.reactions ?? {}).reduce((sum, count) => sum + (count ?? 0), 0);
+      return score(b) - score(a) || new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    }
+    if (feedSort === 'discussed') {
+      const replies = (post: CommunityPost) => comments.filter((comment) => comment.post_id === post.id).length;
+      return replies(b) - replies(a) || new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    }
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
   return (
@@ -460,8 +479,30 @@ export function CommunitySection({
             </button>
           </div>
 
+          <div className="feed-sort-row" aria-label="Choose how to browse the feed">
+            <span className="feed-sort-label">Browse by</span>
+            {([
+              ['latest', 'Latest'],
+              ['popular', 'Most reacted'],
+              ['discussed', 'Most discussed'],
+            ] as Array<[FeedSort, string]>).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                className={`feed-sort-button ${feedSort === value ? 'active' : ''}`}
+                onClick={() => setFeedSort(value)}
+                aria-pressed={feedSort === value}
+              >
+                {label}
+              </button>
+            ))}
+            <span className="feed-result-count">
+              {sortedPosts.length} {sortedPosts.length === 1 ? 'note' : 'notes'}
+            </span>
+          </div>
+
           {feedError && <p className="form-error">{feedError}</p>}
-          {filteredPosts.map((post) => (
+          {sortedPosts.map((post) => (
             <PostCard
               key={post.id}
               post={post}

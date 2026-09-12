@@ -78,3 +78,35 @@ export type MemberResource = {
   summary: string;
   body: string;
 };
+
+export type ReviewCategory = 'scratchers' | 'carriers' | 'feeding' | 'litter' | 'enrichment' | 'home' | 'other';
+export type ReviewVerdict = 'recommend' | 'mixed' | 'skip';
+
+export type MemberReview = {
+  id: number;
+  author_id?: string;
+  product_name: string;
+  product_category: ReviewCategory;
+  rating: number;
+  title: string;
+  body: string;
+  verdict: ReviewVerdict;
+  is_published?: boolean;
+  created_at: string;
+  profiles?: { display_name: string; handle: string; avatar_url?: string } | { display_name: string; handle: string; avatar_url?: string }[] | null;
+};
+
+export type StoryCategory = 'cat_life' | 'care' | 'home' | 'adoption' | 'rescue' | 'other';
+
+export type MemberStory = {
+  id: number;
+  author_id?: string;
+  title: string;
+  category: StoryCategory;
+  body: string;
+  submitted_for_feature?: boolean;
+  is_featured?: boolean;
+  is_published?: boolean;
+  created_at: string;
+  profiles?: { display_name: string; handle: string; avatar_url?: string } | { display_name: string; handle: string; avatar_url?: string }[] | null;
+};
