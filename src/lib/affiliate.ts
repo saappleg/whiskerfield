@@ -67,6 +67,14 @@ export const amazonProducts: AmazonProduct[] = [
     url: 'https://amzn.to/4xW0lHO',
     accent: 'sun',
   },
+  {
+    name: 'Purina ONE Tender Selects Blend with real chicken',
+    category: 'Food & feeding',
+    detail: 'A familiar dry-food staple for adult cats, useful to keep on the shelf when a dependable everyday option is what your household needs.',
+    note: 'Switch foods gradually and follow your cat’s needs.',
+    url: 'https://amzn.to/4xjqEGQ',
+    accent: 'blue',
+  },
 ];
 
 export const amazonShelfCategories: AmazonShelfCategory[] = [
