@@ -1,6 +1,7 @@
 import { featuredStories, practicalGuides } from '../data/editorial';
 import { previewPosts, topicLabels } from '../data/community';
 import { communityTopics, discoveryHubs, productPrinciples } from '../data/discovery';
+import { homeDispatch } from '../data/dispatch';
 import { Hero } from '../components/Hero';
 
 type HomePageProps = {
@@ -113,6 +114,32 @@ export function HomePage({ onOpenAuth, signedIn }: HomePageProps) {
           <div className="product-home-actions">
             <a href="#/products" className="button ink">Visit Product Lab →</a>
             <a href="#/products#amazon-shelf" className="text-link">Shop the Amazon shelf →</a>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-dispatch" aria-labelledby="home-dispatch-heading">
+        <div className="shell">
+          <div className="home-dispatch-heading">
+            <div>
+              <p className="eyebrow light"><i /> {homeDispatch.label}</p>
+              <h2 id="home-dispatch-heading">{homeDispatch.title}</h2>
+            </div>
+            <p className="home-dispatch-intro">{homeDispatch.intro}</p>
+          </div>
+          <div className="home-dispatch-grid">
+            {homeDispatch.items.map((item) => (
+              <a className={`home-dispatch-card ${item.accent}`} href={item.href} key={item.title}>
+                <p>{item.label}</p>
+                <h3>{item.title}</h3>
+                <span>{item.detail}</span>
+                <b>{item.action}</b>
+              </a>
+            ))}
+          </div>
+          <div className="home-dispatch-footer">
+            <p>The email version is coming soon. For now, this is where the good links live.</p>
+            <a href="#/news">Open the full Dispatch →</a>
           </div>
         </div>
       </section>

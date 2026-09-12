@@ -103,13 +103,21 @@ export function MemberContributionStudio({
       <div className="studio-grid">
         <form className="studio-card studio-review-card" onSubmit={submitReview}>
           <div className="studio-card-heading"><span className="studio-icon" aria-hidden="true">★</span><div><p className="studio-kicker">Product Lab</p><h3>Review something your cat actually used.</h3></div></div>
+          <div className="review-writing-guide" id="review-writing-guide">
+            <strong>A useful review answers three small questions.</strong>
+            <ul>
+              <li>What did your cat actually do with it?</li>
+              <li>What would you change or warn someone about?</li>
+              <li>Which cat or kind of home is it a good fit for?</li>
+            </ul>
+          </div>
           <label>Product or setup<input value={productName} onChange={(event) => setProductName(event.target.value)} maxLength={120} placeholder="e.g. a window perch, litter, water fountain" required /></label>
           <div className="studio-form-row">
             <label>Category<select value={reviewCategory} onChange={(event) => setReviewCategory(event.target.value as ReviewCategory)}>{reviewCategories.map((item) => <option value={item.value} key={item.value}>{item.label}</option>)}</select></label>
             <label>Rating<select value={rating} onChange={(event) => setRating(Number(event.target.value))}>{[5, 4, 3, 2, 1].map((value) => <option value={value} key={value}>{'★'.repeat(value)} {value}/5</option>)}</select></label>
           </div>
           <label>Review title<input value={reviewTitle} onChange={(event) => setReviewTitle(event.target.value)} maxLength={120} placeholder="What should another cat person know?" required /></label>
-          <label>Your honest take<textarea value={reviewBody} onChange={(event) => setReviewBody(event.target.value)} maxLength={2000} placeholder="Tell us what your cat liked, what you would change, and who it is for." required /><span className="studio-counter">{reviewBody.length}/2000</span></label>
+          <label>Your honest take<textarea aria-describedby="review-writing-guide review-body-note" value={reviewBody} onChange={(event) => setReviewBody(event.target.value)} maxLength={2000} placeholder="What worked? What did not? Who would you buy it for?" required /><span className="studio-counter">{reviewBody.length}/2000</span><span className="studio-field-note" id="review-body-note">Specific details beat a perfect verdict: setup, durability, cleanup, and your cat’s reaction are all useful.</span></label>
           <label>Bottom line<select value={verdict} onChange={(event) => setVerdict(event.target.value as ReviewVerdict)}><option value="recommend">Recommend with context</option><option value="mixed">Mixed / depends on the home</option><option value="skip">Would skip</option></select></label>
           <button className="button ink" type="submit" disabled={busy !== ''}>{busy === 'review' ? 'Publishing…' : 'Publish review →'}</button>
         </form>

@@ -371,6 +371,64 @@ export const SAFETY_DIRECTORY: SafetyItem[] = [
 
 export type CalorieGoal = 'maintain' | 'loss' | 'gain' | 'kitten';
 
+export type CareToolId = 'age' | 'safety' | 'hydration' | 'sitter' | 'binder' | 'lost';
+
+export type CarePathway = {
+  id: string;
+  label: string;
+  emoji: string;
+  description: string;
+  toolIds: CareToolId[];
+  accent: 'mint' | 'sun' | 'blue' | 'paper';
+};
+
+/**
+ * Gentle starting points for the care tools. These are orientation paths, not
+ * diagnoses or care plans; each tool keeps its own educational/vet guidance.
+ */
+export const CARE_PATHWAYS: CarePathway[] = [
+  {
+    id: 'new-cat',
+    label: 'New cat at home',
+    emoji: '🏡',
+    description: 'Get the basics in place for a kitten, adult, or newly adopted cat.',
+    toolIds: ['age', 'safety', 'hydration'],
+    accent: 'mint',
+  },
+  {
+    id: 'everyday-wellness',
+    label: 'Everyday wellness',
+    emoji: '🌿',
+    description: 'A quick check-in for food, water, safe spaces, and health notes.',
+    toolIds: ['hydration', 'safety', 'binder'],
+    accent: 'sun',
+  },
+  {
+    id: 'away-from-home',
+    label: 'Someone else is caring for them',
+    emoji: '🧳',
+    description: 'Make a clear handoff for a sitter, boarding stay, or family member.',
+    toolIds: ['sitter', 'binder'],
+    accent: 'blue',
+  },
+  {
+    id: 'be-ready',
+    label: 'Be ready for the unexpected',
+    emoji: '🧰',
+    description: 'Keep important details together and have a lost-cat plan ready.',
+    toolIds: ['binder', 'lost', 'safety'],
+    accent: 'paper',
+  },
+  {
+    id: 'older-cat',
+    label: 'Supporting an older cat',
+    emoji: '🤍',
+    description: 'Use age, hydration, and health notes as prompts for a thoughtful check-in.',
+    toolIds: ['age', 'hydration', 'binder'],
+    accent: 'mint',
+  },
+];
+
 export function calculateCatCaloriesAndHydration(
   weightLbs: number,
   goal: CalorieGoal,
@@ -415,4 +473,3 @@ export function calculateCatCaloriesAndHydration(
     wetGramsDay,
   };
 }
-

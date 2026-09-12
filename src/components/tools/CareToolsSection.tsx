@@ -7,6 +7,7 @@ import { CatSitterGuide } from './CatSitterGuide';
 import { HydrationCalculator } from './HydrationCalculator';
 import { LostCatFlyer } from './LostCatFlyer';
 import { ToxicPlantChecker } from './ToxicPlantChecker';
+import { CARE_PATHWAYS, type CareToolId } from '../../data/cat-tools';
 
 type CareToolsSectionProps = {
   user?: User | null;
@@ -14,9 +15,9 @@ type CareToolsSectionProps = {
 };
 
 export function CareToolsSection({ userPets = [] }: CareToolsSectionProps) {
-  type ToolId = 'age' | 'safety' | 'hydration' | 'sitter' | 'binder' | 'lost';
-  const [activeTool, setActiveTool] = useState<ToolId>('age');
-  const tabs: Array<{ id: ToolId; label: string }> = [
+  const [activeTool, setActiveTool] = useState<CareToolId>('age');
+  const [activePathway, setActivePathway] = useState<string | null>(null);
+  const tabs: Array<{ id: CareToolId; label: string }> = [
     { id: 'age', label: '🎂 Human Age' },
     { id: 'safety', label: '🌿 Plant & Food Safety' },
     { id: 'hydration', label: '💧 Hydration' },
@@ -24,6 +25,18 @@ export function CareToolsSection({ userPets = [] }: CareToolsSectionProps) {
     { id: 'binder', label: '🩺 Health Binder' },
     { id: 'lost', label: '🚨 Lost Cat Flyer' },
   ];
+  const selectedPathway = CARE_PATHWAYS.find((pathway) => pathway.id === activePathway);
+  const visibleTabs = selectedPathway
+    ? tabs.filter((tab) => selectedPathway.toolIds.includes(tab.id))
+    : tabs;
+
+  function choosePathway(pathwayId: string | null) {
+    setActivePathway(pathwayId);
+    if (pathwayId) {
+      const pathway = CARE_PATHWAYS.find((item) => item.id === pathwayId);
+      if (pathway) setActiveTool(pathway.toolIds[0]);
+    }
+  }
 
   const activePanel = activeTool === 'age' ? <CatAgeCalculator />
     : activeTool === 'safety' ? <ToxicPlantChecker />
@@ -48,9 +61,8 @@ export function CareToolsSection({ userPets = [] }: CareToolsSectionProps) {
             </p>
           </div>
 
-          {/* Tool Tab Switcher */}
-          <div role="tablist" aria-label="Cat care tools" style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
-            {tabs.map((tab) => {
+          <div className="care-tool-tabs" role="tablist" aria-label="Cat care tools">
+            {visibleTabs.map((tab) => {
               const selected = activeTool === tab.id;
               return (
                 <button
@@ -79,6 +91,45 @@ export function CareToolsSection({ userPets = [] }: CareToolsSectionProps) {
             })}
           </div>
         </div>
+      </div>
+
+      <div className="care-start-panel" aria-labelledby="care-start-heading">
+        <div className="care-start-copy">
+          <p className="care-start-kicker">Start with what is happening today</p>
+          <h3 id="care-start-heading">Not sure which tool to open?</h3>
+          <p>Pick a starting point and we’ll put the most useful tools together. You can always switch to the full set.</p>
+        </div>
+        <ul className="care-pathway-grid" aria-label="Care tool starting points">
+          {CARE_PATHWAYS.map((pathway) => {
+            const selected = activePathway === pathway.id;
+            return (
+              <li key={pathway.id}>
+                <button
+                  type="button"
+                  className={`care-pathway-card ${pathway.accent}${selected ? ' is-selected' : ''}`}
+                  aria-pressed={selected}
+                  onClick={() => choosePathway(pathway.id)}
+                >
+                  <span className="care-pathway-emoji" aria-hidden="true">{pathway.emoji}</span>
+                  <strong>{pathway.label}</strong>
+                  <small>{pathway.description}</small>
+                </button>
+              </li>
+            );
+          })}
+          <li>
+            <button
+              type="button"
+              className={`care-pathway-card all-tools${activePathway === null ? ' is-selected' : ''}`}
+              aria-pressed={activePathway === null}
+              onClick={() => choosePathway(null)}
+            >
+              <span className="care-pathway-emoji" aria-hidden="true">✦</span>
+              <strong>Show all tools</strong>
+              <small>Browse the complete care toolkit.</small>
+            </button>
+          </li>
+        </ul>
       </div>
 
       <div
