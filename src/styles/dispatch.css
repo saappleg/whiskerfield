@@ -56,6 +56,12 @@
 .home-dispatch-card.sun { background: var(--sun); }
 .home-dispatch-card.paper { background: var(--cream); color: var(--ink); }
 
+/* In dark mode the mint surface becomes a deep teal. Keep the card copy on
+   the light theme's dark ink only when the surface is actually light. */
+[data-theme="dark"] .home-dispatch-card.mint {
+  color: var(--ink);
+}
+
 .home-dispatch-card > p {
   margin: 0 0 .85rem;
   font-size: .63rem;
