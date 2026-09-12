@@ -5,11 +5,17 @@ const publisherId = process.env.VITE_ADSENSE_PUBLISHER_ID?.trim()
 const adsTxtPath = new URL('../dist/ads.txt', import.meta.url);
 const distIndexPath = new URL('../dist/index.html', import.meta.url);
 const notFoundPath = new URL('../dist/404.html', import.meta.url);
+const routeDirectories = ['stories', 'care', 'products', 'news', 'privacy'];
 
 // GitHub Pages serves 404.html for clean share/sitemap URLs. Copying the built
 // shell keeps the existing hash router intact while allowing /stories?article=…
 // to resolve to the same public Journal reader.
 await copyFile(distIndexPath, notFoundPath);
+await Promise.all(routeDirectories.map(async (route) => {
+  const routeDirectory = new URL(`../dist/${route}/`, import.meta.url);
+  await mkdir(routeDirectory, { recursive: true });
+  await copyFile(distIndexPath, new URL('index.html', routeDirectory));
+}));
 
 if (publisherId && /^pub-\d{16}$/.test(publisherId)) {
   await mkdir(new URL('../dist/', import.meta.url), { recursive: true });
