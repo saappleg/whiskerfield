@@ -1,4 +1,7 @@
+import { useState } from 'react';
 import { AvatarImage } from './AvatarImage';
+import { ImageLightbox } from './ImageLightbox';
+import { isImageAvatar, normalizeImageUrl } from '../lib/avatar';
 import type { Pet } from '../types/community';
 
 type CatOfTheDayProps = {
@@ -42,6 +45,7 @@ const SEED_CAT_HEROES: Pet[] = [
 ];
 
 export function CatOfTheDay({ userPets = [], onSelectPetFilter }: CatOfTheDayProps) {
+  const [photoOpen, setPhotoOpen] = useState(false);
   const pool = userPets.length > 0 ? [...userPets, ...SEED_CAT_HEROES] : SEED_CAT_HEROES;
 
   // Day-of-year deterministic index
@@ -51,6 +55,30 @@ export function CatOfTheDay({ userPets = [], onSelectPetFilter }: CatOfTheDayPro
   const oneDay = 1000 * 60 * 60 * 24;
   const dayOfYear = Math.floor(diff / oneDay);
   const featuredCat = pool[dayOfYear % pool.length];
+  const featuredCatImage = isImageAvatar(featuredCat.avatar_url) ? normalizeImageUrl(featuredCat.avatar_url) : '';
+
+  const photoFrame = (
+    <div
+      style={{
+        width: '56px',
+        height: '56px',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        background: 'var(--mint)',
+        border: '2px solid var(--line)',
+        display: 'grid',
+        placeItems: 'center',
+        fontSize: '2rem',
+        flexShrink: 0,
+      }}
+    >
+      <AvatarImage
+        src={featuredCat.avatar_url}
+        alt={featuredCat.name}
+        fallback={featuredCat.avatar_url || '🐱'}
+      />
+    </div>
+  );
 
   return (
     <div
@@ -70,26 +98,16 @@ export function CatOfTheDay({ userPets = [], onSelectPetFilter }: CatOfTheDayPro
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flexWrap: 'wrap' }}>
-        <div
-          style={{
-            width: '56px',
-            height: '56px',
-            borderRadius: '50%',
-            overflow: 'hidden',
-            background: 'var(--mint)',
-            border: '2px solid var(--line)',
-            display: 'grid',
-            placeItems: 'center',
-            fontSize: '2rem',
-            flexShrink: 0,
-          }}
-        >
-          <AvatarImage
-            src={featuredCat.avatar_url}
-            alt={featuredCat.name}
-            fallback={featuredCat.avatar_url || '🐱'}
-          />
-        </div>
+        {featuredCatImage ? (
+          <button
+            type="button"
+            className="cat-of-the-day-photo-trigger"
+            onClick={() => setPhotoOpen(true)}
+            aria-label={`Open ${featuredCat.name}'s photo`}
+          >
+            {photoFrame}
+          </button>
+        ) : photoFrame}
 
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', flexWrap: 'wrap' }}>
@@ -142,6 +160,14 @@ export function CatOfTheDay({ userPets = [], onSelectPetFilter }: CatOfTheDayPro
         >
           <span>🐾</span> See notes mentioning {featuredCat.name} →
         </button>
+      )}
+
+      {photoOpen && featuredCatImage && (
+        <ImageLightbox
+          imageUrl={featuredCatImage}
+          caption={`${featuredCat.name}${featuredCat.breed ? ` · ${featuredCat.breed}` : ''}`}
+          onClose={() => setPhotoOpen(false)}
+        />
       )}
     </div>
   );

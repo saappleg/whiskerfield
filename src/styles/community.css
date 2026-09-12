@@ -1,4 +1,8 @@
 .community-section { padding:108px 0 0; }
+.cat-of-the-day-photo-trigger { border:0; border-radius:50%; padding:0; background:transparent; line-height:0; cursor:zoom-in; }
+.cat-of-the-day-photo-trigger:hover > div { transform:scale(1.05); box-shadow:0 0 0 3px var(--sun); }
+.cat-of-the-day-photo-trigger:focus-visible { outline:3px solid var(--sun); outline-offset:4px; border-radius:50%; }
+.cat-of-the-day-photo-trigger > div { transition:transform .18s ease, box-shadow .18s ease; }
 .section-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:2rem; margin-bottom:2rem; }
 .section-heading h2 { max-width:700px; margin:0; font-size:clamp(2.4rem, 4.5vw, 4.3rem); line-height:.97; }
 .refresh-button { border:1px solid var(--line); padding:.65rem .8rem; background:var(--cream); color:var(--ink); font-size:.72rem; font-weight:800; cursor:pointer; }
