@@ -90,6 +90,9 @@ export function PrivacyPage() {
           <p>
             All care observations, scratcher field tests, and environmental enrichment articles are written independently. When an article includes an affiliate link to a pet product, it is clearly and prominently labeled. We only mention products that have proven genuinely useful in real cat homes.
           </p>
+          <p>
+            As an Amazon Associate, Whiskerfield earns from qualifying purchases. This does not change the price you pay.
+          </p>
         </section>
 
         <section>

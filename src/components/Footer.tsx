@@ -12,6 +12,7 @@ export function Footer() {
         <a href="#/members">Community</a>
         <a href="#/care">Care</a>
         <a href="#/products">Product Lab</a>
+        <a href="#/products#amazon-shelf">Amazon shelf</a>
         <a href="#/news">Dispatch</a>
         <a href="#/stories">Journal</a>
         <a href="#/privacy">Privacy</a>

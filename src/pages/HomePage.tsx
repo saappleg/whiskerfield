@@ -110,7 +110,10 @@ export function HomePage({ onOpenAuth, signedIn }: HomePageProps) {
           <div className="mini-principles">
             {productPrinciples.map((principle) => <span key={principle.title}>{principle.icon} {principle.title}</span>)}
           </div>
-          <a href="#/products" className="button ink">Visit Product Lab →</a>
+          <div className="product-home-actions">
+            <a href="#/products" className="button ink">Visit Product Lab →</a>
+            <a href="#/products#amazon-shelf" className="text-link">Shop the Amazon shelf →</a>
+          </div>
         </div>
       </section>
 

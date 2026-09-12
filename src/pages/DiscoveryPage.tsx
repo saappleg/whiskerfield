@@ -1,5 +1,6 @@
 import type { User } from '@supabase/supabase-js';
 import { dispatchStories, dispatchTopics, productRecommendations, productPrinciples, type DiscoveryRoute } from '../data/discovery';
+import { amazonSearchUrl, amazonShelfCategories } from '../lib/affiliate';
 import type { MemberReview } from '../types/community';
 
 type DiscoveryPageProps = {
@@ -48,6 +49,31 @@ function MemberReviewShelf({ reviews = [], user, onOpenAuth }: { reviews?: Membe
         })}
       </div>
       <div className="member-review-cta"><span>Have a real-world take?</span>{user ? <a href="#/members">Write a member review →</a> : <button type="button" onClick={onOpenAuth}>Sign in to review a product →</button>}</div>
+    </section>
+  );
+}
+
+function AmazonShelfSection() {
+  return (
+    <section className="shell amazon-shelf-section" id="amazon-shelf" aria-labelledby="amazon-shelf-heading">
+      <div className="section-kicker-row">
+        <div>
+          <p className="eyebrow"><i /> The Whiskerfield shelf</p>
+          <h2 id="amazon-shelf-heading">Shop the categories we keep coming back to.</h2>
+        </div>
+        <p>Start with the field note, then browse a focused Amazon search instead of an endless aisle. We earn from qualifying purchases, at no extra cost to you.</p>
+      </div>
+      <div className="amazon-shelf-grid">
+        {amazonShelfCategories.map((category) => (
+          <a className={`amazon-shelf-card ${category.accent}`} href={amazonSearchUrl(category.query)} key={category.label} target="_blank" rel="sponsored nofollow noopener">
+            <span className="amazon-shelf-arrow" aria-hidden="true">↗</span>
+            <h3>{category.label}</h3>
+            <p>{category.detail}</p>
+            <b>Browse on Amazon</b>
+          </a>
+        ))}
+      </div>
+      <p className="affiliate-disclosure">As an Amazon Associate, Whiskerfield earns from qualifying purchases. Product opinions remain independent, and member reviews are not paid rankings.</p>
     </section>
   );
 }
@@ -172,6 +198,7 @@ export function DiscoveryPage({ route, reviews, user, onOpenAuth }: DiscoveryPag
               ))}
             </div>
           </section>
+          <AmazonShelfSection />
           <MemberReviewShelf reviews={reviews} user={user} onOpenAuth={onOpenAuth} />
           <section className="shell pathway-section product-paths" aria-label="Product Lab guides">
             <div className="section-kicker-row">

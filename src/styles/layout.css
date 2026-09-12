@@ -168,6 +168,20 @@ details[open] .toggle-arrow { transform:rotate(180deg); }
 .recommendation-card dd { margin:0; font-size:.79rem; line-height:1.45; }
 .recommendation-note { margin:1.1rem 0 0; font-size:.81rem; line-height:1.5; }
 .recommendation-card > a { margin-top:auto; padding-top:1.2rem; color:inherit; font-size:.76rem; font-weight:900; text-decoration:underline; }
+.amazon-shelf-section { padding-top:86px; }
+.amazon-shelf-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; }
+.amazon-shelf-card { min-height:225px; display:flex; flex-direction:column; padding:1.45rem; border:1px solid var(--line); color:var(--ink); transition:transform .18s ease, box-shadow .18s ease; }
+.amazon-shelf-card:hover { transform:translateY(-3px); box-shadow:0 12px 25px rgba(16,45,53,.11); }
+.amazon-shelf-card.mint { background:var(--mint); }
+.amazon-shelf-card.sun { background:var(--sun); }
+.amazon-shelf-card.blue { background:var(--blue); }
+.amazon-shelf-card.paper { background:var(--cream); }
+.amazon-shelf-arrow { align-self:flex-end; font-size:1.2rem; font-weight:900; }
+.amazon-shelf-card h3 { margin:.8rem 0 .55rem; font-size:1.45rem; line-height:1.03; }
+.amazon-shelf-card p { margin:0; font-size:.84rem; line-height:1.5; }
+.amazon-shelf-card b { margin-top:auto; padding-top:1.1rem; font-size:.75rem; text-decoration:underline; }
+.affiliate-disclosure { max-width:760px; margin:1.2rem 0 0; color:var(--ink-soft); font-size:.78rem; line-height:1.55; }
+.product-home-actions { display:flex; align-items:center; flex-wrap:wrap; gap:1.15rem; }
 .dispatch-story-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; padding-top:64px; }
 .dispatch-story-card { min-height:330px; display:flex; flex-direction:column; padding:1.55rem; border:1px solid var(--line); }
 .dispatch-story-card.coral { background:var(--coral-bg); color:#fff; border-color:var(--coral-bg); }
