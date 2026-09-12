@@ -1,6 +1,6 @@
 import type { User } from '@supabase/supabase-js';
 import { dispatchStories, dispatchTopics, productRecommendations, productPrinciples, type DiscoveryRoute } from '../data/discovery';
-import { amazonSearchUrl, amazonShelfCategories } from '../lib/affiliate';
+import { amazonProducts, amazonSearchUrl, amazonShelfCategories } from '../lib/affiliate';
 import type { MemberReview } from '../types/community';
 
 type DiscoveryPageProps = {
@@ -59,9 +59,28 @@ function AmazonShelfSection() {
       <div className="section-kicker-row">
         <div>
           <p className="eyebrow"><i /> The Whiskerfield shelf</p>
-          <h2 id="amazon-shelf-heading">Shop the categories we keep coming back to.</h2>
+          <h2 id="amazon-shelf-heading">Six useful picks, with the context still attached.</h2>
         </div>
-        <p>Start with the field note, then browse a focused Amazon search instead of an endless aisle. We earn from qualifying purchases, at no extra cost to you.</p>
+        <p>These are direct product links you shared with us. Read the note, decide whether it fits your cat, and check the current listing before you buy.</p>
+      </div>
+      <div className="amazon-product-grid" aria-label="Featured Amazon products">
+        {amazonProducts.map((product) => (
+          <a className={`amazon-product-card ${product.accent}`} href={product.url} key={product.url} target="_blank" rel="sponsored nofollow noopener">
+            <span className="amazon-product-category">{product.category}</span>
+            <span className="amazon-shelf-arrow" aria-hidden="true">↗</span>
+            <h3>{product.name}</h3>
+            <p>{product.detail}</p>
+            {product.note && <small>{product.note}</small>}
+            <b>View on Amazon <span className="affiliate-link-label">(affiliate link)</span></b>
+          </a>
+        ))}
+      </div>
+      <div className="amazon-category-heading">
+        <div>
+          <p className="eyebrow"><i /> Keep browsing</p>
+          <h3>Shop by cat-home problem.</h3>
+        </div>
+        <p>Focused searches for the everyday setups that tend to matter most.</p>
       </div>
       <div className="amazon-shelf-grid">
         {amazonShelfCategories.map((category) => (
