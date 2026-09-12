@@ -27,15 +27,15 @@ const verdictLabels: Record<MemberReview['verdict'], string> = {
 };
 
 function MemberReviewShelf({ reviews = [], user, onOpenAuth }: { reviews?: MemberReview[]; user?: User | null; onOpenAuth?: () => void }) {
-  if (reviews.length === 0) return null;
   return (
     <section className="shell member-review-section" aria-labelledby="member-review-heading">
       <div className="member-review-heading">
         <div><p className="eyebrow"><i /> From the Cat Club</p><h2 id="member-review-heading">What cat people actually kept.</h2></div>
         <p>Member reviews are experience reports, not paid rankings. Look for the trade-off, the setup, and whether the product fits your particular home.</p>
       </div>
+      <div className="member-review-cta"><span>Have a real-world take?</span>{user ? <a href="#/members#member-studio">Write a member review →</a> : <button type="button" onClick={onOpenAuth}>Sign in to review a product →</button>}</div>
       <div className="member-review-grid">
-        {reviews.slice(0, 6).map((review) => {
+        {reviews.length > 0 ? reviews.slice(0, 6).map((review) => {
           const profile = Array.isArray(review.profiles) ? review.profiles[0] : review.profiles;
           return (
             <article className="member-review-card" key={review.id}>
@@ -46,9 +46,8 @@ function MemberReviewShelf({ reviews = [], user, onOpenAuth }: { reviews?: Membe
               <div className="member-review-footer"><span>{profile?.display_name || 'Cat friend'} · {verdictLabels[review.verdict]}</span><span>{review.created_at.slice(0, 10)}</span></div>
             </article>
           );
-        })}
+        }) : <div className="member-review-empty"><h3>No member reviews yet.</h3><p>Be the first to leave a useful note about something your cat has actually lived with.</p></div>}
       </div>
-      <div className="member-review-cta"><span>Have a real-world take?</span>{user ? <a href="#/members">Write a member review →</a> : <button type="button" onClick={onOpenAuth}>Sign in to review a product →</button>}</div>
     </section>
   );
 }
@@ -217,8 +216,8 @@ export function DiscoveryPage({ route, reviews, user, onOpenAuth }: DiscoveryPag
               ))}
             </div>
           </section>
-          <AmazonShelfSection />
           <MemberReviewShelf reviews={reviews} user={user} onOpenAuth={onOpenAuth} />
+          <AmazonShelfSection />
           <section className="shell pathway-section product-paths" aria-label="Product Lab guides">
             <div className="section-kicker-row">
               <div><p className="eyebrow"><i /> Begin here</p><h2>Make a more useful cat home.</h2></div>

@@ -91,7 +91,7 @@ export function MemberContributionStudio({
   }
 
   return (
-    <section className="shell member-studio" aria-labelledby="member-studio-title">
+    <section className="shell member-studio" id="member-studio" aria-labelledby="member-studio-title">
       <div className="member-studio-heading">
         <div>
           <p className="eyebrow"><i /> Make the internet better</p>
