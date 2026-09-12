@@ -61,7 +61,7 @@ function AmazonShelfSection() {
           <p className="eyebrow"><i /> The Whiskerfield shelf</p>
           <h2 id="amazon-shelf-heading">A few cat-home picks worth a look.</h2>
         </div>
-        <p>These are the products you sent us. We’ve sorted them by what they’re for, with a quick note where the details matter.</p>
+        <p>Tried and tested products from our own home. Products we keep going back to for more or have seen major usage in our cat family.</p>
       </div>
       <div className="amazon-product-grid" aria-label="Featured Amazon products">
         {amazonProducts.map((product) => (
