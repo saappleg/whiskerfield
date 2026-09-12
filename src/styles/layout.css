@@ -173,7 +173,7 @@ details[open] .toggle-arrow { transform:rotate(180deg); }
 .amazon-product-card { min-height:305px; display:flex; flex-direction:column; padding:1.45rem; border:1px solid var(--line); color:var(--ink); transition:transform .18s ease, box-shadow .18s ease; }
 .amazon-product-card:hover { transform:translateY(-3px); box-shadow:0 12px 25px rgba(16,45,53,.11); }
 .amazon-product-card.mint { background:var(--mint); }
-.amazon-product-card.sun { background:var(--sun); }
+.amazon-product-card.sun { background:var(--sun); color:#102d35; }
 .amazon-product-card.blue { background:var(--blue); }
 .amazon-product-card.paper { background:var(--cream); }
 .amazon-product-category { font-size:.64rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
@@ -188,7 +188,7 @@ details[open] .toggle-arrow { transform:rotate(180deg); }
 .amazon-shelf-card { min-height:225px; display:flex; flex-direction:column; padding:1.45rem; border:1px solid var(--line); color:var(--ink); transition:transform .18s ease, box-shadow .18s ease; }
 .amazon-shelf-card:hover { transform:translateY(-3px); box-shadow:0 12px 25px rgba(16,45,53,.11); }
 .amazon-shelf-card.mint { background:var(--mint); }
-.amazon-shelf-card.sun { background:var(--sun); }
+.amazon-shelf-card.sun { background:var(--sun); color:#102d35; }
 .amazon-shelf-card.blue { background:var(--blue); }
 .amazon-shelf-card.paper { background:var(--cream); }
 .amazon-shelf-arrow { align-self:flex-end; font-size:1.2rem; font-weight:900; }
