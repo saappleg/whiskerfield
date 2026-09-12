@@ -59,9 +59,9 @@ function AmazonShelfSection() {
       <div className="section-kicker-row">
         <div>
           <p className="eyebrow"><i /> The Whiskerfield shelf</p>
-          <h2 id="amazon-shelf-heading">Six useful picks, with the context still attached.</h2>
+          <h2 id="amazon-shelf-heading">A few cat-home picks worth a look.</h2>
         </div>
-        <p>These are direct product links you shared with us. Read the note, decide whether it fits your cat, and check the current listing before you buy.</p>
+        <p>These are the products you sent us. We’ve sorted them by what they’re for, with a quick note where the details matter.</p>
       </div>
       <div className="amazon-product-grid" aria-label="Featured Amazon products">
         {amazonProducts.map((product) => (
@@ -78,9 +78,9 @@ function AmazonShelfSection() {
       <div className="amazon-category-heading">
         <div>
           <p className="eyebrow"><i /> Keep browsing</p>
-          <h3>Shop by cat-home problem.</h3>
+          <h3>Looking for something else?</h3>
         </div>
-        <p>Focused searches for the everyday setups that tend to matter most.</p>
+        <p>Browse a few everyday cat-home categories.</p>
       </div>
       <div className="amazon-shelf-grid">
         {amazonShelfCategories.map((category) => (
