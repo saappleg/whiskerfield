@@ -69,11 +69,11 @@ function AmazonShelfSection() {
             <span className="amazon-shelf-arrow" aria-hidden="true">↗</span>
             <h3>{category.label}</h3>
             <p>{category.detail}</p>
-            <b>Browse on Amazon</b>
+            <b>Browse on Amazon <span className="affiliate-link-label">(affiliate link)</span></b>
           </a>
         ))}
       </div>
-      <p className="affiliate-disclosure">As an Amazon Associate, Whiskerfield earns from qualifying purchases. Product opinions remain independent, and member reviews are not paid rankings.</p>
+      <p className="affiliate-disclosure">As an Amazon Associate I earn from qualifying purchases. Product opinions remain independent, and member reviews are not paid rankings.</p>
     </section>
   );
 }
