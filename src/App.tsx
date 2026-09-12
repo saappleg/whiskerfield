@@ -3,6 +3,7 @@ import { AuthDialog } from './components/AuthDialog';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { ProfileModal } from './components/ProfileModal';
+import { Seo } from './components/Seo';
 import { useWhiskerfield } from './hooks/use-whiskerfield';
 import { lazyWithReload } from './lib/lazy-with-reload';
 import { useRouter } from './lib/router';
@@ -25,6 +26,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <Seo />
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <Header
         configured={community.configured}

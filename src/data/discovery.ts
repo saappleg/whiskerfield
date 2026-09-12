@@ -1,3 +1,5 @@
+import { articleHref } from '../lib/seo';
+
 export type DiscoveryRoute = 'care' | 'products' | 'news';
 
 export type DiscoveryHub = {
@@ -77,7 +79,7 @@ export const productRecommendations: ProductRecommendation[] = [
     goodFor: 'Cats who stretch tall and scratch near the rooms people use.',
     skipIf: 'Your cat prefers a flat cardboard scratcher or a hidden corner.',
     note: 'Start with the placement and the base. A beautiful scratcher that slides is still a miss.',
-    href: '#/stories/article/scratcher-belongs-here',
+    href: articleHref('scratcher-belongs-here'),
     accent: 'mint',
   },
   {
@@ -86,7 +88,7 @@ export const productRecommendations: ProductRecommendation[] = [
     goodFor: 'Cats learning that the carrier can be an ordinary piece of furniture.',
     skipIf: 'The doors are flimsy, the base flexes, or it cannot be cleaned easily.',
     note: 'Leave it open at home with familiar bedding. The useful test starts long before vet day.',
-    href: '#/stories/article/two-useful-things',
+    href: articleHref('two-useful-things'),
     accent: 'paper',
   },
   {
@@ -95,7 +97,7 @@ export const productRecommendations: ProductRecommendation[] = [
     goodFor: 'Homes where water drips, bowls travel, or mealtimes need a reset.',
     skipIf: 'The surface slides, traps moisture, or makes the bowls harder to reach.',
     note: 'Choose the thing that shortens one daily chore. Less friction is a real feature.',
-    href: '#/stories/article/two-useful-things',
+    href: articleHref('two-useful-things'),
     accent: 'sun',
   },
   {
@@ -104,7 +106,7 @@ export const productRecommendations: ProductRecommendation[] = [
     goodFor: 'Cats who need room to turn, dig, or choose their preferred edge.',
     skipIf: 'The entrance is hard to reach, the liner catches claws, or the box cannot be scooped comfortably.',
     note: 'The best box is one you can keep clean and your cat can leave without feeling cornered.',
-    href: '#/stories/article/litter-box-placement',
+    href: articleHref('litter-box-placement'),
     accent: 'paper',
   },
   {
@@ -113,7 +115,7 @@ export const productRecommendations: ProductRecommendation[] = [
     goodFor: 'Cats who love novelty but lose interest when every toy is always available.',
     skipIf: 'The pieces are small enough to swallow or the toy cannot be supervised safely.',
     note: 'Three familiar options rotated thoughtfully beat a basket of forgotten objects.',
-    href: '#/stories/article/play-that-ends-well',
+    href: articleHref('play-that-ends-well'),
     accent: 'mint',
   },
   {
@@ -122,7 +124,7 @@ export const productRecommendations: ProductRecommendation[] = [
     goodFor: 'Cats who want a view and a way to retreat without crossing the whole room.',
     skipIf: 'The hardware is loose, the screen is not secure, or the landing route is cluttered.',
     note: 'A view is more useful when it comes with a safe way up, down, and away.',
-    href: '#/stories/article/safer-window-watching',
+    href: articleHref('safer-window-watching'),
     accent: 'sun',
   },
 ];

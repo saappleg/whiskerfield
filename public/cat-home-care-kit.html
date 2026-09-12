@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Whiskerfield Cat Home Care Kit</title>
+  <style>
+    :root { color-scheme: light; --ink:#102d35; --muted:#526c70; --line:#b9c6c4; --paper:#fffdf8; --sun:#ffd663; --coral:#a33a26; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#e9e6dc; color:var(--ink); font-family:Arial,Helvetica,sans-serif; line-height:1.45; }
+    .page { width:min(8.5in,calc(100% - 2rem)); min-height:10.8in; margin:1rem auto; padding:.58in .62in; background:var(--paper); box-shadow:0 8px 28px rgba(16,45,53,.12); }
+    .topbar { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; padding-bottom:1rem; border-bottom:3px solid var(--ink); }
+    .brand { margin:0; font-size:.72rem; font-weight:900; letter-spacing:.13em; text-transform:uppercase; }
+    h1 { max-width:5.2in; margin:.45rem 0 .25rem; font-family:Georgia,serif; font-size:2.3rem; font-weight:500; letter-spacing:-.05em; line-height:.95; }
+    .dek { max-width:5.8in; margin:0; color:var(--muted); font-size:.88rem; }
+    .paw { font-size:2.2rem; }
+    h2 { margin:1.25rem 0 .55rem; padding-bottom:.28rem; border-bottom:1px solid var(--line); font-family:Georgia,serif; font-size:1.28rem; font-weight:500; letter-spacing:-.03em; }
+    h3 { margin:.75rem 0 .35rem; font-size:.82rem; letter-spacing:.04em; text-transform:uppercase; }
+    .intro { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; margin-top:1rem; }
+    .field, .line-field { min-height:2rem; padding:.35rem .45rem; border:1px solid var(--line); }
+    .field label, .line-field label { display:block; color:var(--muted); font-size:.62rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+    .field span, .line-field span { display:block; min-height:1.1rem; margin-top:.15rem; }
+    .routine-grid, .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
+    .checklist { display:grid; grid-template-columns:1fr 1fr; gap:.45rem .9rem; margin:0; padding:0; list-style:none; }
+    .checklist li { display:flex; gap:.45rem; align-items:flex-start; min-height:1.25rem; font-size:.78rem; }
+    .box { flex:0 0 .9rem; width:.9rem; height:.9rem; border:1px solid var(--ink); }
+    .log { width:100%; border-collapse:collapse; font-size:.73rem; }
+    .log th, .log td { height:1.5rem; padding:.25rem .35rem; border:1px solid var(--line); text-align:left; vertical-align:top; }
+    .log th { background:#eef2ed; font-size:.63rem; letter-spacing:.05em; text-transform:uppercase; }
+    .notes { min-height:1.8rem; border-bottom:1px solid var(--line); }
+    .notes.tall { min-height:3.6rem; }
+    .callout { margin-top:1rem; padding:.7rem .8rem; border-left:4px solid var(--coral); background:#fff2e7; font-size:.76rem; }
+    .callout strong { color:var(--coral); }
+    .footer { display:flex; justify-content:space-between; gap:1rem; margin-top:1.1rem; color:var(--muted); font-size:.62rem; }
+    .actions { display:flex; justify-content:center; gap:.5rem; margin:1rem auto; }
+    button, .back { border:0; border-radius:999px; padding:.65rem 1rem; background:var(--ink); color:#fffdf8; font:inherit; font-size:.78rem; font-weight:800; text-decoration:none; cursor:pointer; }
+    .back { background:var(--sun); color:var(--ink); }
+    @media (max-width:620px) {
+      .page { width:calc(100% - 1rem); padding:1.25rem; }
+      .intro, .routine-grid, .contact-grid, .checklist { grid-template-columns:1fr; }
+      h1 { font-size:2rem; }
+      .paw { display:none; }
+    }
+    @media print {
+      body { background:#fff; }
+      .page { width:auto; min-height:0; margin:0; padding:.48in .55in; box-shadow:none; }
+      .actions { display:none; }
+      .page-break { break-before:page; }
+      .field, .line-field, .log td { break-inside:avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="actions" aria-label="Printable kit controls">
+    <button type="button" onclick="window.print()">Print or save as PDF</button>
+    <a class="back" href="/">Back to Whiskerfield</a>
+  </div>
+
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <p class="brand">Whiskerfield · Cat Home Care Kit</p>
+        <h1>The notes your cat’s next helper will thank you for.</h1>
+        <p class="dek">Print this free kit, fill it in while everything is calm, and keep a copy near the food or in your cat’s travel folder.</p>
+      </div>
+      <div class="paw" aria-hidden="true">🐾</div>
+    </header>
+
+    <section aria-labelledby="snapshot-heading">
+      <h2 id="snapshot-heading">1 · Household snapshot</h2>
+      <div class="intro">
+        <div class="field"><label>Cat name(s)</label><span></span></div>
+        <div class="field"><label>Updated on</label><span></span></div>
+        <div class="field"><label>Microchip number / registry</label><span></span></div>
+        <div class="field"><label>Where the carrier is kept</label><span></span></div>
+      </div>
+      <div class="line-field" style="margin-top:.6rem"><label>How my cat likes to be approached</label><span></span></div>
+    </section>
+
+    <section aria-labelledby="routine-heading">
+      <h2 id="routine-heading">2 · Daily rhythm</h2>
+      <div class="routine-grid">
+        <div class="field"><label>Morning food + amount</label><span></span></div>
+        <div class="field"><label>Evening food + amount</label><span></span></div>
+        <div class="field"><label>Water / fountain routine</label><span></span></div>
+        <div class="field"><label>Litter routine + location</label><span></span></div>
+      </div>
+      <h3>Before you leave the house</h3>
+      <ul class="checklist">
+        <li><span class="box" aria-hidden="true"></span>Doors, windows, and balcony are secure.</li>
+        <li><span class="box" aria-hidden="true"></span>Food, water, and litter supplies are easy to find.</li>
+        <li><span class="box" aria-hidden="true"></span>Carrier, flashlight, and keys are accessible.</li>
+        <li><span class="box" aria-hidden="true"></span>Medication instructions are written below.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="med-heading">
+      <h2 id="med-heading">3 · Medication &amp; observations</h2>
+      <div class="field"><label>Medication instructions (name, dose, timing, and where it is stored)</label><div class="notes tall"></div></div>
+      <table class="log" style="margin-top:.7rem">
+        <thead><tr><th style="width:1.05in">Date</th><th style="width:1.25in">Food / water</th><th style="width:1.35in">Litter / bathroom</th><th>Notes for the vet or owner</th></tr></thead>
+        <tbody>
+          <tr><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <main class="page page-break">
+    <header class="topbar">
+      <div><p class="brand">Whiskerfield · Cat Home Care Kit</p><h1>Who to call, what to watch.</h1></div>
+      <div class="paw" aria-hidden="true">📋</div>
+    </header>
+
+    <section aria-labelledby="contact-heading">
+      <h2 id="contact-heading">4 · Contacts</h2>
+      <div class="contact-grid">
+        <div class="field"><label>Primary vet + phone</label><span></span></div>
+        <div class="field"><label>24-hour / emergency vet + phone</label><span></span></div>
+        <div class="field"><label>Owner / primary contact</label><span></span></div>
+        <div class="field"><label>Backup contact + key location</label><span></span></div>
+      </div>
+      <div class="line-field" style="margin-top:.6rem"><label>Insurance policy / important account details</label><span></span></div>
+    </section>
+
+    <section aria-labelledby="handoff-heading">
+      <h2 id="handoff-heading">5 · Sitter handoff</h2>
+      <div class="field"><label>Favorite hiding spots, comforts, and quirks</label><div class="notes tall"></div></div>
+      <div class="field" style="margin-top:.6rem"><label>House rules (plants, doors, rooms, other pets)</label><div class="notes tall"></div></div>
+      <h3>Handoff checklist</h3>
+      <ul class="checklist">
+        <li><span class="box" aria-hidden="true"></span>Walked through feeding and litter setup.</li>
+        <li><span class="box" aria-hidden="true"></span>Shown where the carrier and supplies live.</li>
+        <li><span class="box" aria-hidden="true"></span>Confirmed how to reach the owner and vet.</li>
+        <li><span class="box" aria-hidden="true"></span>Shared the cat’s “please don’t” list.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="urgent-heading">
+      <h2 id="urgent-heading">6 · Safety reminder</h2>
+      <div class="callout"><strong>Call a veterinarian promptly</strong> for trouble breathing, collapse, severe bleeding, suspected poisoning, repeated vomiting, inability to urinate, or any sudden change that worries you. If you think your cat has been poisoned, do not induce vomiting unless a veterinary professional tells you to; call your veterinarian or a pet poison service right away.</div>
+      <div class="field" style="margin-top:.8rem"><label>Questions for our next vet visit</label><div class="notes tall"></div></div>
+    </section>
+
+    <div class="footer"><span>Free resource from whiskerfield.social</span><span>Keep this with your cat’s records.</span></div>
+    <p style="margin-top:.8rem;color:var(--muted);font-size:.64rem"><strong>Note:</strong> This worksheet is for organization only and is not veterinary advice. Medication, food, and emergency decisions should follow your cat’s veterinary team.</p>
+  </main>
+</body>
+</html>

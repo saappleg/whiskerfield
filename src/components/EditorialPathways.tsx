@@ -1,4 +1,5 @@
 import { editorialPaths } from '../data/editorial-paths';
+import { articleHref } from '../lib/seo';
 import { featuredStories, practicalGuides, type JournalEntry } from '../data/editorial';
 
 const allEntries = [...featuredStories, ...practicalGuides];
@@ -31,7 +32,7 @@ export function EditorialPathways() {
                 return (
                   <li key={articleId}>
                     <span aria-hidden="true">{articleIndex + 1}</span>
-                    <a href={`#/stories/article/${entry.id}`}>
+                    <a href={articleHref(entry.id)}>
                       <strong>{entry.title}</strong>
                       <small>{entry.readTime}</small>
                     </a>
@@ -39,7 +40,7 @@ export function EditorialPathways() {
                 );
               })}
             </ol>
-            <a className="editorial-pathway-start" href={`#/stories/article/${path.articles[0]}`}>Start this path <span aria-hidden="true">→</span></a>
+            <a className="editorial-pathway-start" href={articleHref(path.articles[0])}>Start this path <span aria-hidden="true">→</span></a>
           </article>
         ))}
       </div>

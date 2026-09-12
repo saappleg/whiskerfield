@@ -1,4 +1,5 @@
 import { featuredStories, practicalGuides, type EditorialChannel, type JournalEntry } from '../data/editorial';
+import { articleHref } from '../lib/seo';
 
 const channelLabels: Record<EditorialChannel, string> = {
   care: 'Care & health',
@@ -42,7 +43,7 @@ function ArticleCard({ entry, index }: { entry: JournalEntry; index: number }) {
   const channel = entry.channel || 'journal';
 
   return (
-    <a className="article-card" href={`#/stories/article/${entry.id}`} aria-label={`Read: ${entry.title}`}>
+    <a className="article-card" href={articleHref(entry.id)} aria-label={`Read: ${entry.title}`}>
       <div className="article-card-top">
         <span className="article-card-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
         <span className="article-card-category">{entry.category}</span>
@@ -81,7 +82,7 @@ export function JournalSection({ filter = 'all', query = '', sort = 'editorial' 
             </div>
             <div className="journal-featured-grid">
               {featuredEntries.map((entry, index) => (
-                <a className={`journal-featured-card ${index === 0 ? 'journal-featured-card-lead' : ''}`} href={`#/stories/article/${entry.id}`} key={entry.id}>
+                <a className={`journal-featured-card ${index === 0 ? 'journal-featured-card-lead' : ''}`} href={articleHref(entry.id)} key={entry.id}>
                   <div className="article-card-top">
                     <span className="article-card-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                     <span className="article-card-category">{entry.category}</span>

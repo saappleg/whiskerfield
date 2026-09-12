@@ -7,6 +7,7 @@ import { CatSitterGuide } from './CatSitterGuide';
 import { HydrationCalculator } from './HydrationCalculator';
 import { LostCatFlyer } from './LostCatFlyer';
 import { ToxicPlantChecker } from './ToxicPlantChecker';
+import { CatCareKit } from './CatCareKit';
 import { CARE_PATHWAYS, type CareToolId } from '../../data/cat-tools';
 
 type CareToolsSectionProps = {
@@ -131,6 +132,8 @@ export function CareToolsSection({ userPets = [] }: CareToolsSectionProps) {
           </li>
         </ul>
       </div>
+
+      <CatCareKit />
 
       <div
         id={`care-tool-panel-${activeTool}`}

@@ -2,6 +2,7 @@ import { featuredStories, practicalGuides } from '../data/editorial';
 import { previewPosts, topicLabels } from '../data/community';
 import { communityTopics, discoveryHubs, productPrinciples } from '../data/discovery';
 import { homeDispatch } from '../data/dispatch';
+import { articleHref } from '../lib/seo';
 import { Hero } from '../components/Hero';
 
 type HomePageProps = {
@@ -158,13 +159,13 @@ export function HomePage({ onOpenAuth, signedIn }: HomePageProps) {
               <p className="story-meta">{leadStory.category.toUpperCase()} · {leadStory.readTime.toUpperCase()}</p>
               <h2>{leadStory.title}</h2>
               <span className="story-dek">{leadStory.dek}</span>
-              <a href={`#/stories/article/${leadStory.id}`} className="button coral story-button">Read the piece →</a>
+              <a href={articleHref(leadStory.id)} className="button coral story-button">Read the piece →</a>
             </article>
             <article className="story sun-story" id={`story-${secondStory.id}`}>
               <p className="story-meta">{secondStory.category.toUpperCase()} · {secondStory.readTime.toUpperCase()}</p>
               <h3>{secondStory.title}</h3>
               <span className="story-dek">{secondStory.dek}</span>
-              <a href={`#/stories/article/${secondStory.id}`} className="button ink story-button">Read the piece →</a>
+              <a href={articleHref(secondStory.id)} className="button ink story-button">Read the piece →</a>
             </article>
           </div>
         </div>
@@ -181,7 +182,7 @@ export function HomePage({ onOpenAuth, signedIn }: HomePageProps) {
               <p className="guide-meta">{guide.category} · {guide.readTime}</p>
               <h3>{guide.title}</h3>
               <span className="guide-dek">{guide.dek}</span>
-              <a href={`#/stories/article/${guide.id}`} className="guide-link">Read guide →</a>
+              <a href={articleHref(guide.id)} className="guide-link">Read guide →</a>
             </article>
           ))}
         </div>

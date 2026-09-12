@@ -1,3 +1,5 @@
+import { articleHref } from '../lib/seo';
+
 export type HomeDispatchItem = {
   label: string;
   title: string;
@@ -21,7 +23,7 @@ export const homeDispatch = {
       label: 'READ · 7 DAYS',
       title: 'A seven-day enrichment reset',
       detail: 'A low-pressure week of tiny changes for cats who are bored, busy, or simply curious about everything you do.',
-      href: '#/stories/article/seven-day-enrichment',
+      href: articleHref('seven-day-enrichment'),
       action: 'Read the guide →',
       accent: 'mint',
     },
@@ -29,7 +31,7 @@ export const homeDispatch = {
       label: 'TRY · AT HOME',
       title: 'Move the good spot closer',
       detail: 'Put the scratcher, bed, or perch where your cat already wants to be. The living room is often the whole point.',
-      href: '#/stories/article/scratcher-belongs-here',
+      href: articleHref('scratcher-belongs-here'),
       action: 'Read the field note →',
       accent: 'sun',
     },

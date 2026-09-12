@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 export type PageRoute = 'home' | 'stories' | 'members' | 'care' | 'products' | 'news' | 'privacy';
 
-function parseRoute(hash: string): PageRoute {
-  const clean = hash.replace(/^#\/?/, '').toLowerCase().trim();
+function parseRoute(locationValue: string): PageRoute {
+  const clean = locationValue.replace(/^#\/?/, '').replace(/^\/+/, '').toLowerCase().trim();
   const path = clean.split(/[?#]/, 1)[0];
   if (path === 'community' || path === 'cat-club' || path === 'members' || path === 'shelf' || path === 'club') {
     return 'members';
@@ -26,16 +26,23 @@ function parseRoute(hash: string): PageRoute {
   return 'home';
 }
 
-export function getArticleId(hash: string) {
-  const clean = hash.replace(/^#\/?/, '').trim();
-  const match = clean.match(/^stories\/article\/([^?#/]+)/i);
-  return match ? decodeURIComponent(match[1]) : '';
+function getQueryValue(locationValue: string, key: string) {
+  const query = locationValue.includes('?') ? locationValue.slice(locationValue.indexOf('?') + 1).split('#', 1)[0] : '';
+  return new URLSearchParams(query).get(key) || '';
 }
 
-export function getMemberStoryId(hash: string) {
-  const clean = hash.replace(/^#\/?/, '').trim();
+export function getArticleId(hashOrPath: string, search = '') {
+  const clean = hashOrPath.replace(/^#\/?/, '').replace(/^\/+/, '').trim();
+  const match = clean.match(/^stories\/article\/([^?#/]+)/i);
+  if (match) return decodeURIComponent(match[1]);
+  return getQueryValue(search || clean, 'article');
+}
+
+export function getMemberStoryId(hashOrPath: string, search = '') {
+  const clean = hashOrPath.replace(/^#\/?/, '').replace(/^\/+/, '').trim();
   const match = clean.match(/^stories\/member\/([^?#/]+)/i);
-  return match ? decodeURIComponent(match[1]) : '';
+  if (match) return decodeURIComponent(match[1]);
+  return getQueryValue(search || clean, 'member');
 }
 
 function getAnchor(hash: string) {
@@ -54,13 +61,18 @@ function scrollToAnchor(anchor: string, attempt = 0) {
 }
 
 export function useRouter() {
+  const getLocationRoute = () => {
+    if (typeof window === 'undefined') return 'home' as PageRoute;
+    return parseRoute(window.location.hash || `${window.location.pathname}${window.location.search}`);
+  };
+
   const [currentRoute, setCurrentRoute] = useState<PageRoute>(() => {
-    return typeof window !== 'undefined' ? parseRoute(window.location.hash) : 'home';
+    return getLocationRoute();
   });
 
   useEffect(() => {
     const handleHashChange = () => {
-      const nextRoute = parseRoute(window.location.hash);
+      const nextRoute = getLocationRoute();
       setCurrentRoute(nextRoute);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       const anchor = getAnchor(window.location.hash);
@@ -68,8 +80,12 @@ export function useRouter() {
     };
 
     window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
     handleHashChange();
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
   }, []);
 
   const navigate = (route: PageRoute) => {

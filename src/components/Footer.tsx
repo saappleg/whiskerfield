@@ -6,7 +6,10 @@ export function Footer() {
       <a href="#/" aria-label="Whiskerfield home" style={{ textDecoration: 'none' }}>
         <Logo size={36} />
       </a>
-      <p>For the life you share.</p>
+      <p className="site-footer-copy">
+        <span>For the life you share.</span>
+        <span className="site-footer-disclosure">As an Amazon Associate I earn from qualifying purchases.</span>
+      </p>
       <div>
         <a href="#/">Home</a>
         <a href="#/members">Community</a>

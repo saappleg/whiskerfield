@@ -6,6 +6,7 @@ import { JournalSection, type JournalSort } from '../components/JournalSection';
 import { CareToolsSection } from '../components/tools/CareToolsSection';
 import { featuredStories, practicalGuides, type EditorialChannel, type JournalEntry } from '../data/editorial';
 import { getArticleId, getMemberStoryId } from '../lib/router';
+import { articleHref } from '../lib/seo';
 import type { MemberStory, Pet } from '../types/community';
 
 type StoriesPageProps = {
@@ -51,7 +52,7 @@ function ArticleReader({ entry, onBack }: { entry: JournalEntry; onBack: () => v
         <aside className="article-reader-aside">
           <p className="eyebrow"><i /> Keep exploring</p>
           <h2>More from {channelLabels[entry.channel || 'journal']}.</h2>
-          {relatedEntries.map((related) => <a href={`#/stories/article/${related.id}`} key={related.id}>{related.title} →</a>)}
+          {relatedEntries.map((related) => <a href={articleHref(related.id)} key={related.id}>{related.title} →</a>)}
           <a href="#/stories#tools">Open free care tools →</a>
           <a href="#/care">Browse the Care Center →</a>
           <a href="#/members">Bring it to the Cat Club →</a>
@@ -121,8 +122,8 @@ function MemberStoriesSection({ stories }: { stories: MemberStory[] }) {
 }
 
 export function StoriesPage({ user, userPets, memberStories = [] }: StoriesPageProps) {
-  const [articleId, setArticleId] = useState(() => typeof window !== 'undefined' ? getArticleId(window.location.hash) : '');
-  const [memberStoryId, setMemberStoryId] = useState(() => typeof window !== 'undefined' ? getMemberStoryId(window.location.hash) : '');
+  const [articleId, setArticleId] = useState(() => typeof window !== 'undefined' ? getArticleId(window.location.hash || window.location.pathname, window.location.search) : '');
+  const [memberStoryId, setMemberStoryId] = useState(() => typeof window !== 'undefined' ? getMemberStoryId(window.location.hash || window.location.pathname, window.location.search) : '');
   const [filter, setFilter] = useState<'all' | EditorialChannel>('all');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<JournalSort>('editorial');
@@ -146,11 +147,16 @@ export function StoriesPage({ user, userPets, memberStories = [] }: StoriesPageP
 
   useEffect(() => {
     const handleHashChange = () => {
-      setArticleId(getArticleId(window.location.hash));
-      setMemberStoryId(getMemberStoryId(window.location.hash));
+      const source = window.location.hash || window.location.pathname;
+      setArticleId(getArticleId(source, window.location.search));
+      setMemberStoryId(getMemberStoryId(source, window.location.search));
     };
     window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
   }, []);
 
   if (article) {

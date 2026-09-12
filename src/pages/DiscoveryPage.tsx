@@ -1,6 +1,8 @@
 import type { User } from '@supabase/supabase-js';
+import { AffiliateDisclosure } from '../components/AffiliateDisclosure';
 import { dispatchStories, dispatchTopics, productRecommendations, productPrinciples, type DiscoveryRoute } from '../data/discovery';
 import { amazonProducts, amazonSearchUrl, amazonShelfCategories } from '../lib/affiliate';
+import { articleHref } from '../lib/seo';
 import type { MemberReview } from '../types/community';
 
 type DiscoveryPageProps = {
@@ -62,6 +64,7 @@ function AmazonShelfSection() {
         </div>
         <p>Tried and tested products from our own home. Products we keep going back to for more or have seen major usage in our cat family.</p>
       </div>
+      <AffiliateDisclosure className="amazon-shelf-disclosure" />
       <div className="amazon-product-grid" aria-label="Featured Amazon products">
         {amazonProducts.map((product) => (
           <a className={`amazon-product-card ${product.accent}`} href={product.url} key={product.url} target="_blank" rel="sponsored nofollow noopener">
@@ -91,7 +94,7 @@ function AmazonShelfSection() {
           </a>
         ))}
       </div>
-      <p className="affiliate-disclosure">As an Amazon Associate I earn from qualifying purchases. Product opinions remain independent, and member reviews are not paid rankings.</p>
+      <p className="affiliate-disclosure affiliate-disclosure-note">Product links are provided for convenience. Prices, availability, and product details are set by Amazon and can change.</p>
     </section>
   );
 }
@@ -115,21 +118,21 @@ const pageCopy = {
 } as const;
 
 const carePaths = [
-  ['Start with a change', 'What to note when your cat seems a little different.', '#/stories/article/notice-the-small-things'],
-  ['Build a better home', 'Litter box placement, scratchers, enrichment, and gentle resets.', '#/stories/article/litter-box-placement'],
-  ['Care for every age', 'Observations that make a senior-cat check-in more useful.', '#/stories/article/senior-cat-checkin'],
+  ['Start with a change', 'What to note when your cat seems a little different.', articleHref('notice-the-small-things')],
+  ['Build a better home', 'Litter box placement, scratchers, enrichment, and gentle resets.', articleHref('litter-box-placement')],
+  ['Care for every age', 'Observations that make a senior-cat check-in more useful.', articleHref('senior-cat-checkin')],
   ['Use a free tool', 'Safety checkers, hydration estimates, a health binder, and more.', '#/stories#tools'],
-  ['Welcome a new cat', 'A soft landing for an adopted cat’s first month at home.', '#/stories/article/first-thirty-days-adopted-cat'],
-  ['Prepare before you need it', 'A small emergency kit and a plan that keeps urgent moments clear.', '#/stories/article/cat-home-emergency-kit'],
+  ['Welcome a new cat', 'A soft landing for an adopted cat’s first month at home.', articleHref('first-thirty-days-adopted-cat')],
+  ['Prepare before you need it', 'A small emergency kit and a plan that keeps urgent moments clear.', articleHref('cat-home-emergency-kit')],
 ];
 
 const productPaths = [
-  ['Scratchers that stay put', 'How to judge stability, surface, height, and placement before buying.', '#/stories/article/scratcher-belongs-here'],
-  ['The carrier question', 'The features that can make vet-day handling calmer for everyone.', '#/stories/article/two-useful-things'],
-  ['Everyday water setup', 'A small routine for fresher water, better placement, and one less point of friction.', '#/stories/article/nightly-reset'],
+  ['Scratchers that stay put', 'How to judge stability, surface, height, and placement before buying.', articleHref('scratcher-belongs-here')],
+  ['The carrier question', 'The features that can make vet-day handling calmer for everyone.', articleHref('two-useful-things')],
+  ['Everyday water setup', 'A small routine for fresher water, better placement, and one less point of friction.', articleHref('nightly-reset')],
   ['The honest disclosure', 'If a recommendation ever earns a commission, it will be labeled plainly.', '#/privacy'],
-  ['A safer window perch', 'How to keep the view, the route, and the landing spot in the same conversation.', '#/stories/article/safer-window-watching'],
-  ['A play rotation that works', 'A simple way to bring novelty back without leaving every toy out forever.', '#/stories/article/play-that-ends-well'],
+  ['A safer window perch', 'How to keep the view, the route, and the landing spot in the same conversation.', articleHref('safer-window-watching')],
+  ['A play rotation that works', 'A simple way to bring novelty back without leaving every toy out forever.', articleHref('play-that-ends-well')],
 ];
 
 export function DiscoveryPage({ route, reviews, user, onOpenAuth }: DiscoveryPageProps) {

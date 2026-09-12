@@ -28,10 +28,24 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Whiskerfield",
-        "url": "https://whiskerfield.social/",
-        "description": "A social home for cat people with community, care guidance, product notes, and a thoughtful dispatch."
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://whiskerfield.social/#website",
+            "name": "Whiskerfield",
+            "url": "https://whiskerfield.social/",
+            "description": "A social home for cat people with community, care guidance, product notes, and a thoughtful dispatch.",
+            "publisher": { "@id": "https://whiskerfield.social/#organization" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://whiskerfield.social/#organization",
+            "name": "Whiskerfield",
+            "url": "https://whiskerfield.social/",
+            "logo": "https://whiskerfield.social/logo.svg",
+            "description": "A social home for cat people with community, care guidance, product notes, and a thoughtful dispatch."
+          }
+        ]
       }
     </script>
   </head>
