@@ -5,7 +5,7 @@ const publisherId = process.env.VITE_ADSENSE_PUBLISHER_ID?.trim()
 const adsTxtPath = new URL('../dist/ads.txt', import.meta.url);
 const distIndexPath = new URL('../dist/index.html', import.meta.url);
 const notFoundPath = new URL('../dist/404.html', import.meta.url);
-const routeDirectories = ['stories', 'care', 'products', 'news', 'privacy'];
+const routeDirectories = ['stories', 'care', 'products', 'news', 'privacy', 'members'];
 
 // GitHub Pages serves 404.html for clean share/sitemap URLs. Copying the built
 // shell keeps the existing hash router intact while allowing /stories?article=…
